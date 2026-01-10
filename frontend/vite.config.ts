@@ -15,13 +15,17 @@ export default defineConfig(({ mode }) => {
       proxy: {
         '/api': {
           // En développement local, rediriger vers le backend Render pour éviter de démarrer le backend local
-          // Si vous voulez utiliser le backend local, définir VITE_API_URL=http://localhost:8000 dans .env.local
-          target: env.VITE_API_URL?.replace('/api', '') || 'https://kairos-0aoy.onrender.com',
+          // Si vous voulez utiliser le backend local, créer .env.local avec VITE_API_URL=http://localhost:8000
+          // Si VITE_API_URL est définie (ex: http://localhost:8000), l'utiliser
+          // Sinon, utiliser le backend Render par défaut
+          target: env.VITE_API_URL 
+            ? (env.VITE_API_URL.startsWith('http') ? env.VITE_API_URL.replace('/api', '') : `http://${env.VITE_API_URL.replace('/api', '')}`)
+            : 'https://kairos-0aoy.onrender.com',
           changeOrigin: true,
-          secure: true, // Accepter les certificats HTTPS
+          secure: true, // Accepter les certificats HTTPS (nécessaire pour Render)
           // Ne pas supprimer /api car le backend attend /api/auth/login, /api/modules, etc.
           // Le backend inclut les routeurs avec prefix="/api/auth", "/api/modules", etc.
-          // rewrite: (path) => path, // Pas de rewrite, garder /api dans l'URL
+          // Pas de rewrite : garder /api dans l'URL finale
         },
       },
     },
