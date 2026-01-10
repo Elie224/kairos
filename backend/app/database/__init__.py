@@ -4,6 +4,7 @@ Package database pour PostgreSQL et MongoDB
 import sys
 import os
 import importlib.util
+import logging
 
 # Charger directement le fichier database.py depuis le répertoire parent
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
