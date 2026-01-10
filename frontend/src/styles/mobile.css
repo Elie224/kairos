@@ -1,0 +1,426 @@
+/**
+ * Styles Mobile - Optimisations pour l'affichage mobile
+ * Améliore l'expérience utilisateur sur les petits écrans
+ */
+
+/* ============================================
+   BASE MOBILE
+   ============================================ */
+
+/* Viewport fix pour éviter le zoom automatique */
+@viewport {
+  width: device-width;
+  initial-scale: 1;
+  maximum-scale: 5;
+  user-scalable: yes;
+}
+
+/* Amélioration du touch sur mobile */
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  -webkit-touch-callout: none;
+}
+
+/* Optimisation du scroll sur mobile */
+html {
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ============================================
+   CONTAINERS ET SPACING MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Réduction des paddings sur mobile */
+  .chakra-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Espacement réduit entre les sections */
+  section {
+    padding: 2rem 1rem !important;
+  }
+
+  /* Cards plus compactes */
+  .chakra-card {
+    padding: 1rem !important;
+  }
+
+  /* Headings plus petits sur mobile */
+  h1 {
+    font-size: 1.75rem !important;
+    line-height: 1.2 !important;
+  }
+
+  h2 {
+    font-size: 1.5rem !important;
+    line-height: 1.3 !important;
+  }
+
+  h3 {
+    font-size: 1.25rem !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Textes plus lisibles */
+  p {
+    font-size: 0.9375rem !important;
+    line-height: 1.6 !important;
+  }
+}
+
+/* ============================================
+   BOUTONS MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Boutons plus grands pour faciliter le clic */
+  button,
+  .chakra-button {
+    min-height: 44px !important; /* Taille minimale recommandée pour le touch */
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  /* Boutons full width sur mobile */
+  .chakra-button[data-full-width="true"],
+  button.full-width-mobile {
+    width: 100% !important;
+  }
+}
+
+/* ============================================
+   FORMULAIRES MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Inputs plus grands pour faciliter la saisie */
+  input,
+  textarea,
+  select,
+  .chakra-input,
+  .chakra-textarea,
+  .chakra-select {
+    min-height: 44px !important;
+    font-size: 16px !important; /* Évite le zoom automatique sur iOS */
+    padding: 0.75rem 1rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  /* Labels plus espacés */
+  label,
+  .chakra-form__label {
+    margin-bottom: 0.5rem !important;
+    font-size: 0.9375rem !important;
+    font-weight: 600 !important;
+  }
+
+  /* Form controls avec espacement */
+  .chakra-form-control {
+    margin-bottom: 1.25rem !important;
+  }
+}
+
+/* ============================================
+   NAVIGATION MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Navbar plus compacte */
+  nav,
+  .chakra-nav {
+    padding: 0.75rem 1rem !important;
+  }
+
+  /* Menu hamburger plus visible */
+  .chakra-menu__button,
+  [aria-label*="menu"],
+  [aria-label*="Menu"] {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Drawer full screen sur mobile */
+  .chakra-drawer__content {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ============================================
+   CARDS ET GRIDS MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Cards en colonne unique */
+  .chakra-simple-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Cards avec padding réduit */
+  .chakra-card {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Espacement réduit dans les VStack */
+  .chakra-stack {
+    gap: 1rem !important;
+  }
+}
+
+/* ============================================
+   TABLES MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Tables scrollables horizontalement */
+  table,
+  .chakra-table {
+    display: block !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+  }
+
+  /* Masquer certaines colonnes sur mobile */
+  .chakra-table th:nth-child(n+4),
+  .chakra-table td:nth-child(n+4) {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   MODALS ET DIALOGS MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Modals full screen sur mobile */
+  .chakra-modal__content-container {
+    padding: 0 !important;
+  }
+
+  .chakra-modal__content {
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+  }
+
+  /* Close button plus visible */
+  .chakra-modal__close-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    top: 1rem !important;
+    right: 1rem !important;
+  }
+}
+
+/* ============================================
+   IMAGES ET MEDIA MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Images responsives */
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Vidéos responsives */
+  video,
+  iframe {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
+
+/* ============================================
+   UTILITAIRES MOBILE
+   ============================================ */
+
+/* Masquer sur mobile */
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+/* Afficher uniquement sur mobile */
+@media (min-width: 769px) {
+  .show-mobile-only {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .show-mobile-only {
+    display: block !important;
+  }
+}
+
+/* Text align center sur mobile */
+@media (max-width: 768px) {
+  .text-center-mobile {
+    text-align: center !important;
+  }
+}
+
+/* Full width sur mobile */
+@media (max-width: 768px) {
+  .full-width-mobile {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ============================================
+   TOUCH OPTIMIZATIONS
+   ============================================ */
+
+/* Zone de touch optimale */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Amélioration du feedback tactile */
+button:active,
+a:active,
+.touch-target:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+/* ============================================
+   SCROLL SMOOTH MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Scroll plus fluide */
+  * {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Masquer la scrollbar sur mobile */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+  }
+}
+
+/* ============================================
+   SAFE AREA (iPhone X et plus)
+   ============================================ */
+
+@supports (padding: max(0px)) {
+  .safe-area-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+
+  .safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  .safe-area-left {
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
+
+  .safe-area-right {
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
+
+/* ============================================
+   PERFORMANCE MOBILE
+   ============================================ */
+
+/* Réduire les animations sur mobile pour économiser la batterie */
+@media (max-width: 768px) and (prefers-reduced-motion: no-preference) {
+  * {
+    animation-duration: 0.3s !important;
+    transition-duration: 0.2s !important;
+  }
+}
+
+/* Désactiver les animations si l'utilisateur préfère */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   FIXES SPÉCIFIQUES
+   ============================================ */
+
+/* Fix pour iOS Safari - input zoom */
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="number"],
+  textarea,
+  select {
+    font-size: 16px !important; /* Évite le zoom automatique */
+  }
+}
+
+/* Fix pour le viewport sur mobile */
+@-webkit-viewport {
+  width: device-width;
+}
+
+@-moz-viewport {
+  width: device-width;
+}
+
+@-ms-viewport {
+  width: device-width;
+}
+
+@viewport {
+  width: device-width;
+}
+
+/* Fix pour les polices sur mobile */
+@media (max-width: 768px) {
+  body {
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+}

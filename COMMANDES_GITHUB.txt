@@ -1,0 +1,83 @@
+# ========================================
+# COMMANDES EXACTES POUR GITHUB - À COPIER-COLLER
+# ========================================
+
+# ÉTAPE 1 : Vérifier Git
+git --version
+
+# ÉTAPE 2 : Configurer Git (remplacer NOM et EMAIL)
+git config --global user.name "Votre Nom"
+git config --global user.email "votre.email@example.com"
+
+# ÉTAPE 3 : Se placer dans le dossier du projet
+cd "C:\Users\KOURO\OneDrive\Desktop\Kairós"
+
+# ÉTAPE 4 : Vérifier si Git est déjà initialisé
+git status
+
+# Si erreur "not a git repository", initialiser Git :
+git init
+
+# ÉTAPE 5 : Vérifier les fichiers à ajouter
+git status
+
+# IMPORTANT : Vérifier que .env, venv/, node_modules/ ne sont PAS listés
+
+# ÉTAPE 6 : Si .env est listé, le supprimer du cache Git
+git rm --cached .env
+echo ".env" >> .gitignore
+
+# ÉTAPE 7 : Ajouter tous les fichiers (sauf ceux dans .gitignore)
+git add .
+
+# ÉTAPE 8 : Vérifier ce qui a été ajouté
+git status
+
+# ÉTAPE 9 : Créer le premier commit
+git commit -m "Initial commit - Préparation déploiement Render"
+
+# ÉTAPE 10 : Vérifier que le commit a été créé
+git log --oneline
+
+# ÉTAPE 11 : Renommer la branche en main (si nécessaire)
+git branch -M main
+
+# ÉTAPE 12 : Ajouter le remote GitHub (REMPLACER VOTRE_USERNAME et REPO_NAME)
+# Remplacer VOTRE_USERNAME par votre nom d'utilisateur GitHub
+# Remplacer REPO_NAME par le nom de votre repository (ex: kairos)
+git remote add origin https://github.com/VOTRE_USERNAME/REPO_NAME.git
+
+# Exemple concret :
+# git remote add origin https://github.com/johndoe/kairos.git
+
+# Si erreur "remote origin already exists" :
+# git remote remove origin
+# git remote add origin https://github.com/VOTRE_USERNAME/REPO_NAME.git
+
+# ÉTAPE 13 : Vérifier le remote
+git remote -v
+
+# ÉTAPE 14 : Pousser le code sur GitHub
+git push -u origin main
+
+# ========================================
+# Si GitHub demande une authentification :
+# ========================================
+# Option 1 : Utiliser le navigateur (ouvrira automatiquement)
+# Option 2 : Utiliser un token personnel (voir GUIDE_COMPLET_GITHUB.md)
+
+# ========================================
+# Pour vérifier que tout est OK :
+# ========================================
+git status
+
+# Doit afficher :
+# On branch main
+# Your branch is up to date with 'origin/main'.
+
+# ========================================
+# PROCHAINES FOIS (quand vous modifiez le code) :
+# ========================================
+git add .
+git commit -m "Description des modifications"
+git push
