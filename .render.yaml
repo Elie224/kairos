@@ -42,14 +42,12 @@ services:
       - key: ALLOWED_HOSTS
         value: "*"
 
-  # Service Frontend (React/Vite)
-  - type: web
+  # Service Frontend (React/Vite) - Static Site
+  - type: static
     name: kairos-frontend
-    env: node
     region: frankfurt
-    plan: starter
     buildCommand: cd frontend && npm ci && npm run build
-    startCommand: cd frontend && npx serve -s dist -l $PORT
+    staticPublishPath: frontend/dist
     envVars:
       - key: NODE_VERSION
         value: 18.17.0

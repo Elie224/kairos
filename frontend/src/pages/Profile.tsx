@@ -23,6 +23,7 @@ import api from '../services/api'
 import { Button } from '@chakra-ui/react'
 import { LazyImage } from '../components/LazyImage'
 import logoKairos from '../logo_kairos.jpeg'
+import { countries } from '../constants/countries'
 
 const Profile = () => {
   const { t } = useTranslation()
@@ -65,9 +66,7 @@ const Profile = () => {
 
   const getCountryName = (code?: string) => {
     if (!code) return 'Non renseigné'
-    // Import dynamique pour éviter les problèmes de chargement
     try {
-      const { countries } = require('../constants/countries')
       const country = countries.find((c: { code: string }) => c.code === code)
       return country ? country.name : code
     } catch {

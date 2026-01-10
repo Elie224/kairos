@@ -38,7 +38,7 @@ const Quiz = ({ moduleId }: QuizProps) => {
   const [timeElapsed, setTimeElapsed] = useState(0)
   const queryClient = useQueryClient()
   const startTimeRef = useRef<number>(Date.now())
-  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const generateQuizMutation = useMutation(
     async () => {

@@ -1,8 +1,20 @@
 import axios, { AxiosError } from 'axios'
 import { useAuthStore } from '../store/authStore'
 
+// Déterminer l'URL de base de l'API
+// En production (Render Static Site), utiliser VITE_API_URL directement
+// En développement, utiliser le proxy Vite (/api)
+const getBaseURL = () => {
+  // Si VITE_API_URL est définie (production), l'utiliser directement
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL
+  }
+  // Sinon, utiliser le proxy en développement
+  return '/api'
+}
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },
@@ -96,12 +108,12 @@ api.interceptors.response.use(
             return Promise.reject(error)
           }
           // Pour les autres méthodes, logger seulement en développement
-          if (process.env.NODE_ENV === 'development') {
+          if (import.meta.env.DEV) {
             console.warn('Timeout de requête (peut être normal pour les opérations longues)')
           }
         } else {
           // Autre erreur réseau
-          if (process.env.NODE_ENV === 'development') {
+          if (import.meta.env.DEV) {
             console.error('Erreur réseau: Pas de réponse du serveur', error.message)
           }
         }
@@ -121,7 +133,7 @@ api.interceptors.response.use(
     if (error.response?.status === 429) {
       const retryAfter = error.response.headers['retry-after']
       const delay = retryAfter ? parseInt(retryAfter) * 1000 : 5000
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.warn(`Rate limit atteint. Nouvelle tentative dans ${delay}ms`)
       }
       

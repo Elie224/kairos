@@ -1,0 +1,5 @@
+# Fichier _redirects pour Render Static Site
+# Permet le routing client-side pour les Single Page Applications (SPA)
+# Toutes les routes non-fichiers sont redirigées vers index.html
+
+/*    /index.html   200

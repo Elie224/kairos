@@ -1,12 +1,21 @@
 """
 Configuration de l'application
 """
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import field_validator, Field
 from typing import Optional
 import secrets
 import os
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=False,
+        extra="ignore",  # Ignorer les champs extra dans .env (compatibilité)
+        env_ignore_empty=True,
+        # Exclure ALLOWED_HOSTS du parsing automatique car c'est une propriété personnalisée
+        env_prefix="",  # Pas de préfixe
+    )
     mongodb_url: str = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
     mongodb_db_name: str = os.getenv("MONGODB_DB_NAME", "kaïros")
     # Timeout MongoDB en millisecondes (5 secondes par défaut)
@@ -47,10 +56,25 @@ class Settings(BaseSettings):
     
     # Sécurité supplémentaire
     enable_csrf: bool = os.getenv("ENABLE_CSRF", "false").lower() == "true"
-    allowed_hosts: list[str] = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    # Note: allowed_hosts n'est PAS un champ Pydantic pour éviter le parsing JSON automatique
+    # Il est lu directement via os.getenv dans la propriété ci-dessous
     
     # Frontend URL pour les liens dans les emails
     frontend_url: str = os.getenv("FRONTEND_URL", "http://localhost:5173")
+    
+    @property
+    def allowed_hosts(self) -> list[str]:
+        """Parse allowed_hosts depuis une chaîne (séparée par virgules)"""
+        # Lire directement depuis os.getenv pour éviter le parsing JSON de Pydantic Settings
+        env_value = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1")
+        if not env_value or env_value.strip() == "":
+            return ["localhost", "127.0.0.1"]
+        # Si c'est "*", retourner ["*"]
+        if env_value.strip() == "*":
+            return ["*"]
+        # Sinon, split par virgule et nettoyer
+        hosts = [h.strip() for h in env_value.split(",") if h.strip()]
+        return hosts if hosts else ["localhost", "127.0.0.1"]
     
     # Stripe Configuration
     stripe_secret_key: Optional[str] = os.getenv("STRIPE_SECRET_KEY", None)
@@ -102,10 +126,8 @@ class Settings(BaseSettings):
                 "form-action 'self';"
             )
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = False
-        extra = "ignore"  # Ignorer les champs extra dans .env (compatibilité)
+    # Note: allowed_hosts n'est pas un champ mais une propriété (@property)
+    # pour éviter que Pydantic Settings essaie de le parser comme JSON
 
 settings = Settings()
 
