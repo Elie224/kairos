@@ -66,17 +66,51 @@ fetch('https://kairos-0aoy.onrender.com/health')
 ## 🚨 Si CORS ne fonctionne toujours pas
 
 1. **Vérifier les logs du backend** :
-   - Connectez-vous à Render Dashboard
-   - Allez dans "Logs" du service backend
+   - Connectez-vous à Render Dashboard : https://dashboard.render.com
+   - Allez dans votre service backend (`kairos-backend` ou `kairos-0aoy`)
+   - Cliquez sur "Logs"
    - Cherchez la ligne `🌐 CORS autorisé pour les origines...`
+   - Vérifiez que `https://kairos-frontend-hjg9.onrender.com` est dans la liste
 
-2. **Vérifier l'URL du frontend** :
-   - L'URL dans la console du navigateur doit correspondre à une des origines autorisées
-   - Exemple : Si votre frontend est sur `https://kairos-frontend-hjg9.onrender.com`, cette URL doit être dans la liste
+2. **Vérifier les variables d'environnement sur Render** :
+   
+   **Dans Render Dashboard → Service Backend → Environment** :
+   - ✅ `ALLOWED_HOSTS` = `*` (déjà configuré dans `.render.yaml`)
+   - ✅ `ENVIRONMENT` = `production` (déjà configuré dans `.render.yaml`)
+   - ⚠️ `FRONTEND_URL` = `https://kairos-frontend-hjg9.onrender.com` (optionnel mais recommandé)
+   
+   **Pour ajouter `FRONTEND_URL`** :
+   1. Allez dans Render Dashboard
+   2. Service backend → "Environment"
+   3. Cliquez sur "Add Environment Variable"
+   4. Key : `FRONTEND_URL`
+   5. Value : `https://kairos-frontend-hjg9.onrender.com` (remplacez par votre URL frontend réelle)
+   6. Cliquez sur "Save Changes"
+   7. Le service redémarrera automatiquement
 
 3. **Redémarrer le backend** :
    - Allez dans Render Dashboard
    - Service backend → "Manual Deploy" → "Deploy latest commit"
+   - OU simplement "Save Changes" dans Environment pour redémarrer automatiquement
+
+4. **Vérifier l'URL du frontend** :
+   - L'URL dans la console du navigateur doit correspondre à une des origines autorisées
+   - Exemple : Si votre frontend est sur `https://kairos-frontend-hjg9.onrender.com`, cette URL doit être dans la liste des origines CORS
+
+5. **Vérifier que VITE_API_URL est configuré sur le frontend** :
+   
+   **Dans Render Dashboard → Service Frontend → Environment** :
+   - ⚠️ `VITE_API_URL` = `https://kairos-0aoy.onrender.com` (OBLIGATOIRE)
+   - Remplacez par votre URL backend réelle
+   
+   **Pour ajouter `VITE_API_URL`** :
+   1. Allez dans Render Dashboard
+   2. Service frontend → "Environment"
+   3. Cliquez sur "Add Environment Variable"
+   4. Key : `VITE_API_URL`
+   5. Value : `https://kairos-0aoy.onrender.com` (remplacez par votre URL backend réelle)
+   6. Cliquez sur "Save Changes"
+   7. Le service redémarrera automatiquement
 
 ## 📚 Documentation Render
 
