@@ -1,10 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { Box, VStack, HStack, Input, Button, Text, Card, CardBody, Badge, Spinner, Alert, AlertIcon, IconButton, Flex, Wrap, WrapItem, Image, CloseButton } from '@chakra-ui/react'
-import { useMutation } from 'react-query'
 import { useTranslation } from 'react-i18next'
-import { FiSend, FiX, FiMessageCircle, FiPaperclip, FiImage } from 'react-icons/fi'
+import { FiSend, FiX, FiMessageCircle, FiPaperclip } from 'react-icons/fi'
 import { chatService, ChatMessage } from '../services/chatService'
-import api from '../services/api'
 
 interface AITutorProps {
   moduleId: string
@@ -26,6 +24,7 @@ const AITutor = ({ moduleId }: AITutorProps) => {
   const [isStreaming, setIsStreaming] = useState(false)
   const [currentStreamingMessage, setCurrentStreamingMessage] = useState<string>('')
   const [attachedFiles, setAttachedFiles] = useState<FilePreview[]>([])
+  const [error, setError] = useState<string | null>(null)
 
   // Suggestions de questions initiales
   const initialSuggestions = [
@@ -36,12 +35,23 @@ const AITutor = ({ moduleId }: AITutorProps) => {
   ]
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    // Utiliser requestAnimationFrame pour s'assurer que le DOM est mis à jour
+    requestAnimationFrame(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    })
   }
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages])
+  }, [messages]) // Scroller quand les messages changent
+
+  useEffect(() => {
+    // Scroller pendant le streaming aussi (avec un petit délai pour la performance)
+    if (currentStreamingMessage && isStreaming) {
+      const timer = setTimeout(() => scrollToBottom(), 100)
+      return () => clearTimeout(timer)
+    }
+  }, [currentStreamingMessage, isStreaming])
 
   // Charger l'historique de conversation depuis le backend au démarrage
   useEffect(() => {
@@ -119,7 +129,12 @@ const AITutor = ({ moduleId }: AITutorProps) => {
             moduleId,
             language: 'fr',
             onChunk: (chunk) => {
-              setCurrentStreamingMessage(prev => prev + chunk)
+              setCurrentStreamingMessage(prev => {
+                const newMessage = prev + chunk
+                // Faire défiler automatiquement pendant le streaming
+                setTimeout(() => scrollToBottom(), 50)
+                return newMessage
+              })
             },
             onComplete: (fullResponse) => {
               const assistantMessage: ChatMessage = {
@@ -138,8 +153,11 @@ const AITutor = ({ moduleId }: AITutorProps) => {
             },
             onError: (error) => {
               console.error('Erreur chat:', error)
+              setError(error instanceof Error ? error.message : 'Une erreur est survenue lors de la communication avec Kaïrox')
               setIsStreaming(false)
               setCurrentStreamingMessage('')
+              // Retirer le message utilisateur en cas d'erreur pour permettre une nouvelle tentative
+              setMessages((prev) => prev.slice(0, -1))
             }
           }
         )
@@ -149,7 +167,12 @@ const AITutor = ({ moduleId }: AITutorProps) => {
           moduleId,
           language: 'fr',
           onChunk: (chunk) => {
-            setCurrentStreamingMessage(prev => prev + chunk)
+            setCurrentStreamingMessage(prev => {
+              const newMessage = prev + chunk
+              // Faire défiler automatiquement pendant le streaming
+              setTimeout(() => scrollToBottom(), 50)
+              return newMessage
+            })
           },
           onComplete: (fullResponse) => {
             const assistantMessage: ChatMessage = {
@@ -160,18 +183,25 @@ const AITutor = ({ moduleId }: AITutorProps) => {
             setMessages((prev) => [...prev, assistantMessage])
             setCurrentStreamingMessage('')
             setIsStreaming(false)
+            setError(null) // Effacer les erreurs précédentes en cas de succès
           },
           onError: (error) => {
             console.error('Erreur chat:', error)
+            setError(error instanceof Error ? error.message : 'Une erreur est survenue lors de la communication avec Kaïrox')
             setIsStreaming(false)
             setCurrentStreamingMessage('')
+            // Retirer le message utilisateur en cas d'erreur pour permettre une nouvelle tentative
+            setMessages((prev) => prev.slice(0, -1))
           }
         })
       }
     } catch (error) {
       console.error('Erreur:', error)
+      setError(error instanceof Error ? error.message : 'Une erreur est survenue. Veuillez réessayer.')
       setIsStreaming(false)
       setCurrentStreamingMessage('')
+      // Retirer le message utilisateur en cas d'erreur pour permettre une nouvelle tentative
+      setMessages((prev) => prev.slice(0, -1))
     }
 
     if (!messageText) {
@@ -186,67 +216,144 @@ const AITutor = ({ moduleId }: AITutorProps) => {
   const clearChat = () => {
     setMessages([])
     setSuggestions([])
+    setError(null)
+    setCurrentStreamingMessage('')
+    chatService.clearHistory()
   }
 
   return (
-    <VStack spacing={4} align="stretch" h={{ base: '500px', md: '700px' }}>
-      <Card h="100%" display="flex" flexDirection="column">
-        <CardBody display="flex" flexDirection="column" h="100%" p={0}>
-          {/* Header */}
-          <Box p={{ base: 3, md: 4 }} borderBottom="1px" borderColor="gray.200" bg="gray.50">
+    <VStack spacing={0} align="stretch" h={{ base: '500px', md: '700px' }} w="100%">
+      <Card h="100%" display="flex" flexDirection="column" borderRadius="lg" boxShadow="md" overflow="hidden">
+        <CardBody display="flex" flexDirection="column" h="100%" p={0} gap={0}>
+          {/* Header amélioré */}
+          <Box 
+            p={{ base: 4, md: 5 }} 
+            borderBottom="1px" 
+            borderColor="gray.200" 
+            bgGradient="linear(to-r, blue.50, purple.50)"
+          >
             <Flex justify="space-between" align="center">
-              <HStack spacing={2}>
-                <FiMessageCircle size={{ base: 18, md: 20 }} color="#1e88e5" />
-                <Text fontSize={{ base: 'md', md: 'lg' }} fontWeight="bold" color="gray.700">
-                  {t('aiTutor.title') || 'Kaïrox'}
-                </Text>
+              <HStack spacing={3}>
+                <Box
+                  p={2}
+                  borderRadius="full"
+                  bg="white"
+                  boxShadow="sm"
+                >
+                  <FiMessageCircle size={24} color="#1e88e5" />
+                </Box>
+                <VStack align="start" spacing={0}>
+                  <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="bold" color="gray.800">
+                    {t('aiTutor.title') || 'Kaïrox'}
+                  </Text>
+                  <Text fontSize="xs" color="gray.600">
+                    Assistant IA personnel
+                  </Text>
+                </VStack>
               </HStack>
               {messages.length > 0 && (
                 <IconButton
                   aria-label="Effacer la conversation"
                   icon={<FiX />}
-                  size={{ base: 'md', md: 'sm' }}
-                  minW="44px"
-                  minH="44px"
+                  size="sm"
                   variant="ghost"
+                  colorScheme="gray"
                   onClick={clearChat}
+                  _hover={{ bg: 'whiteAlpha.800' }}
                 />
               )}
             </Flex>
           </Box>
 
-          {/* Messages Area */}
-          <Box flex={1} overflowY="auto" p={{ base: 3, md: 4 }} bg="gray.50">
+          {/* Messages Area améliorée */}
+          <Box 
+            flex={1} 
+            overflowY="auto" 
+            p={{ base: 4, md: 6 }} 
+            bg="gray.50"
+            css={{
+              '&::-webkit-scrollbar': {
+                width: '8px',
+              },
+              '&::-webkit-scrollbar-track': {
+                background: 'transparent',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: '#cbd5e0',
+                borderRadius: '4px',
+              },
+              '&::-webkit-scrollbar-thumb:hover': {
+                background: '#a0aec0',
+              },
+            }}
+          >
             <VStack spacing={{ base: 3, md: 4 }} align="stretch">
-              {messages.length === 0 && (
-                <Box textAlign="center" py={{ base: 6, md: 8 }}>
-                  <Box mb={4} display="flex" justifyContent="center">
-                    <FiMessageCircle size={{ base: 36, md: 48 }} color="#1e88e5" />
+              {/* Affichage des erreurs */}
+              {error && (
+                <Alert 
+                  status="error" 
+                  borderRadius="lg"
+                  onClose={() => setError(null)}
+                  closeButton
+                >
+                  <AlertIcon />
+                  <Box>
+                    <Text fontWeight="bold">Erreur de communication</Text>
+                    <Text fontSize="sm">{error}</Text>
                   </Box>
-                  <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="bold" mb={2} color="gray.700">
-                    {t('aiTutor.welcome') || 'Bonjour ! Je suis Kaïrox'}
+                </Alert>
+              )}
+              {messages.length === 0 && (
+                <Box textAlign="center" py={{ base: 8, md: 12 }}>
+                  <Box 
+                    mb={6} 
+                    display="flex" 
+                    justifyContent="center"
+                    position="relative"
+                  >
+                    <Box
+                      p={6}
+                      borderRadius="full"
+                      bgGradient="linear(to-br, blue.100, purple.100)"
+                      boxShadow="lg"
+                    >
+                      <FiMessageCircle size={64} color="#1e88e5" />
+                    </Box>
+                  </Box>
+                  <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold" mb={3} color="gray.800">
+                    {t('aiTutor.welcome') || 'Bonjour ! Je suis Kaïrox 👋'}
                   </Text>
-                  <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.600" mb={6}>
-                    {t('aiTutor.subtitle') || 'Posez-moi vos questions sur ce module et je vous aiderai à comprendre les concepts.'}
+                  <Text fontSize={{ base: 'md', md: 'lg' }} color="gray.600" mb={8} maxW="600px" mx="auto">
+                    {t('aiTutor.subtitle') || 'Votre assistant IA personnel. Posez-moi vos questions sur ce module et je vous aiderai à comprendre les concepts.'}
                   </Text>
                   
-                  {/* Suggestions initiales */}
-                  <Wrap spacing={2} justify="center">
-                    {initialSuggestions.map((suggestion, idx) => (
-                      <WrapItem key={idx}>
+                  {/* Suggestions initiales améliorées */}
+                  <VStack spacing={3} align="stretch" maxW="600px" mx="auto">
+                    <Text fontSize="sm" color="gray.500" fontWeight="medium" mb={2}>
+                      Questions suggérées :
+                    </Text>
+                    <VStack spacing={2} align="stretch">
+                      {initialSuggestions.map((suggestion, idx) => (
                         <Button
-                          size={{ base: 'xs', md: 'sm' }}
+                          key={idx}
+                          size="md"
                           variant="outline"
-                          colorScheme="brand"
-                          minH="36px"
+                          colorScheme="blue"
+                          justifyContent="flex-start"
+                          textAlign="left"
+                          leftIcon={<FiMessageCircle />}
                           onClick={() => handleSuggestionClick(suggestion)}
-                          _hover={{ bg: 'gray.50' }}
+                          _hover={{ bg: 'blue.50', borderColor: 'blue.300', transform: 'translateX(4px)' }}
+                          transition="all 0.2s"
+                          borderRadius="md"
+                          py={6}
+                          px={4}
                         >
-                          {suggestion}
+                          <Text fontSize="sm">{suggestion}</Text>
                         </Button>
-                      </WrapItem>
-                    ))}
-                  </Wrap>
+                      ))}
+                    </VStack>
+                  </VStack>
                 </Box>
               )}
 
@@ -254,60 +361,98 @@ const AITutor = ({ moduleId }: AITutorProps) => {
                 <Box
                   key={idx}
                   alignSelf={msg.role === 'user' ? 'flex-end' : 'flex-start'}
-                  maxW={{ base: '90%', md: '85%' }}
-                  width="100%"
+                  maxW={{ base: '85%', md: '75%', lg: '65%' }}
+                  width="fit-content"
+                  mb={4}
                 >
                   <HStack
                     spacing={2}
-                    align="start"
+                    align="center"
                     justify={msg.role === 'user' ? 'flex-end' : 'flex-start'}
-                    mb={1}
+                    mb={2}
                   >
                     {msg.role === 'assistant' && (
-                      <Badge colorScheme="gray" borderRadius="full" px={2} py={1} fontSize={{ base: 'xs', md: 'sm' }}>
-                        {t('aiTutor.tutor') || 'Kaïrox'}
+                      <Badge 
+                        colorScheme="blue" 
+                        borderRadius="full" 
+                        px={3} 
+                        py={1} 
+                        fontSize="xs"
+                        fontWeight="medium"
+                      >
+                        🤖 {t('aiTutor.tutor') || 'Kaïrox'}
                       </Badge>
                     )}
                     {msg.role === 'user' && (
-                      <Badge colorScheme="brand" borderRadius="full" px={2} py={1} fontSize={{ base: 'xs', md: 'sm' }}>
-                        {t('aiTutor.you') || 'Vous'}
+                      <Badge 
+                        colorScheme="purple" 
+                        borderRadius="full" 
+                        px={3} 
+                        py={1} 
+                        fontSize="xs"
+                        fontWeight="medium"
+                      >
+                        👤 {t('aiTutor.you') || 'Vous'}
                       </Badge>
                     )}
+                    <Text fontSize="xs" color="gray.500">
+                      {new Date(msg.timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    </Text>
                   </HStack>
                   <Card
-                    bg={msg.role === 'user' ? 'gray.500' : 'white'}
+                    bg={msg.role === 'user' 
+                      ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
+                      : 'white'}
                     color={msg.role === 'user' ? 'white' : 'gray.800'}
-                    boxShadow="sm"
-                    borderRadius="lg"
+                    boxShadow={msg.role === 'user' ? 'md' : 'sm'}
+                    borderRadius="xl"
+                    border={msg.role === 'assistant' ? '1px solid' : 'none'}
+                    borderColor={msg.role === 'assistant' ? 'gray.200' : 'transparent'}
+                    _hover={{ boxShadow: 'lg' }}
+                    transition="all 0.2s"
                   >
-                    <CardBody p={{ base: 3, md: 4 }}>
+                    <CardBody p={{ base: 4, md: 5 }}>
                       {/* Afficher les fichiers/images si présents */}
                       {msg.files && msg.files.length > 0 && (
-                        <VStack spacing={2} align="stretch" mb={3}>
+                        <VStack spacing={3} align="stretch" mb={4}>
                           {msg.files.map((file, fileIdx) => (
                             <Box key={fileIdx} position="relative">
                               {file.type === 'image' && file.preview ? (
-                                <Image
-                                  src={file.preview}
-                                  alt={file.name}
-                                  maxH="300px"
-                                  borderRadius="md"
-                                  objectFit="contain"
-                                />
+                                <Box
+                                  borderRadius="lg"
+                                  overflow="hidden"
+                                  boxShadow="sm"
+                                >
+                                  <Image
+                                    src={file.preview}
+                                    alt={file.name}
+                                    maxH="400px"
+                                    objectFit="contain"
+                                  />
+                                </Box>
                               ) : (
                                 <Box
-                                  p={3}
-                                  bg={msg.role === 'user' ? 'gray.400' : 'gray.100'}
+                                  p={4}
+                                  bg={msg.role === 'user' ? 'whiteAlpha.200' : 'gray.100'}
                                   borderRadius="md"
+                                  border="1px solid"
+                                  borderColor={msg.role === 'user' ? 'whiteAlpha.300' : 'gray.200'}
                                 >
-                                  <Text fontSize="sm">📎 {file.name}</Text>
+                                  <HStack spacing={2}>
+                                    <Text fontSize="lg">📎</Text>
+                                    <Text fontSize="sm" fontWeight="medium">{file.name}</Text>
+                                  </HStack>
                                 </Box>
                               )}
                             </Box>
                           ))}
                         </VStack>
                       )}
-                      <Text whiteSpace="pre-wrap" lineHeight="1.6">
+                      <Text 
+                        whiteSpace="pre-wrap" 
+                        lineHeight="1.8"
+                        fontSize={{ base: 'sm', md: 'md' }}
+                      >
                         {msg.content}
                       </Text>
                     </CardBody>
@@ -358,101 +503,176 @@ const AITutor = ({ moduleId }: AITutorProps) => {
                 </Box>
               )}
 
-              {/* Message en cours de streaming */}
+              {/* Message en cours de streaming amélioré */}
               {isStreaming && currentStreamingMessage && (
                 <Box
                   alignSelf="flex-start"
-                  maxW="85%"
-                  width="100%"
+                  maxW={{ base: '85%', md: '75%', lg: '65%' }}
+                  width="fit-content"
+                  mb={4}
                 >
-                  <HStack spacing={2} align="start" mb={1}>
-                    <Badge colorScheme="gray" borderRadius="full" px={2} py={1}>
-                      {t('aiTutor.tutor') || 'Kaïrox'}
+                  <HStack spacing={2} align="center" mb={2}>
+                    <Badge 
+                      colorScheme="blue" 
+                      borderRadius="full" 
+                      px={3} 
+                      py={1} 
+                      fontSize="xs"
+                      fontWeight="medium"
+                    >
+                      🤖 {t('aiTutor.tutor') || 'Kaïrox'}
                     </Badge>
+                    <Spinner size="xs" color="blue.500" />
                   </HStack>
-                  <Card bg="white" boxShadow="sm" borderRadius="lg">
-                    <CardBody p={4}>
-                      <Text whiteSpace="pre-wrap" lineHeight="1.6">
+                  <Card 
+                    bg="white" 
+                    boxShadow="md" 
+                    borderRadius="xl"
+                    border="1px solid"
+                    borderColor="gray.200"
+                  >
+                    <CardBody p={{ base: 4, md: 5 }}>
+                      <Text 
+                        whiteSpace="pre-wrap" 
+                        lineHeight="1.8"
+                        fontSize={{ base: 'sm', md: 'md' }}
+                      >
                         {currentStreamingMessage}
-                        <Text as="span" opacity={0.5}>▋</Text>
+                        <Text 
+                          as="span" 
+                          opacity={0.7}
+                          fontWeight="bold"
+                          ml={1}
+                          animation="blink 1s infinite"
+                          css={{
+                            '@keyframes blink': {
+                              '0%, 50%': { opacity: 1 },
+                              '51%, 100%': { opacity: 0.3 },
+                            },
+                          }}
+                        >
+                          ▋
+                        </Text>
                       </Text>
                     </CardBody>
                   </Card>
                 </Box>
               )}
 
-              {/* Indicateur de chargement */}
+              {/* Indicateur de chargement amélioré */}
               {isStreaming && !currentStreamingMessage && (
-                <HStack spacing={2} align="start">
-                  <Badge colorScheme="gray" borderRadius="full" px={2} py={1}>
-                    {t('aiTutor.tutor') || 'Kaïros'}
-                  </Badge>
-                  <Card bg="white" boxShadow="sm">
+                <Box
+                  alignSelf="flex-start"
+                  maxW={{ base: '85%', md: '75%', lg: '65%' }}
+                  width="fit-content"
+                  mb={4}
+                >
+                  <HStack spacing={2} align="center" mb={2}>
+                    <Badge 
+                      colorScheme="blue" 
+                      borderRadius="full" 
+                      px={3} 
+                      py={1} 
+                      fontSize="xs"
+                      fontWeight="medium"
+                    >
+                      🤖 {t('aiTutor.tutor') || 'Kaïrox'}
+                    </Badge>
+                  </HStack>
+                  <Card 
+                    bg="white" 
+                    boxShadow="sm" 
+                    borderRadius="xl"
+                    border="1px solid"
+                    borderColor="gray.200"
+                  >
                     <CardBody p={4}>
-                      <HStack spacing={2}>
-                        <Spinner size="sm" color="gray.500" />
-                        <Text color="gray.500" fontSize="sm">
+                      <HStack spacing={3}>
+                        <Spinner size="sm" color="blue.500" thickness="3px" />
+                        <Text color="gray.600" fontSize="sm" fontWeight="medium">
                           {t('aiTutor.thinking') || 'Réflexion en cours...'}
                         </Text>
                       </HStack>
                     </CardBody>
                   </Card>
-                </HStack>
+                </Box>
               )}
 
               <div ref={messagesEndRef} />
             </VStack>
           </Box>
 
-          {/* Input Area */}
-          <Box p={{ base: 3, md: 4 }} borderTop="1px" borderColor="gray.200" bg="white">
-            {/* Afficher les fichiers attachés */}
+          {/* Input Area améliorée */}
+          <Box 
+            p={{ base: 4, md: 5 }} 
+            borderTop="1px" 
+            borderColor="gray.200" 
+            bg="white"
+            boxShadow="0 -2px 10px rgba(0,0,0,0.05)"
+          >
+            {/* Afficher les fichiers attachés améliorés */}
             {attachedFiles.length > 0 && (
-              <Box mb={3}>
-                <Wrap spacing={2}>
+              <Box mb={4} p={3} bg="gray.50" borderRadius="lg" border="1px dashed" borderColor="gray.300">
+                <HStack mb={2} spacing={2}>
+                  <Text fontSize="xs" fontWeight="bold" color="gray.600">
+                    Fichiers joints ({attachedFiles.length}) :
+                  </Text>
+                </HStack>
+                <Wrap spacing={3}>
                   {attachedFiles.map((filePreview, idx) => (
                     <WrapItem key={idx}>
-                      <Box position="relative" display="inline-block">
+                      <Box 
+                        position="relative" 
+                        display="inline-block"
+                        borderRadius="lg"
+                        overflow="hidden"
+                        boxShadow="sm"
+                        border="1px solid"
+                        borderColor="gray.200"
+                      >
                         {filePreview.type === 'image' ? (
                           <Box position="relative">
                             <Image
                               src={filePreview.preview}
                               alt={filePreview.file.name}
-                              maxH="80px"
-                              maxW="80px"
-                              borderRadius="md"
+                              maxH="100px"
+                              maxW="100px"
                               objectFit="cover"
                             />
                             <CloseButton
                               size="sm"
                               position="absolute"
-                              top="-2"
-                              right="-2"
+                              top={1}
+                              right={1}
                               bg="red.500"
                               color="white"
                               borderRadius="full"
                               onClick={() => removeFile(idx)}
+                              _hover={{ bg: 'red.600' }}
+                              aria-label="Retirer le fichier"
                             />
                           </Box>
                         ) : (
                           <Box
-                            p={2}
-                            bg="gray.100"
-                            borderRadius="md"
+                            p={3}
+                            bg="white"
                             position="relative"
+                            minW="120px"
                           >
-                            <Text fontSize="xs" noOfLines={1} maxW="100px">
+                            <Text fontSize="xs" noOfLines={1} fontWeight="medium" color="gray.700">
                               📎 {filePreview.file.name}
                             </Text>
                             <CloseButton
                               size="xs"
                               position="absolute"
-                              top="-1"
-                              right="-1"
+                              top={1}
+                              right={1}
                               bg="red.500"
                               color="white"
                               borderRadius="full"
                               onClick={() => removeFile(idx)}
+                              _hover={{ bg: 'red.600' }}
+                              aria-label="Retirer le fichier"
                             />
                           </Box>
                         )}
@@ -463,7 +683,7 @@ const AITutor = ({ moduleId }: AITutorProps) => {
               </Box>
             )}
             
-            <HStack spacing={2}>
+            <HStack spacing={3} align="flex-end">
               <Input
                 type="file"
                 ref={fileInputRef}
@@ -473,41 +693,70 @@ const AITutor = ({ moduleId }: AITutorProps) => {
                 display="none"
               />
               <IconButton
-                aria-label="Joindre un fichier"
+                aria-label="Joindre une image"
                 icon={<FiPaperclip />}
                 onClick={() => fileInputRef.current?.click()}
-                variant="ghost"
+                variant="outline"
+                colorScheme="gray"
                 size="lg"
                 isDisabled={isStreaming}
+                _hover={{ bg: 'gray.50', borderColor: 'gray.400' }}
+                borderRadius="lg"
               />
-              <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault()
-                    handleSend()
-                  }
-                }}
-                placeholder={t('aiTutor.placeholder') || 'Posez votre question...'}
-                disabled={isStreaming}
-                size="lg"
-                bg="gray.50"
-                _focus={{ bg: 'white', borderColor: 'gray.500' }}
-                flex={1}
-              />
-              <IconButton
-                aria-label="Envoyer"
-                icon={<FiSend />}
-                colorScheme="brand"
-                onClick={() => handleSend()}
-                isLoading={isStreaming}
-                size="lg"
-                isDisabled={(!input.trim() && attachedFiles.length === 0) || isStreaming}
-              />
+              <Box flex={1} position="relative">
+                <Input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault()
+                      handleSend()
+                    }
+                  }}
+                  placeholder={t('aiTutor.placeholder') || 'Posez votre question à Kaïrox...'}
+                  disabled={isStreaming}
+                  size="lg"
+                  bg="gray.50"
+                  borderRadius="lg"
+                  _focus={{ bg: 'white', borderColor: 'blue.400', boxShadow: '0 0 0 1px #3182ce' }}
+                  _disabled={{ opacity: 0.6, cursor: 'not-allowed' }}
+                  pr="60px"
+                  minH="48px"
+                />
+                {input.trim() && (
+                  <IconButton
+                    aria-label="Envoyer"
+                    icon={<FiSend />}
+                    colorScheme="blue"
+                    onClick={() => handleSend()}
+                    isLoading={isStreaming}
+                    size="sm"
+                    position="absolute"
+                    right="8px"
+                    top="50%"
+                    transform="translateY(-50%)"
+                    isDisabled={(!input.trim() && attachedFiles.length === 0) || isStreaming}
+                    borderRadius="md"
+                    _hover={{ bg: 'blue.600' }}
+                  />
+                )}
+              </Box>
+              {!input.trim() && (
+                <IconButton
+                  aria-label="Envoyer"
+                  icon={<FiSend />}
+                  colorScheme="blue"
+                  onClick={() => handleSend()}
+                  isLoading={isStreaming}
+                  size="lg"
+                  isDisabled={(!input.trim() && attachedFiles.length === 0) || isStreaming}
+                  borderRadius="lg"
+                  _hover={{ bg: 'blue.600' }}
+                />
+              )}
             </HStack>
-            <Text fontSize="xs" color="gray.500" mt={2} textAlign="center">
-              {t('aiTutor.hint') || 'Appuyez sur Entrée pour envoyer • Cliquez sur 📎 pour joindre une image'}
+            <Text fontSize="xs" color="gray.500" mt={3} textAlign="center">
+              💡 {t('aiTutor.hint') || 'Appuyez sur Entrée pour envoyer • Shift+Entrée pour une nouvelle ligne • Cliquez sur 📎 pour joindre une image'}
             </Text>
           </Box>
         </CardBody>

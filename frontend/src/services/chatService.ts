@@ -4,6 +4,22 @@
  */
 import api from './api'
 
+// Helper pour obtenir l'URL de base de l'API pour fetch (streaming SSE)
+// fetch est nécessaire pour le streaming Server-Sent Events, axios ne supporte pas bien le streaming natif
+const getApiBaseURL = () => {
+  // En développement, utiliser le proxy Vite qui redirige vers le backend Render
+  if (import.meta.env.DEV) {
+    return '/api'  // Proxy Vite
+  }
+  // En production, utiliser VITE_API_URL si définie, sinon le backend Render par défaut
+  // Si VITE_API_URL contient déjà /api à la fin, l'utiliser tel quel
+  const viteApiUrl = import.meta.env.VITE_API_URL
+  if (viteApiUrl) {
+    return viteApiUrl.endsWith('/api') ? viteApiUrl : `${viteApiUrl}/api`
+  }
+  return 'https://kairos-0aoy.onrender.com/api'
+}
+
 export interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
@@ -78,9 +94,11 @@ class ChatService {
     let fullResponse = ''
 
     try {
+      // Utiliser l'URL de base correcte (proxy Vite en dev, backend Render en prod)
+      const baseURL = getApiBaseURL()
       const token = this.getAuthToken()
-
-      const response = await fetch('/api/ai/chat/stream', {
+      
+      const response = await fetch(`${baseURL}/ai/chat/stream`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -301,10 +319,14 @@ class ChatService {
         formData.append('files', file)
       })
 
-      const response = await fetch('/api/ai/chat/stream/with-files', {
+      // Utiliser l'URL de base correcte (proxy Vite en dev, backend Render en prod)
+      const baseURL = getApiBaseURL()
+      const authToken = token || this.getAuthToken()
+      
+      const response = await fetch(`${baseURL}/ai/chat/stream/with-files`, {
         method: 'POST',
         headers: {
-          'Authorization': token ? `Bearer ${token}` : ''
+          'Authorization': authToken ? `Bearer ${authToken}` : ''
           // Ne pas définir Content-Type, le navigateur le fera automatiquement avec FormData
         },
         body: formData,
