@@ -16,14 +16,12 @@ logger = logging.getLogger(__name__)
 # Initialiser le client OpenAI
 client = None
 # Utiliser GPT-5-mini comme modèle par défaut, avec fallback sur gpt-4o-mini (modèle réel)
+from app.utils.model_mapper import map_to_real_model
 configured_model = getattr(settings, 'gpt_5_mini_model', 'gpt-5-mini')
-# Si le modèle configuré n'est pas un modèle réel, utiliser gpt-4o-mini comme fallback
-# Les modèles GPT-5.x sont fictifs, utiliser gpt-4o-mini qui est le modèle réel le plus proche
-if configured_model.startswith('gpt-5'):
-    AI_MODEL = 'gpt-4o-mini'  # Modèle réel OpenAI
-    logger.warning(f"Modèle '{configured_model}' n'est pas un modèle réel OpenAI. Utilisation de '{AI_MODEL}' comme fallback.")
-else:
-    AI_MODEL = configured_model
+# Mapper le modèle fictif vers le vrai modèle OpenAI
+AI_MODEL = map_to_real_model(configured_model)
+if configured_model != AI_MODEL:
+    logger.info(f"Modèle '{configured_model}' mappé vers '{AI_MODEL}' (modèle réel OpenAI)")
 
 
 def _initialize_openai_client():
@@ -87,10 +85,10 @@ def _get_max_tokens_param(model: str, max_tokens_value: int) -> dict:
     Note: Requiert OpenAI SDK >= 1.54.0 pour le support de max_completion_tokens.
     Le SDK 1.3.5 ne supporte pas max_completion_tokens.
     """
-    # Modèles récents qui nécessitent max_completion_tokens
-    if (model.startswith("gpt-5") or 
-        model.startswith("o1") or 
-        model.startswith("gpt-4o")):
+    # Les modèles réels gpt-4o nécessitent max_completion_tokens
+    # Note: Les modèles GPT-5 fictifs sont déjà mappés vers les vrais modèles avant cet appel
+    if (model.startswith("gpt-4o") or 
+        model.startswith("o1")):
         return {"max_completion_tokens": max_tokens_value}
     else:
         # Pour les anciens modèles (gpt-3.5, gpt-4 sans 'o')
@@ -109,13 +107,14 @@ def _get_temperature_param(model: str, temperature_value: float) -> dict:
     
     Note: Si le modèle ne supporte pas temperature, retourne un dict vide.
     """
-    # Modèles qui ne supportent pas temperature ou ne supportent que la valeur par défaut (1)
-    if (model.startswith("gpt-5") or 
-        model.startswith("o1")):
-        # Ne pas inclure temperature pour ces modèles (utilise la valeur par défaut)
+    # Les modèles o1 ne supportent pas temperature
+    # Note: Les modèles GPT-5 fictifs sont déjà mappés vers les vrais modèles avant cet appel
+    # gpt-4o supporte temperature normalement
+    if model.startswith("o1"):
+        # Ne pas inclure temperature pour o1 (utilise la valeur par défaut)
         return {}
     else:
-        # Pour les autres modèles, utiliser la valeur spécifiée
+        # Pour les autres modèles (gpt-4o, gpt-3.5-turbo, etc.), utiliser la valeur spécifiée
         return {"temperature": temperature_value}
 
 

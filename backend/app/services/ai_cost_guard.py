@@ -6,6 +6,7 @@ from typing import Dict, Any, Optional
 from datetime import datetime, timezone, timedelta
 from app.database import get_database
 from app.config import settings
+from app.utils.model_mapper import map_to_real_model, get_model_cost
 import logging
 
 logger = logging.getLogger(__name__)
@@ -13,14 +14,6 @@ logger = logging.getLogger(__name__)
 
 class AICostGuard:
     """Garde-fou pour les coûts OpenAI"""
-    
-    # Coûts estimés par modèle (par 1M tokens)
-    MODEL_COSTS = {
-        "gpt-5-mini": 0.15,  # $0.15 / 1M tokens
-        "gpt-5.2": 5.00,     # $5.00 / 1M tokens
-        "gpt-5.2": 15.00,  # $15.00 / 1M tokens (Expert)
-        "gpt-5-nano": 0.50  # $0.50 / 1M tokens (Rapide)
-    }
     
     # Plafonds par défaut
     DEFAULT_USER_DAILY_TOKENS = 100000  # 100k tokens/jour par utilisateur
@@ -69,20 +62,20 @@ class AICostGuard:
                 }
             ]).to_list(length=1)
             
-            tokens_used_today = daily_usage[0]["total_tokens"] if daily_usage else 0
+            tokens_used_today = daily_usage[0].get("total_tokens", 0) if daily_usage else 0
             remaining_tokens = max(0, daily_limit - tokens_used_today)
             
             # Vérifier si la requête est autorisée
             if tokens_used_today + estimated_tokens > daily_limit:
-                # Suggérer un modèle moins cher
-                fallback_model = "gpt-5-mini" if estimated_tokens > 0 else None
+                # Suggérer un modèle moins cher (mapper vers le vrai modèle)
+                fallback_model = map_to_real_model("gpt-5-mini") if estimated_tokens > 0 else None
                 
                 return {
                     "allowed": False,
                     "reason": f"Limite quotidienne atteinte ({tokens_used_today}/{daily_limit} tokens)",
                     "remaining_tokens": remaining_tokens,
                     "fallback_model": fallback_model,
-                    "suggestion": "Utilisez GPT-5-mini ou attendez demain"
+                    "suggestion": f"Utilisez {fallback_model} ou attendez demain" if fallback_model else "Attendez demain"
                 }
             
             return {
@@ -125,8 +118,8 @@ class AICostGuard:
             monthly_token_limit = getattr(settings, 'ai_monthly_token_limit', AICostGuard.DEFAULT_MONTHLY_TOKENS)
             monthly_cost_limit = getattr(settings, 'ai_monthly_cost_limit_eur', AICostGuard.DEFAULT_MONTHLY_COST_EUR)
             
-            # Calculer le coût estimé de cette requête
-            model_cost_per_million = AICostGuard.MODEL_COSTS.get(model, 5.00)
+            # Calculer le coût estimé de cette requête (utiliser la fonction utilitaire)
+            model_cost_per_million = get_model_cost(model)
             estimated_cost = (estimated_tokens / 1_000_000) * model_cost_per_million
             
             # Compter les tokens et coûts du mois
@@ -154,21 +147,23 @@ class AICostGuard:
             
             # Vérifier les limites
             if monthly_tokens + estimated_tokens > monthly_token_limit:
+                fallback_model = map_to_real_model("gpt-5-mini")
                 return {
                     "allowed": False,
                     "reason": f"Plafond mensuel de tokens atteint ({monthly_tokens}/{monthly_token_limit})",
                     "estimated_cost": estimated_cost,
                     "monthly_cost": monthly_cost,
-                    "fallback_model": "gpt-5-mini"
+                    "fallback_model": fallback_model
                 }
             
             if monthly_cost + estimated_cost > monthly_cost_limit:
+                fallback_model = map_to_real_model("gpt-5-mini")
                 return {
                     "allowed": False,
                     "reason": f"Plafond mensuel de coût atteint ({monthly_cost:.2f}€/{monthly_cost_limit}€)",
                     "estimated_cost": estimated_cost,
                     "monthly_cost": monthly_cost,
-                    "fallback_model": "gpt-5-mini"
+                    "fallback_model": fallback_model
                 }
             
             return {

@@ -350,7 +350,9 @@ Génère le TD avec EXACTEMENT 6 à 10 exercices au format JSON ci-dessus."""
             create_params.update(_get_max_tokens_param(AI_MODEL, 4000))
             create_params.update(_get_temperature_param(AI_MODEL, 0.7))
             
-            if AI_MODEL.startswith("gpt-4") and not AI_MODEL.startswith("gpt-4o"):
+            # gpt-4o supporte response_format, on peut l'ajouter pour forcer le format JSON
+            # Note: gpt-4o-mini est déjà le modèle mappé depuis gpt-5-mini
+            if not AI_MODEL.startswith("gpt-3.5"):
                 create_params["response_format"] = {"type": "json_object"}
             
             # client.chat.completions.create() est synchrone, utiliser asyncio.to_thread
@@ -526,6 +528,7 @@ Génère le TP au format JSON ci-dessus."""
             
             from app.services.ai_service import _get_max_tokens_param, _get_temperature_param
             from app.config import settings
+            from app.utils.model_mapper import map_to_real_model
             
             # Utiliser GPT-5.2 (Expert) pour les TP Machine Learning, GPT-5-mini pour les autres
             if subject.lower() == "computer_science" and "machine learning" in lesson_title.lower():
@@ -535,11 +538,10 @@ Génère le TP au format JSON ci-dessus."""
                 tp_model = settings.gpt_5_mini_model  # Principal pour autres TP
                 logger.info(f"Utilisation du modèle Principal (GPT-5-mini) pour TP {subject}")
             
-            # Fallback sur gpt-4o-mini si le modèle configuré n'existe pas
-            if tp_model.startswith('gpt-5'):
-                actual_model = 'gpt-4o-mini'  # Modèle réel OpenAI
-            else:
-                actual_model = tp_model
+            # Mapper le modèle fictif vers le vrai modèle OpenAI
+            actual_model = map_to_real_model(tp_model)
+            if tp_model != actual_model:
+                logger.info(f"Modèle '{tp_model}' mappé vers '{actual_model}' (modèle réel OpenAI)")
             
             create_params = {
                 "model": actual_model,
@@ -554,7 +556,8 @@ Génère le TP au format JSON ci-dessus."""
             create_params.update(_get_max_tokens_param(actual_model, 3000))  # Plus de tokens pour les TP avec code
             create_params.update(_get_temperature_param(actual_model, 0.7))
             
-            if actual_model.startswith("gpt-4") and not actual_model.startswith("gpt-4o"):
+            # gpt-4o supporte response_format, on peut l'ajouter pour forcer le format JSON
+            if not actual_model.startswith("gpt-3.5"):
                 create_params["response_format"] = {"type": "json_object"}
             
             # client.chat.completions.create() est synchrone, utiliser asyncio.to_thread
@@ -568,7 +571,7 @@ Génère le TP au format JSON ci-dessus."""
                 logger.error(f"Détails de l'erreur TP: {str(api_error)}")
                 # Si c'est une erreur de modèle, suggérer un modèle alternatif
                 if "model" in str(api_error).lower() or "not found" in str(api_error).lower():
-                    logger.error(f"⚠️ Le modèle '{AI_MODEL}' n'existe peut-être pas. Essayez 'gpt-4o-mini' ou 'gpt-4-turbo'")
+                    logger.error(f"⚠️ Le modèle '{actual_model}' n'existe peut-être pas. Essayez 'gpt-4o-mini' ou 'gpt-4-turbo'")
                 raise
             
             if not response or not response.choices or len(response.choices) == 0:
