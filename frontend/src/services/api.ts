@@ -3,17 +3,25 @@ import { useAuthStore } from '../store/authStore'
 
 // Déterminer l'URL de base de l'API
 // En production (Render Static Site), utiliser VITE_API_URL directement
-// En développement, utiliser VITE_API_URL si définie, sinon le backend Render par défaut, sinon le proxy Vite (/api)
+// En développement local, utiliser VITE_API_URL si définie, sinon le backend Render, sinon le proxy Vite
 const getBaseURL = () => {
-  // Si VITE_API_URL est définie (production ou développement avec backend distant), l'utiliser directement
+  // Si VITE_API_URL est définie (production ou développement), l'utiliser directement
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL
   }
-  // En développement, utiliser le backend Render par défaut pour éviter les problèmes de proxy local
+  
+  // En production (build), si VITE_API_URL n'est pas définie, utiliser le backend Render par défaut
+  // Cela évite les erreurs si la variable d'environnement n'est pas configurée
+  if (import.meta.env.PROD) {
+    return 'https://kairos-0aoy.onrender.com/api'
+  }
+  
+  // En développement local, utiliser le backend Render par défaut pour éviter les problèmes de proxy
   // Pour utiliser le backend local, créer un fichier .env.local avec VITE_API_URL=http://localhost:8000/api
   if (import.meta.env.DEV) {
     return 'https://kairos-0aoy.onrender.com/api'
   }
+  
   // Fallback : utiliser le proxy (nécessite que le backend soit démarré sur localhost:8000)
   return '/api'
 }
