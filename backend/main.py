@@ -208,6 +208,7 @@ if settings.is_production:
     if settings.allowed_hosts == ["*"]:
         # Pour "*", autoriser tous les domaines Render courants (avec et sans hash)
         # Note: On ne peut pas utiliser ["*"] avec allow_credentials=True dans FastAPI
+        logger.info("🌐 ALLOWED_HOSTS=* détecté : Autorisation de tous les domaines Render")
         render_domains = [
             "https://kairos-frontend.onrender.com",
             "https://kairos-frontend-hjg9.onrender.com",  # Domaine actuel avec hash
