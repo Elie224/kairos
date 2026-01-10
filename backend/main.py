@@ -12,8 +12,9 @@ import os
 from app.database import connect_to_mongo, close_mongo_connection
 try:
     from app.database.postgres import init_postgres
-except ImportError:
+except (ImportError, Exception) as e:
     # PostgreSQL est optionnel
+    logger.warning(f"⚠️  PostgreSQL non disponible à l'import: {e}")
     init_postgres = None
 try:
     from app.utils.cache import init_redis, close_redis
