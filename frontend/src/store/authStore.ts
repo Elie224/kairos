@@ -33,11 +33,12 @@ export const useAuthStore = create<AuthState>()(
       
       login: async (email: string, password: string) => {
         const { default: api } = await import('../services/api')
-        const formData = new FormData()
-        formData.append('username', email)
-        formData.append('password', password)
+        // OAuth2PasswordRequestForm attend application/x-www-form-urlencoded
+        const params = new URLSearchParams()
+        params.append('username', email)
+        params.append('password', password)
         
-        const response = await api.post('/auth/login', formData, {
+        const response = await api.post('/auth/login', params.toString(), {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         })
         

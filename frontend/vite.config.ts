@@ -16,7 +16,8 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: env.VITE_API_URL || 'http://localhost:8000',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
+          // Ne pas supprimer /api car le backend attend /api/auth/login, /api/modules, etc.
+          // Le backend inclut les routeurs avec prefix="/api/auth", "/api/modules", etc.
         },
       },
     },
