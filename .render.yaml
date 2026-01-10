@@ -47,7 +47,7 @@ services:
     name: kairos-frontend
     region: frankfurt
     buildCommand: cd frontend && npm ci && npm run build
-    staticPublishPath: frontend/dist
+    publishDirectory: frontend/dist
     envVars:
       - key: NODE_VERSION
         value: 18.17.0
