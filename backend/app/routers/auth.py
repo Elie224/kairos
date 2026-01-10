@@ -214,6 +214,74 @@ async def update_user_admin(
     return updated_user
 
 
+@router.post("/initialize-main-admin")
+async def initialize_main_admin():
+    """
+    Endpoint d'initialisation pour promouvoir kouroumaelisee@gmail.com comme admin principal.
+    Peut être appelé une seule fois lors de la première installation.
+    """
+    MAIN_ADMIN_EMAIL = "kouroumaelisee@gmail.com"
+    
+    from app.utils.security import InputSanitizer
+    from app.repositories.user_repository import UserRepository
+    from app.database import get_database
+    from bson import ObjectId
+    
+    # Trouver l'utilisateur par email
+    user = await UserRepository.find_by_email(MAIN_ADMIN_EMAIL)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Utilisateur avec l'email '{MAIN_ADMIN_EMAIL}' non trouvé. Veuillez d'abord créer un compte avec cet email."
+        )
+    
+    # Vérifier si déjà admin
+    if user.get("is_admin", False):
+        return {
+            "message": f"L'utilisateur '{MAIN_ADMIN_EMAIL}' est déjà administrateur",
+            "user": {
+                "id": user.get("id"),
+                "email": user.get("email"),
+                "username": user.get("username"),
+                "is_admin": True
+            }
+        }
+    
+    # Promouvoir en admin
+    db = get_database()
+    sanitized_id = InputSanitizer.sanitize_object_id(user["id"])
+    
+    if not sanitized_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="ID utilisateur invalide"
+        )
+    
+    result = await db.users.update_one(
+        {"_id": ObjectId(sanitized_id)},
+        {"$set": {"is_admin": True}}
+    )
+    
+    if result.modified_count > 0:
+        # Récupérer l'utilisateur mis à jour
+        updated_user = await UserRepository.find_by_id(sanitized_id)
+        logger.info(f"✅ Utilisateur '{MAIN_ADMIN_EMAIL}' promu administrateur avec succès")
+        return {
+            "message": f"Utilisateur '{MAIN_ADMIN_EMAIL}' promu administrateur avec succès",
+            "user": {
+                "id": updated_user.get("id"),
+                "email": updated_user.get("email"),
+                "username": updated_user.get("username"),
+                "is_admin": updated_user.get("is_admin", True)
+            }
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Échec de la promotion"
+        )
+
+
 @router.post("/promote-admin-by-email")
 async def promote_admin_by_email(
     email: str = Form(...),

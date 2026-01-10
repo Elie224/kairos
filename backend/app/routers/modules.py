@@ -339,6 +339,193 @@ async def generate_content_for_module(
         raise HTTPException(status_code=500, detail=f"Erreur lors de la génération: {str(e)}")
 
 
+@router.post("/initialize-demo-modules")
+async def initialize_demo_modules():
+    """
+    Endpoint d'initialisation pour créer des modules de démonstration.
+    Crée des modules de base pour mathematics et computer_science s'ils n'existent pas.
+    Peut être appelé une seule fois lors de la première installation.
+    """
+    from app.database import get_database
+    from datetime import timezone
+    from datetime import datetime as dt
+    import logging
+    
+    logger = logging.getLogger(__name__)
+    db = get_database()
+    
+    # Vérifier si des modules existent déjà
+    existing_modules = await db.modules.find({"subject": {"$in": ["mathematics", "computer_science"]}}).to_list(length=10)
+    if existing_modules:
+        logger.info(f"Des modules existent déjà ({len(existing_modules)} trouvé(s))")
+        return {
+            "message": f"Des modules existent déjà ({len(existing_modules)} module(s) trouvé(s))",
+            "existing_count": len(existing_modules),
+            "created": False
+        }
+    
+    # Modules de démonstration de base
+    demo_modules = [
+        {
+            "title": "Algèbre Linéaire - Fondamentaux",
+            "description": "Introduction à l'algèbre linéaire : vecteurs, matrices, systèmes d'équations linéaires, déterminants et valeurs propres. Ce module couvre les concepts essentiels pour comprendre l'algèbre linéaire moderne.",
+            "subject": "mathematics",
+            "difficulty": "beginner",
+            "estimated_time": 120,
+            "content": {
+                "lessons": [
+                    {
+                        "id": "lesson_1",
+                        "title": "Introduction aux vecteurs",
+                        "content": "Les vecteurs sont des objets mathématiques fondamentaux en algèbre linéaire."
+                    },
+                    {
+                        "id": "lesson_2",
+                        "title": "Opérations sur les matrices",
+                        "content": "Les matrices permettent de représenter des transformations linéaires."
+                    }
+                ]
+            },
+            "created_at": dt.now(timezone.utc),
+            "updated_at": dt.now(timezone.utc)
+        },
+        {
+            "title": "Analyse - Limites et Continuité",
+            "description": "Explorez les concepts fondamentaux de l'analyse : limites, continuité, dérivées et intégrales. Ce module vous permettra de maîtriser les outils essentiels du calcul différentiel et intégral.",
+            "subject": "mathematics",
+            "difficulty": "intermediate",
+            "estimated_time": 150,
+            "content": {
+                "lessons": [
+                    {
+                        "id": "lesson_1",
+                        "title": "Notion de limite",
+                        "content": "La limite est un concept fondamental en analyse mathématique."
+                    },
+                    {
+                        "id": "lesson_2",
+                        "title": "Continuité des fonctions",
+                        "content": "Une fonction continue ne présente pas de sauts brusques."
+                    }
+                ]
+            },
+            "created_at": dt.now(timezone.utc),
+            "updated_at": dt.now(timezone.utc)
+        },
+        {
+            "title": "Probabilités et Statistiques",
+            "description": "Maîtrisez les concepts de probabilités et statistiques : variables aléatoires, distributions, tests d'hypothèses et inférence statistique. Ce module est essentiel pour la science des données.",
+            "subject": "mathematics",
+            "difficulty": "intermediate",
+            "estimated_time": 180,
+            "content": {
+                "lessons": [
+                    {
+                        "id": "lesson_1",
+                        "title": "Variables aléatoires",
+                        "content": "Les variables aléatoires modélisent des phénomènes incertains."
+                    },
+                    {
+                        "id": "lesson_2",
+                        "title": "Distributions de probabilité",
+                        "content": "Les distributions décrivent la probabilité des différentes valeurs possibles."
+                    }
+                ]
+            },
+            "created_at": dt.now(timezone.utc),
+            "updated_at": dt.now(timezone.utc)
+        },
+        {
+            "title": "Introduction au Machine Learning",
+            "description": "Découvrez les fondamentaux du Machine Learning : algorithmes supervisés et non supervisés, régression, classification, clustering et évaluation de modèles. Ce module vous introduira aux concepts clés de l'IA moderne.",
+            "subject": "computer_science",
+            "difficulty": "beginner",
+            "estimated_time": 180,
+            "content": {
+                "lessons": [
+                    {
+                        "id": "lesson_1",
+                        "title": "Qu'est-ce que le Machine Learning ?",
+                        "content": "Le Machine Learning permet aux machines d'apprendre à partir de données."
+                    },
+                    {
+                        "id": "lesson_2",
+                        "title": "Algorithmes supervisés",
+                        "content": "Les algorithmes supervisés apprennent à partir d'exemples étiquetés."
+                    }
+                ]
+            },
+            "created_at": dt.now(timezone.utc),
+            "updated_at": dt.now(timezone.utc)
+        },
+        {
+            "title": "Réseaux de Neurones et Deep Learning",
+            "description": "Plongez dans les réseaux de neurones artificiels et le deep learning : perceptrons, réseaux multicouches, backpropagation, CNN, RNN et architectures avancées. Ce module vous permettra de construire vos propres réseaux de neurones.",
+            "subject": "computer_science",
+            "difficulty": "advanced",
+            "estimated_time": 240,
+            "content": {
+                "lessons": [
+                    {
+                        "id": "lesson_1",
+                        "title": "Architecture des réseaux de neurones",
+                        "content": "Les réseaux de neurones sont composés de couches interconnectées."
+                    },
+                    {
+                        "id": "lesson_2",
+                        "title": "Backpropagation",
+                        "content": "La backpropagation est l'algorithme d'apprentissage principal."
+                    }
+                ]
+            },
+            "created_at": dt.now(timezone.utc),
+            "updated_at": dt.now(timezone.utc)
+        },
+        {
+            "title": "Algorithmes et Structures de Données",
+            "description": "Maîtrisez les algorithmes et structures de données essentielles : tableaux, listes, arbres, graphes, tri, recherche et complexité algorithmique. Ce module est fondamental pour tout développeur.",
+            "subject": "computer_science",
+            "difficulty": "intermediate",
+            "estimated_time": 200,
+            "content": {
+                "lessons": [
+                    {
+                        "id": "lesson_1",
+                        "title": "Structures de données de base",
+                        "content": "Les structures de données permettent d'organiser efficacement les données."
+                    },
+                    {
+                        "id": "lesson_2",
+                        "title": "Complexité algorithmique",
+                        "content": "La complexité mesure l'efficacité d'un algorithme."
+                    }
+                ]
+            },
+            "created_at": dt.now(timezone.utc),
+            "updated_at": dt.now(timezone.utc)
+        }
+    ]
+    
+    # Créer les modules
+    created_count = 0
+    for module_data in demo_modules:
+        try:
+            result = await db.modules.insert_one(module_data)
+            if result.inserted_id:
+                created_count += 1
+                logger.info(f"✅ Module créé: {module_data['title']} ({module_data['subject']})")
+        except Exception as e:
+            logger.error(f"❌ Erreur lors de la création du module '{module_data['title']}': {e}")
+            continue
+    
+    return {
+        "message": f"Initialisation terminée: {created_count}/{len(demo_modules)} modules créés avec succès",
+        "created_count": created_count,
+        "total_demo_modules": len(demo_modules),
+        "created": created_count > 0
+    }
+
+
 @router.get("/{module_id}", response_model=Module)
 async def get_module(module_id: str):
     """Récupère un module spécifique"""
