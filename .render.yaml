@@ -22,7 +22,7 @@ services:
       - key: OPENAI_API_KEY
         sync: false
       - key: FRONTEND_URL
-        sync: false
+        value: https://kairos-frontend-hjg9.onrender.com
       - key: REDIS_URL
         sync: false
       - key: POSTGRES_HOST
