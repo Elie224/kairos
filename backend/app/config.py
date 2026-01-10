@@ -13,8 +13,10 @@ class Settings(BaseSettings):
         case_sensitive=False,
         extra="ignore",  # Ignorer les champs extra dans .env (compatibilité)
         env_ignore_empty=True,
-        # Exclure ALLOWED_HOSTS du parsing automatique car c'est une propriété personnalisée
         env_prefix="",  # Pas de préfixe
+        # IMPORTANT: allowed_hosts est une propriété (@property) et NON un champ Pydantic
+        # pour éviter que Pydantic Settings essaie de le parser comme JSON.
+        # La variable ALLOWED_HOSTS sera lue directement via os.getenv dans la propriété.
     )
     mongodb_url: str = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
     mongodb_db_name: str = os.getenv("MONGODB_DB_NAME", "kaïros")
@@ -57,15 +59,18 @@ class Settings(BaseSettings):
     # Sécurité supplémentaire
     enable_csrf: bool = os.getenv("ENABLE_CSRF", "false").lower() == "true"
     # Note: allowed_hosts n'est PAS un champ Pydantic pour éviter le parsing JSON automatique
-    # Il est lu directement via os.getenv dans la propriété ci-dessous
+    # Il est lu directement via os.getenv dans la propriété @property ci-dessous
     
     # Frontend URL pour les liens dans les emails
     frontend_url: str = os.getenv("FRONTEND_URL", "http://localhost:5173")
     
     @property
     def allowed_hosts(self) -> list[str]:
-        """Parse allowed_hosts depuis une chaîne (séparée par virgules)"""
-        # Lire directement depuis os.getenv pour éviter le parsing JSON de Pydantic Settings
+        """Parse allowed_hosts depuis une chaîne (séparée par virgules)
+        
+        IMPORTANT: Cette propriété lit directement depuis os.getenv pour éviter
+        que Pydantic Settings essaie de parser ALLOWED_HOSTS comme JSON.
+        """
         env_value = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1")
         if not env_value or env_value.strip() == "":
             return ["localhost", "127.0.0.1"]
