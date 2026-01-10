@@ -169,33 +169,44 @@ app.add_middleware(SecurityHeadersMiddleware)
 
 # 7. Configuration CORS (dynamique selon l'environnement)
 # En développement, autoriser localhost par défaut
-# En production, utiliser ALLOWED_HOSTS depuis les variables d'environnement
+# En production, utiliser ALLOWED_HOSTS et FRONTEND_URL depuis les variables d'environnement
 if settings.is_production:
+    allowed_origins = []
+    
+    # Toujours ajouter le FRONTEND_URL s'il est défini (priorité absolue)
+    if settings.frontend_url and settings.frontend_url != "http://localhost:5173":
+        frontend_origin = settings.frontend_url.rstrip("/")
+        allowed_origins.append(frontend_origin)
+    
     # Gérer le cas spécial "*" (wildcard)
     if settings.allowed_hosts == ["*"]:
-        # Pour "*", autoriser tous les domaines Render (solution pragmatique)
+        # Pour "*", autoriser tous les domaines Render courants (avec et sans hash)
         # Note: On ne peut pas utiliser ["*"] avec allow_credentials=True dans FastAPI
-        # Donc on autorise explicitement les domaines Render courants
-        allowed_origins = [
+        render_domains = [
             "https://kairos-frontend.onrender.com",
+            "https://kairos-frontend-hjg9.onrender.com",  # Domaine actuel avec hash
+            "https://kairos-backend.onrender.com",
+            "https://kairos-0aoy.onrender.com",  # Backend actuel
+        ]
+        for domain in render_domains:
+            if domain not in allowed_origins:
+                allowed_origins.append(domain)
+    else:
+        # Ajouter les hosts depuis ALLOWED_HOSTS
+        for host in settings.allowed_hosts:
+            if host.strip() and host != "*":
+                origin = f"https://{host.strip()}" if not host.startswith("http") else host.strip()
+                if origin not in allowed_origins:
+                    allowed_origins.append(origin)
+    
+    # Si aucune origine n'a été définie, utiliser les domaines Render par défaut
+    if not allowed_origins:
+        allowed_origins = [
+            "https://kairos-frontend-hjg9.onrender.com",
             "https://kairos-backend.onrender.com",
         ]
-        # Ajouter le FRONTEND_URL s'il est défini
-        if settings.frontend_url and settings.frontend_url != "http://localhost:5173":
-            frontend_origin = settings.frontend_url.rstrip("/")
-            if frontend_origin not in allowed_origins:
-                allowed_origins.append(frontend_origin)
-    else:
-        allowed_origins = [
-            f"https://{host.strip()}" if not host.startswith("http") else host.strip()
-            for host in settings.allowed_hosts
-            if host.strip() and host != "*"
-        ]
-        # Ajouter le FRONTEND_URL s'il est défini
-        if settings.frontend_url and settings.frontend_url != "http://localhost:5173":
-            frontend_origin = settings.frontend_url.rstrip("/")
-            if frontend_origin not in allowed_origins:
-                allowed_origins.append(frontend_origin)
+    
+    logger.info(f"🌐 CORS autorisé pour les origines en production: {allowed_origins}")
 else:
     # En développement, autoriser les ports locaux courants
     allowed_origins = [
@@ -205,13 +216,20 @@ else:
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5173"
     ]
+    # Ajouter le FRONTEND_URL s'il est défini et différent de localhost
+    if settings.frontend_url and settings.frontend_url.startswith("http://localhost"):
+        frontend_origin = settings.frontend_url.rstrip("/")
+        if frontend_origin not in allowed_origins:
+            allowed_origins.append(frontend_origin)
     # Ajouter les hosts personnalisés (sauf localhost qui est déjà là)
     if settings.allowed_hosts != ["*"]:
-        allowed_origins.extend([
-            f"http://{host.strip()}" if not host.startswith("http") else host.strip()
-            for host in settings.allowed_hosts
-            if host.strip() and host not in ["localhost", "127.0.0.1", "*"]
-        ])
+        for host in settings.allowed_hosts:
+            if host.strip() and host not in ["localhost", "127.0.0.1", "*"]:
+                origin = f"http://{host.strip()}" if not host.startswith("http") else host.strip()
+                if origin not in allowed_origins:
+                    allowed_origins.append(origin)
+    
+    logger.info(f"🌐 CORS autorisé pour les origines en développement: {allowed_origins}")
 
 app.add_middleware(
     CORSMiddleware,
