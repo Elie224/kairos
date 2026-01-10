@@ -171,6 +171,11 @@ app.add_middleware(SecurityHeadersMiddleware)
 # 7. Configuration CORS (dynamique selon l'environnement)
 # En développement, autoriser localhost par défaut
 # En production, utiliser ALLOWED_HOSTS et FRONTEND_URL depuis les variables d'environnement
+
+# Détecter si on est sur Render (via variable d'environnement RENDER ou via hostname)
+# Render définit automatiquement RENDER=true ou RENDER_EXTERNAL_HOSTNAME
+is_on_render = os.getenv("RENDER") == "true" or os.getenv("RENDER_EXTERNAL_HOSTNAME") is not None
+
 if settings.is_production:
     allowed_origins = []
     
@@ -178,6 +183,26 @@ if settings.is_production:
     if settings.frontend_url and settings.frontend_url != "http://localhost:5173":
         frontend_origin = settings.frontend_url.rstrip("/")
         allowed_origins.append(frontend_origin)
+        logger.info(f"✅ FRONTEND_URL configuré: {frontend_origin}")
+    
+    # Si on est sur Render, autoriser automatiquement tous les domaines Render
+    if is_on_render:
+        logger.info("🌐 Détection Render : Autorisation automatique des domaines *.onrender.com")
+        # Ajouter tous les domaines Render courants (avec et sans hash)
+        render_domains = [
+            "https://kairos-frontend.onrender.com",
+            "https://kairos-frontend-hjg9.onrender.com",  # Domaine actuel avec hash
+            "https://kairos-backend.onrender.com",
+            "https://kairos-0aoy.onrender.com",  # Backend actuel
+        ]
+        for domain in render_domains:
+            if domain not in allowed_origins:
+                allowed_origins.append(domain)
+        
+        # Si FRONTEND_URL n'est pas configuré, utiliser le domaine Render par défaut
+        if not any("kairos-frontend" in origin for origin in allowed_origins):
+            allowed_origins.append("https://kairos-frontend-hjg9.onrender.com")
+            logger.warning("⚠️ FRONTEND_URL non configuré sur Render, utilisation du domaine par défaut")
     
     # Gérer le cas spécial "*" (wildcard)
     if settings.allowed_hosts == ["*"]:
@@ -200,14 +225,16 @@ if settings.is_production:
                 if origin not in allowed_origins:
                     allowed_origins.append(origin)
     
-    # Si aucune origine n'a été définie, utiliser les domaines Render par défaut
+    # Si aucune origine n'a été définie, utiliser les domaines Render par défaut (fallback)
     if not allowed_origins:
+        logger.warning("⚠️ Aucune origine CORS configurée, utilisation des domaines Render par défaut")
         allowed_origins = [
             "https://kairos-frontend-hjg9.onrender.com",
             "https://kairos-backend.onrender.com",
+            "https://kairos-0aoy.onrender.com",
         ]
     
-    logger.info(f"🌐 CORS autorisé pour les origines en production: {allowed_origins}")
+    logger.info(f"🌐 CORS autorisé pour les origines en production ({len(allowed_origins)} origines): {allowed_origins}")
 else:
     # En développement, autoriser les ports locaux courants
     allowed_origins = [
