@@ -126,10 +126,11 @@ class LearningProfileRepository:
     
     @staticmethod
     async def find_all(limit: int = 100, skip: int = 0) -> List[Dict[str, Any]]:
-        """Récupère tous les profils (pour admin)"""
+        """Récupère tous les profils (pour admin) - optimisé avec tri"""
         try:
             db = get_database()
-            cursor = db.learning_profiles.find().skip(skip).limit(limit)
+            # Trier par created_at pour un ordre cohérent (utilise l'index)
+            cursor = db.learning_profiles.find().sort("created_at", -1).skip(skip).limit(limit)
             profiles = await cursor.to_list(length=limit)
             return [serialize_doc(p) for p in profiles]
         except Exception as e:

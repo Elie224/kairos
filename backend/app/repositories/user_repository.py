@@ -36,7 +36,11 @@ class UserRepository:
         """Trouve un utilisateur par nom d'utilisateur"""
         try:
             db = get_database()
-            user = await db.users.find_one({"username": username.strip()})
+            # Projection pour exclure les champs sensibles
+            user = await db.users.find_one(
+                {"username": username.strip()},
+                {"hashed_password": 0, "password_reset_token": 0, "email_verification_token": 0}
+            )
             return serialize_doc(user) if user else None
         except Exception as e:
             logger.error(f"Erreur lors de la recherche par username: {e}")
@@ -52,7 +56,11 @@ class UserRepository:
                 return None
             
             db = get_database()
-            user = await db.users.find_one({"_id": ObjectId(sanitized_id)})
+            # Projection pour exclure les champs sensibles
+            user = await db.users.find_one(
+                {"_id": ObjectId(sanitized_id)},
+                {"hashed_password": 0, "password_reset_token": 0, "email_verification_token": 0}
+            )
             return serialize_doc(user) if user else None
         except Exception as e:
             logger.error(f"Erreur lors de la recherche par ID: {e}")
@@ -81,7 +89,11 @@ class UserRepository:
             if not query["$or"]:
                 return None
             
-            user = await db.users.find_one(query)
+            # Projection pour exclure les champs sensibles
+            user = await db.users.find_one(
+                query,
+                {"hashed_password": 0, "password_reset_token": 0, "email_verification_token": 0}
+            )
             return serialize_doc(user) if user else None
         except Exception as e:
             logger.error(f"Erreur lors de la recherche par email/username: {e}")
@@ -143,10 +155,16 @@ class UserRepository:
     
     @staticmethod
     async def find_all(skip: int = 0, limit: int = 100) -> list[Dict[str, Any]]:
-        """Récupère tous les utilisateurs avec pagination"""
+        """Récupère tous les utilisateurs avec pagination (optimisé avec projection)"""
         try:
             db = get_database()
-            cursor = db.users.find({}).skip(skip).limit(limit)
+            # Projection pour exclure les champs sensibles et volumineux
+            projection = {
+                "hashed_password": 0,  # Ne jamais retourner les mots de passe
+                "password_reset_token": 0,  # Ne pas retourner les tokens
+                "email_verification_token": 0,  # Ne pas retourner les tokens
+            }
+            cursor = db.users.find({}, projection).skip(skip).limit(limit).sort("created_at", -1)
             users = await cursor.to_list(length=limit)
             return [serialize_doc(user) for user in users]
         except Exception as e:

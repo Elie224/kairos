@@ -34,11 +34,38 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           // Code splitting manuel pour optimiser les chunks
-          manualChunks: {
-            'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-            'chakra-vendor': ['@chakra-ui/react', '@emotion/react', '@emotion/styled', 'framer-motion'],
-            'query-vendor': ['react-query', 'axios'],
-            'i18n-vendor': ['i18next', 'react-i18next'],
+          manualChunks: (id) => {
+            // Vendor chunks
+            if (id.includes('node_modules')) {
+              if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+                return 'react-vendor'
+              }
+              if (id.includes('@chakra-ui') || id.includes('@emotion') || id.includes('framer-motion')) {
+                return 'chakra-vendor'
+              }
+              if (id.includes('react-query') || id.includes('axios')) {
+                return 'query-vendor'
+              }
+              if (id.includes('i18next')) {
+                return 'i18n-vendor'
+              }
+              // Autres vendors
+              return 'vendor'
+            }
+            // Pages en chunks séparés pour lazy loading optimal
+            if (id.includes('/pages/')) {
+              const pageName = id.split('/pages/')[1]?.split('/')[0]
+              if (pageName) {
+                return `page-${pageName}`
+              }
+            }
+            // Components en chunks séparés pour les gros composants
+            if (id.includes('/components/')) {
+              const componentName = id.split('/components/')[1]?.split('/')[0]
+              if (componentName && ['AITutor', 'Admin', 'Exam', 'Quiz'].includes(componentName)) {
+                return `component-${componentName}`
+              }
+            }
           },
         },
       },
@@ -48,12 +75,29 @@ export default defineConfig(({ mode }) => {
       assetsInlineLimit: 4096, // Inline les assets < 4KB
       // Minification avec esbuild (inclus avec Vite, pas besoin de terser)
       minify: 'esbuild',
-      // Options esbuild pour la minification
-      // Note: esbuild ne supporte pas drop_console directement, on peut utiliser un plugin si nécessaire
+      // Supprimer les console.log en production (via esbuild)
+      esbuildOptions: {
+        drop: import.meta.env.PROD ? ['console', 'debugger'] : [],
+      },
+      // Compression des assets
+      assetsDir: 'assets',
+      // Source maps seulement en développement
+      sourcemap: !import.meta.env.PROD,
     },
     // Optimiser les dépendances
     optimizeDeps: {
       include: ['react', 'react-dom', 'react-router-dom', '@chakra-ui/react'],
+      // Exclure les dépendances qui ne doivent pas être pré-bundlées
+      exclude: [],
+    },
+    // Optimisations de performance
+    build: {
+      ...(import.meta.env.PROD ? {
+        // En production, activer les optimisations agressives
+        cssCodeSplit: true,
+        cssMinify: true,
+        reportCompressedSize: false, // Désactiver pour accélérer le build
+      } : {}),
     },
   }
 })

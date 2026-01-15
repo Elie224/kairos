@@ -94,6 +94,7 @@ class ExamRepository:
         """Liste tous les examens"""
         try:
             db = get_database()
+            # Projection pour exclure les champs volumineux si nécessaire
             cursor = db.exams.find().sort("created_at", -1).limit(limit)
             exams = await cursor.to_list(length=limit)
             return [serialize_doc(exam) for exam in exams]
