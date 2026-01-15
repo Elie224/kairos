@@ -7,7 +7,7 @@ from typing import List
 from pathlib import Path
 from app.models import TP, TPCreate
 from app.services.tp_service import TPService
-from app.utils.permissions import get_current_user, require_admin
+# Authentification supprimée - toutes les routes sont publiques
 from app.utils.security import InputSanitizer
 from app.database import get_database
 import logging
@@ -22,10 +22,9 @@ from app.services.pdf_generator_service import PDF_DIR
 
 @router.get("/module/{module_id}", response_model=List[TP])
 async def get_module_tps(
-    module_id: str,
-    current_user: dict = Depends(get_current_user)
+    module_id: str
 ):
-    """Récupère tous les TP d'un module"""
+    """Récupère tous les TP d'un module (route publique)"""
     sanitized_module_id = InputSanitizer.sanitize_object_id(module_id)
     if not sanitized_module_id:
         raise HTTPException(status_code=400, detail="ID de module invalide")
@@ -35,10 +34,9 @@ async def get_module_tps(
 
 @router.get("/{tp_id}", response_model=TP)
 async def get_tp(
-    tp_id: str,
-    current_user: dict = Depends(get_current_user)
+    tp_id: str
 ):
-    """Récupère un TP spécifique"""
+    """Récupère un TP spécifique (route publique)"""
     sanitized_id = InputSanitizer.sanitize_object_id(tp_id)
     if not sanitized_id:
         raise HTTPException(status_code=400, detail="ID de TP invalide")
@@ -48,10 +46,9 @@ async def get_tp(
 
 @router.post("/", response_model=TP, status_code=201)
 async def create_tp(
-    tp_data: TPCreate,
-    admin_user: dict = Depends(require_admin)
+    tp_data: TPCreate
 ):
-    """Crée un nouveau TP (admin seulement)"""
+    """Crée un nouveau TP (route publique)"""
     sanitized_module_id = InputSanitizer.sanitize_object_id(tp_data.module_id)
     if not sanitized_module_id:
         raise HTTPException(status_code=400, detail="ID de module invalide")
@@ -63,10 +60,9 @@ async def create_tp(
 @router.put("/{tp_id}", response_model=TP)
 async def update_tp(
     tp_id: str,
-    update_data: TPCreate,
-    admin_user: dict = Depends(require_admin)
+    update_data: TPCreate
 ):
-    """Met à jour un TP (admin seulement)"""
+    """Met à jour un TP (route publique)"""
     sanitized_id = InputSanitizer.sanitize_object_id(tp_id)
     if not sanitized_id:
         raise HTTPException(status_code=400, detail="ID de TP invalide")
@@ -93,10 +89,9 @@ async def delete_tp(
 
 @router.get("/{tp_id}/pdf")
 async def download_tp_pdf(
-    tp_id: str,
-    current_user: dict = Depends(get_current_user)
+    tp_id: str
 ):
-    """Télécharge le PDF d'un TP"""
+    """Télécharge le PDF d'un TP (route publique)"""
     sanitized_id = InputSanitizer.sanitize_object_id(tp_id)
     if not sanitized_id:
         raise HTTPException(status_code=400, detail="ID de TP invalide")

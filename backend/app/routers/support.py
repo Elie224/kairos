@@ -7,7 +7,7 @@ from typing import Optional, List
 from datetime import datetime
 from app.database import get_database
 from app.schemas import serialize_doc
-from app.utils.permissions import require_admin
+# Authentification supprimée - toutes les routes sont publiques
 import logging
 
 logger = logging.getLogger(__name__)
@@ -81,10 +81,9 @@ async def create_support_message(message: SupportMessage):
 async def get_support_messages(
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=100),
-    unread_only: bool = Query(False),
-    admin_user: dict = Depends(require_admin)
+    unread_only: bool = Query(False)
 ):
-    """Récupère tous les messages de support (admin seulement)"""
+    """Récupère tous les messages de support (route publique)"""
     try:
         db = get_database()
         
@@ -114,10 +113,9 @@ async def get_support_messages(
 
 @router.put("/messages/{message_id}/read")
 async def mark_message_as_read(
-    message_id: str,
-    admin_user: dict = Depends(require_admin)
+    message_id: str
 ):
-    """Marque un message comme lu (admin seulement)"""
+    """Marque un message comme lu (route publique)"""
     try:
         from bson import ObjectId
         
@@ -157,10 +155,9 @@ async def mark_message_as_read(
 
 @router.put("/messages/{message_id}/responded")
 async def mark_message_as_responded(
-    message_id: str,
-    admin_user: dict = Depends(require_admin)
+    message_id: str
 ):
-    """Marque un message comme ayant reçu une réponse (admin seulement)"""
+    """Marque un message comme ayant reçu une réponse (route publique)"""
     try:
         from bson import ObjectId
         

@@ -8,7 +8,7 @@ from pathlib import Path
 from bson import ObjectId
 from app.models import TD, TDCreate
 from app.services.td_service import TDService
-from app.utils.permissions import get_current_user, require_admin
+# Authentification supprimée - toutes les routes sont publiques
 from app.utils.security import InputSanitizer
 from app.database import get_database
 import logging
@@ -23,10 +23,9 @@ from app.services.pdf_generator_service import PDF_DIR
 
 @router.get("/module/{module_id}", response_model=List[TD])
 async def get_module_tds(
-    module_id: str,
-    current_user: dict = Depends(get_current_user)
+    module_id: str
 ):
-    """Récupère tous les TD d'un module"""
+    """Récupère tous les TD d'un module (route publique)"""
     sanitized_module_id = InputSanitizer.sanitize_object_id(module_id)
     if not sanitized_module_id:
         raise HTTPException(status_code=400, detail="ID de module invalide")
@@ -36,10 +35,9 @@ async def get_module_tds(
 
 @router.get("/{td_id}", response_model=TD)
 async def get_td(
-    td_id: str,
-    current_user: dict = Depends(get_current_user)
+    td_id: str
 ):
-    """Récupère un TD spécifique"""
+    """Récupère un TD spécifique (route publique)"""
     sanitized_id = InputSanitizer.sanitize_object_id(td_id)
     if not sanitized_id:
         raise HTTPException(status_code=400, detail="ID de TD invalide")
@@ -49,10 +47,9 @@ async def get_td(
 
 @router.post("/", response_model=TD, status_code=201)
 async def create_td(
-    td_data: TDCreate,
-    admin_user: dict = Depends(require_admin)
+    td_data: TDCreate
 ):
-    """Crée un nouveau TD (admin seulement)"""
+    """Crée un nouveau TD (route publique)"""
     sanitized_module_id = InputSanitizer.sanitize_object_id(td_data.module_id)
     if not sanitized_module_id:
         raise HTTPException(status_code=400, detail="ID de module invalide")
@@ -64,10 +61,9 @@ async def create_td(
 @router.put("/{td_id}", response_model=TD)
 async def update_td(
     td_id: str,
-    update_data: TDCreate,
-    admin_user: dict = Depends(require_admin)
+    update_data: TDCreate
 ):
-    """Met à jour un TD (admin seulement)"""
+    """Met à jour un TD (route publique)"""
     sanitized_id = InputSanitizer.sanitize_object_id(td_id)
     if not sanitized_id:
         raise HTTPException(status_code=400, detail="ID de TD invalide")
@@ -94,10 +90,9 @@ async def delete_td(
 
 @router.get("/{td_id}/pdf")
 async def download_td_pdf(
-    td_id: str,
-    current_user: dict = Depends(get_current_user)
+    td_id: str
 ):
-    """Télécharge le PDF d'un TD"""
+    """Télécharge le PDF d'un TD (route publique)"""
     sanitized_id = InputSanitizer.sanitize_object_id(td_id)
     if not sanitized_id:
         raise HTTPException(status_code=400, detail="ID de TD invalide")
