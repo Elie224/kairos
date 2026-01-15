@@ -115,7 +115,7 @@ class ProgressService:
             try:
                 from app.database import get_database
                 db = get_database()
-                if db:
+                if db is not None:
                     total_modules_available = await db.modules.count_documents({})
             except Exception as db_error:
                 logger.warning(f"Erreur lors du comptage des modules: {db_error}")
