@@ -44,6 +44,14 @@ from app.middleware.security import (
 from app.middleware.request_size import RequestSizeLimitMiddleware
 from app.middleware.registration_rate_limit import RegistrationRateLimitMiddleware
 from app.middleware.performance import PerformanceMiddleware
+from app.middleware.health_check import HealthCheckMiddleware
+# CSRF middleware optionnel (peut être désactivé pour les API pures)
+try:
+    from app.middleware.csrf import CSRFMiddleware
+    CSRF_AVAILABLE = True
+except ImportError:
+    CSRF_AVAILABLE = False
+    logger.warning("CSRF middleware non disponible")
 from app.config import settings
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -133,13 +141,16 @@ app = FastAPI(
 )
 
 # Middlewares de sécurité (ordre important - du plus général au plus spécifique)
-# 0. Performance monitoring (en premier pour mesurer tout)
+# 0. Health check (en premier pour intercepter /health)
+app.add_middleware(HealthCheckMiddleware)
+
+# 1. Performance monitoring (en premier pour mesurer tout)
 app.add_middleware(PerformanceMiddleware)
 
-# 1. Compression GZip (en premier pour compresser toutes les réponses)
+# 2. Compression GZip (en premier pour compresser toutes les réponses)
 app.add_middleware(GZipMiddleware, minimum_size=1000)  # Compresser les réponses > 1KB
 
-# 2. Logging de sécurité (en premier pour logger toutes les requêtes)
+# 3. Logging de sécurité (en premier pour logger toutes les requêtes)
 app.add_middleware(SecurityLoggingMiddleware)
 
 # 2. Rate limiting général (protège contre les attaques brute force)
@@ -168,6 +179,15 @@ app.add_middleware(RequestSizeLimitMiddleware)
 
 # 6. En-têtes de sécurité HTTP
 app.add_middleware(SecurityHeadersMiddleware)
+
+# 7. Protection CSRF (optionnel, peut être désactivé pour les API pures)
+# Note: CSRF peut être problématique pour les API REST pures
+# Activer seulement si nécessaire (formulaires HTML, etc.)
+if CSRF_AVAILABLE and settings.enable_csrf:
+    app.add_middleware(CSRFMiddleware)
+    logger.info("✅ Protection CSRF activée")
+else:
+    logger.info("⚠️  Protection CSRF désactivée (normal pour les API REST)")
 
 # 7. Configuration CORS (dynamique selon l'environnement)
 # En développement, autoriser localhost par défaut
