@@ -1,5 +1,4 @@
 import axios, { AxiosError } from 'axios'
-import { useAuthStore } from '../store/authStore'
 
 // Déterminer l'URL de base de l'API
 // En production (Render Static Site), utiliser VITE_API_URL directement
@@ -32,23 +31,7 @@ const api = axios.create({
 // Timeout pour les uploads de fichiers (5 minutes pour supporter jusqu'à 100MB)
 const FILE_UPLOAD_TIMEOUT = 5 * 60 * 1000 // 5 minutes
 
-// Récupérer le token depuis le localStorage si disponible
-const initializeAuth = () => {
-  const authData = localStorage.getItem('kairos-auth')
-  if (authData) {
-    try {
-      const parsed = JSON.parse(authData)
-      if (parsed.state?.token) {
-        api.defaults.headers.common['Authorization'] = `Bearer ${parsed.state.token}`
-      }
-    } catch (e) {
-      // Ignorer les erreurs de parsing
-    }
-  }
-}
-
-// Initialiser l'auth au chargement
-initializeAuth()
+// Authentification supprimée - toutes les routes sont publiques
 
 // Intercepteur pour gérer les requêtes et supprimer Content-Type pour FormData
 api.interceptors.request.use(
@@ -91,18 +74,8 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as any
     
-    // Gérer les erreurs 401 (non autorisé)
+    // Gérer les erreurs 401 (non autorisé) - ignoré car auth supprimée
     if (error.response?.status === 401) {
-      // Déconnexion automatique si le token est invalide
-      const { logout } = useAuthStore.getState()
-      logout()
-      // Rediriger vers la page de connexion (utiliser navigate si disponible)
-      if (window.location.pathname !== '/login') {
-        // Éviter de recharger toute la page si possible
-        if (typeof window !== 'undefined' && window.history) {
-          window.location.href = '/login'
-        }
-      }
       return Promise.reject(error)
     }
     

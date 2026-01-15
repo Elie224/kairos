@@ -29,7 +29,7 @@ except ImportError:
     # Redis est optionnel
     init_redis = None
     close_redis = None
-from app.routers import auth, modules, ai_tutor, progress, badges, favorites, recommendations, support, quiz, exam, validation, td, tp, adaptive_learning, pathways, exercise_generator, error_learning, analytics, anti_cheat, virtual_labs, avatar, gamification, collaboration, gdpr, subscriptions, prompt_router, user_history, resources, openai_content, feedback, pedagogical_memory
+from app.routers import modules, ai_tutor, progress, badges, favorites, recommendations, support, quiz, exam, validation, td, tp, adaptive_learning, pathways, exercise_generator, error_learning, analytics, anti_cheat, virtual_labs, avatar, gamification, collaboration, gdpr, subscriptions, prompt_router, user_history, resources, openai_content, feedback, pedagogical_memory
 from app.middleware.error_handler import (
     validation_exception_handler,
     http_exception_handler,
@@ -443,7 +443,6 @@ app.add_exception_handler(StarletteHTTPException, http_exception_handler)
 app.add_exception_handler(Exception, general_exception_handler)
 
 # Inclusion des routeurs
-app.include_router(auth.router, prefix="/api/auth", tags=["Authentification"])
 app.include_router(modules.router, prefix="/api/modules", tags=["Modules"])
 app.include_router(ai_tutor.router, prefix="/api/ai", tags=["Kaïros"])
 app.include_router(prompt_router.router, prefix="/api/prompt-router", tags=["Prompt Router"])

@@ -3,17 +3,10 @@ import { Box } from '@chakra-ui/react'
 import { lazy, Suspense } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import ProtectedRoute from './components/ProtectedRoute'
-import ProtectedAdminRoute from './components/ProtectedAdminRoute'
 import { LoadingSpinner } from './components'
-import { useAuthStore } from './store/authStore'
 
 // Code splitting - Lazy loading des pages
 const Home = lazy(() => import('./pages/Home'))
-const Login = lazy(() => import('./pages/Login'))
-const Register = lazy(() => import('./pages/Register'))
-const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
-const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 const Modules = lazy(() => import('./pages/Modules'))
 const ModuleDetail = lazy(() => import('./pages/ModuleDetail'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -29,8 +22,6 @@ const ExamDetail = lazy(() => import('./pages/ExamDetail'))
 const PageLoader = () => <LoadingSpinner size="lg" text="Chargement..." />
 
 function App() {
-  const { isAuthenticated } = useAuthStore()
-
   return (
     <Box minH="100vh" bg="gray.50" display="flex" flexDirection="column" position="relative">
       {/* Effet de gradient en arrière-plan */}
@@ -49,109 +40,18 @@ function App() {
         <Suspense fallback={<PageLoader />}>
           <Routes>
           <Route path="/" element={<Home />} />
-          <Route 
-            path="/login" 
-            element={!isAuthenticated ? <Login /> : <Navigate to="/dashboard" replace />} 
-          />
-          <Route 
-            path="/register" 
-            element={!isAuthenticated ? <Register /> : <Navigate to="/dashboard" replace />} 
-          />
-          {/* Routes de réinitialisation de mot de passe temporairement désactivées
-          <Route 
-            path="/forgot-password" 
-            element={!isAuthenticated ? <ForgotPassword /> : <Navigate to="/dashboard" replace />} 
-          />
-          <Route
-            path="/reset-password" 
-            element={!isAuthenticated ? <ResetPassword /> : <Navigate to="/dashboard" replace />} 
-          />
-          */}
-          <Route 
-            path="/modules" 
-            element={
-              <ProtectedRoute>
-                <Modules />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/modules/:id" 
-            element={
-              <ProtectedRoute>
-                <ModuleDetail />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/dashboard" 
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/profile" 
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/settings" 
-            element={
-              <ProtectedRoute>
-                <Settings />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/support" 
-            element={
-              <ProtectedRoute>
-                <Support />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/feedback" 
-            element={
-              <ProtectedRoute>
-                <Feedback />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/admin" 
-            element={
-              <ProtectedAdminRoute>
-                <Admin />
-              </ProtectedAdminRoute>
-            } 
-          />
-          <Route 
-            path="/exams" 
-            element={
-              <ProtectedRoute>
-                <Exams />
-              </ProtectedRoute>
-            } 
-          />
+          <Route path="/modules" element={<Modules />} />
+          <Route path="/modules/:id" element={<ModuleDetail />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/support" element={<Support />} />
+          <Route path="/feedback" element={<Feedback />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/exams" element={<Exams />} />
           {/* Redirection des anciennes routes /exams/:subject vers /exams */}
-          <Route 
-            path="/exams/:subject" 
-            element={<Navigate to="/exams" replace />} 
-          />
-          <Route 
-            path="/modules/:moduleId/exam" 
-            element={
-              <ProtectedRoute>
-                <ExamDetail />
-              </ProtectedRoute>
-            } 
-          />
+          <Route path="/exams/:subject" element={<Navigate to="/exams" replace />} />
+          <Route path="/modules/:moduleId/exam" element={<ExamDetail />} />
           </Routes>
         </Suspense>
       </Box>
