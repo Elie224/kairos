@@ -73,8 +73,7 @@ async def update_td(
 
 @router.delete("/{td_id}", status_code=204)
 async def delete_td(
-    td_id: str,
-    admin_user: dict = Depends(require_admin)
+    td_id: str
 ):
     """Supprime un TD (admin seulement)"""
     sanitized_id = InputSanitizer.sanitize_object_id(td_id)

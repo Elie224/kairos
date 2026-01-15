@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 from typing import List, Optional
 from app.models import Resource, ResourceCreate, ResourceType
 from app.services.resource_service import ResourceService
-from app.utils.permissions import get_current_user, require_admin
+# Authentification supprimée - toutes les routes sont publiques
 from app.utils.security import InputSanitizer
 from app.database import get_database
 import os

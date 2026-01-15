@@ -72,8 +72,7 @@ async def update_tp(
 
 @router.delete("/{tp_id}", status_code=204)
 async def delete_tp(
-    tp_id: str,
-    admin_user: dict = Depends(require_admin)
+    tp_id: str
 ):
     """Supprime un TP (admin seulement)"""
     sanitized_id = InputSanitizer.sanitize_object_id(tp_id)

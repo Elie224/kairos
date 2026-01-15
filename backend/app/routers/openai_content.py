@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Optional
 from pydantic import BaseModel
 from app.services.openai_content_generator import OpenAIContentGenerator
-from app.utils.permissions import get_current_user, require_admin
+# Authentification supprimée - toutes les routes sont publiques
 from app.repositories.module_repository import ModuleRepository
 from app.utils.security import InputSanitizer
 import logging
