@@ -101,8 +101,8 @@ const ModuleDetail = () => {
           </Box>
 
           <Tabs index={tabIndex} onChange={setTabIndex} colorScheme="brand">
-            <Box overflowX="auto" className="table-container" mb={4}>
-              <TabList minW="max-content" flexWrap={{ base: 'nowrap', md: 'wrap' }}>
+            <Box overflowX="auto" className="table-container nav-tabs" mb={4}>
+              <TabList minW="max-content" flexWrap={{ base: 'nowrap', md: 'wrap' }} className="nav-tabs">
                 <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>{t('moduleDetail.content') || 'Contenu'}</Tab>
                 {hasSimulation && <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>{t('moduleDetail.simulation')}</Tab>}
                 <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>{t('moduleDetail.objectives')}</Tab>

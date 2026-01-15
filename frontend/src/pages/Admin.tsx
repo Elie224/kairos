@@ -871,8 +871,8 @@ const Admin = () => {
                             <Tbody>
                               {modules.map((module) => (
                                 <Tr key={module.id} _hover={{ bg: 'gray.50' }}>
-                                  <Td fontWeight="medium">{module.title}</Td>
-                                  <Td>
+                                  <Td fontWeight="medium" data-label="Titre">{module.title}</Td>
+                                  <Td data-label="Matière">
                                     <Badge colorScheme="gray" variant="subtle">
                                       {getSubjectLabel(module.subject)}
                                     </Badge>
@@ -1036,9 +1036,9 @@ const Admin = () => {
                             <Tbody>
                               {users.map((user) => (
                                 <Tr key={user.id} _hover={{ bg: 'gray.50' }}>
-                                  <Td>{user.email}</Td>
-                                  <Td fontWeight="medium">{user.username}</Td>
-                                  <Td>
+                                  <Td data-label="Email">{user.email}</Td>
+                                  <Td fontWeight="medium" data-label="Nom d'utilisateur">{user.username}</Td>
+                                  <Td data-label="Admin">
                                     <Badge colorScheme={user.is_admin ? 'gray' : 'gray'}>
                                       {user.is_admin ? 'Admin' : 'Utilisateur'}
                                     </Badge>

@@ -11,6 +11,7 @@ import { LogoColorProvider } from './components/LogoColorProvider'
 import './i18n/config'
 import './styles/animations.css'
 import './styles/mobile.css'
+import './styles/mobile-enhancements.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {
