@@ -206,9 +206,9 @@ const Settings = () => {
   }
 
   return (
-    <Box minH="calc(100vh - 80px)" py={{ base: 6, md: 8 }} bg="gray.50">
-      <Container maxW="800px">
-        <VStack spacing={6} align="stretch">
+    <Box minH="calc(100vh - 80px)" py={{ base: 6, md: 8 }} px={{ base: 4, md: 0 }} bg="gray.50">
+      <Container maxW="800px" px={{ base: 4, md: 6 }}>
+        <VStack spacing={{ base: 4, md: 6 }} align="stretch">
           {/* En-tête */}
           <Box>
             <HStack justify="space-between" align="center" flexWrap="wrap" gap={4}>
@@ -263,6 +263,8 @@ const Settings = () => {
                           onBlur={handleBlur}
                           placeholder="exemple@email.com"
                           size="lg"
+                          fontSize={{ base: '16px', md: '14px' }}
+                          minH="48px"
                           bg="white"
                           border="2px solid"
                           borderColor={errors.email ? 'red.300' : 'gray.200'}
@@ -288,6 +290,8 @@ const Settings = () => {
                           onBlur={handleBlur}
                           placeholder="nom_utilisateur"
                           size="lg"
+                          fontSize={{ base: '16px', md: '14px' }}
+                          minH="48px"
                           bg="white"
                           border="2px solid"
                           borderColor={errors.username ? 'red.300' : 'gray.200'}
@@ -343,6 +347,8 @@ const Settings = () => {
                             onBlur={handleBlur}
                             placeholder="Votre nom"
                             size="lg"
+                            fontSize={{ base: '16px', md: '14px' }}
+                            minH="48px"
                             bg="white"
                             border="2px solid"
                             borderColor={errors.lastName ? 'red.300' : 'gray.200'}
@@ -408,6 +414,8 @@ const Settings = () => {
                             onBlur={handleBlur}
                             placeholder="Sélectionnez votre pays"
                             size="lg"
+                            fontSize={{ base: '16px', md: '14px' }}
+                            minH="48px"
                             bg="white"
                             border="2px solid"
                             borderColor={errors.country ? 'red.300' : 'gray.200'}
@@ -512,6 +520,8 @@ const Settings = () => {
                             onBlur={handleBlur}
                             placeholder="Confirmez votre nouveau mot de passe"
                             size="lg"
+                            fontSize={{ base: '16px', md: '14px' }}
+                            minH="48px"
                             bg="white"
                             border="2px solid"
                             borderColor={errors.confirmPassword ? 'red.300' : 'gray.200'}
@@ -529,18 +539,24 @@ const Settings = () => {
                   </Box>
 
                   {/* Boutons */}
-                  <HStack spacing={4} justify="flex-end" pt={4}>
+                  <HStack spacing={4} justify={{ base: 'stretch', md: 'flex-end' }} pt={4} flexWrap="wrap">
                     <Button
                       variant="outline"
                       onClick={() => navigate('/profile')}
-                      size="lg"
+                      size={{ base: 'md', md: 'lg' }}
+                      minH="48px"
+                      flex={{ base: 1, md: 'none' }}
+                      data-touch-target="true"
                     >
                       Annuler
                     </Button>
                     <Button
                       type="submit"
                       variant="gradient"
-                      size="lg"
+                      size={{ base: 'md', md: 'lg' }}
+                      minH="48px"
+                      flex={{ base: 1, md: 'none' }}
+                      data-touch-target="true"
                       isLoading={loading}
                       loadingText="Enregistrement..."
                       fontWeight="bold"

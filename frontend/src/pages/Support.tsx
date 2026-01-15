@@ -394,6 +394,8 @@ const Support = () => {
                         onBlur={handleBlur}
                         placeholder="votre@email.com"
                         size="lg"
+                        fontSize={{ base: '16px', md: '14px' }}
+                        minH="48px"
                         bg="white"
                         border="2px solid"
                         borderColor={errors.email ? 'red.300' : 'blue.100'}
@@ -430,6 +432,8 @@ const Support = () => {
                       onBlur={handleBlur}
                       placeholder="+33 6 12 34 56 78 ou 0612345678"
                       size="lg"
+                      fontSize={{ base: '16px', md: '14px' }}
+                      minH="48px"
                       bg="white"
                       border="2px solid"
                       borderColor={errors.phone ? 'red.300' : 'blue.100'}
@@ -465,6 +469,8 @@ const Support = () => {
                       onBlur={handleBlur}
                       placeholder="Sujet de votre message"
                       size="lg"
+                      fontSize={{ base: '16px', md: '14px' }}
+                      minH="48px"
                       bg="white"
                       border="2px solid"
                       borderColor={errors.subject ? 'red.300' : 'blue.100'}
@@ -499,6 +505,8 @@ const Support = () => {
                       onBlur={handleBlur}
                       placeholder="Décrivez comment vous souhaitez soutenir le projet Kaïrox..."
                       size="lg"
+                      fontSize={{ base: '16px', md: '14px' }}
+                      minH="120px"
                       bg="white"
                       border="2px solid"
                       borderColor={errors.message ? 'red.300' : 'blue.100'}
@@ -528,21 +536,24 @@ const Support = () => {
                     type="submit"
                     bgGradient="linear-gradient(135deg, blue.500 0%, blue.600 100%)"
                     color="white"
-                    size="lg"
+                    size={{ base: 'md', md: 'lg' }}
+                    minH="48px"
+                    w={{ base: 'full', md: 'auto' }}
                     isLoading={loading}
                     loadingText="Envoi en cours..."
                     fontWeight="600"
                     rightIcon={<FiArrowRight />}
-                    py={7}
+                    py={{ base: 6, md: 7 }}
                     borderRadius="xl"
                     boxShadow="md"
                     _hover={{
                       bgGradient: 'linear-gradient(135deg, blue.600 0%, blue.700 100%)',
-                      transform: 'translateY(-2px)',
+                      transform: { base: 'none', md: 'translateY(-2px)' },
                       boxShadow: 'lg',
                     }}
                     transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
                     fontFamily="body"
+                    data-touch-target="true"
                   >
                     Envoyer le message
                   </Button>

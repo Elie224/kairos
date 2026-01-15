@@ -102,20 +102,21 @@ const Exams = () => {
     <Box
       minH="100vh"
       bgGradient="linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)"
-      py={8}
+      py={{ base: 6, md: 8 }}
+      px={{ base: 4, md: 0 }}
     >
-      <Container maxW="1200px">
-        <VStack spacing={8} align="stretch">
+      <Container maxW="1200px" px={{ base: 4, md: 6 }}>
+        <VStack spacing={{ base: 6, md: 8 }} align="stretch">
           <Box>
             <Heading 
-              size="xl" 
+              size={{ base: 'lg', md: 'xl' }} 
               mb={2} 
               color="gray.800"
               fontWeight="bold"
             >
               Examens
             </Heading>
-            <Text color="gray.700" fontSize="lg" fontWeight="medium">
+            <Text color="gray.700" fontSize={{ base: 'md', md: 'lg' }} fontWeight="medium">
               Passez les examens pour valider vos modules
             </Text>
           </Box>
@@ -158,21 +159,21 @@ const Exams = () => {
                     borderRadius="2xl"
                     boxShadow="md"
                   >
-                    <CardBody>
-                      <VStack spacing={4} align="stretch">
-                        <HStack justify="space-between">
-                          <Badge colorScheme="gray" fontSize="md" p={2}>
+                    <CardBody p={{ base: 4, md: 6 }}>
+                      <VStack spacing={{ base: 3, md: 4 }} align="stretch">
+                        <HStack justify="space-between" flexWrap="wrap" gap={2}>
+                          <Badge colorScheme="gray" fontSize={{ base: 'xs', md: 'md' }} px={{ base: 2, md: 2 }} py={1}>
                             {module.subject} - {module.difficulty}
                           </Badge>
                           {validation?.validated && (
-                            <Badge colorScheme="green" fontSize="md" p={2}>
+                            <Badge colorScheme="green" fontSize={{ base: 'xs', md: 'md' }} px={{ base: 2, md: 2 }} py={1}>
                               <FiCheckCircle style={{ display: 'inline', marginRight: '4px' }} />
                               Validé
                             </Badge>
                           )}
                         </HStack>
 
-                        <Heading size="sm" color="gray.800" fontWeight="bold">
+                        <Heading size={{ base: 'xs', md: 'sm' }} color="gray.800" fontWeight="bold">
                           {module.title}
                         </Heading>
 
@@ -197,10 +198,12 @@ const Exams = () => {
                         <Button
                           colorScheme={validation?.validated ? 'green' : 'brand'}
                           w="full"
-                          size="lg"
+                          size={{ base: 'md', md: 'lg' }}
+                          minH="48px"
                           variant={validation?.validated ? 'solid' : 'gradient'}
                           onClick={() => navigate(`/modules/${module.id}/exam`)}
                           rightIcon={<FiArrowRight />}
+                          data-touch-target="true"
                         >
                           {validation?.validated ? 'Voir l\'examen' : 'Passer l\'examen'}
                         </Button>

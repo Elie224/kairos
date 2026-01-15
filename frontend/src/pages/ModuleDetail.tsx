@@ -61,17 +61,21 @@ const ModuleDetail = () => {
 
   if (isLoading) {
     return (
-      <Container maxW="1200px" py={12} textAlign="center">
-        <Spinner size="xl" />
-      </Container>
+      <Box minH="100vh" bgGradient="linear-gradient(180deg, blue.50 0%, white 100%)" py={{ base: 8, md: 12 }}>
+        <Container maxW="1200px" px={{ base: 4, md: 6 }} textAlign="center">
+          <Spinner size="xl" />
+        </Container>
+      </Box>
     )
   }
 
   if (!module) {
     return (
-      <Container maxW="1200px" py={12}>
-        <Text>{t('moduleDetail.notFound')}</Text>
-      </Container>
+      <Box minH="100vh" bgGradient="linear-gradient(180deg, blue.50 0%, white 100%)" py={{ base: 8, md: 12 }}>
+        <Container maxW="1200px" px={{ base: 4, md: 6 }}>
+          <Text fontSize={{ base: 'md', md: 'lg' }}>{t('moduleDetail.notFound')}</Text>
+        </Container>
+      </Box>
     )
   }
 
@@ -83,47 +87,50 @@ const ModuleDetail = () => {
   const hasQuiz = module.subject === 'computer_science'
 
   return (
-    <Container maxW="1200px" py={8}>
-      <VStack spacing={6} align="stretch">
-        <Box bg="white" p={6} borderRadius="lg" boxShadow="sm">
-          <HStack spacing={4} mb={4}>
-            <Badge colorScheme="gray" fontSize="md" px={3} py={1} borderRadius="md">
-              {subjectLabels[module.subject] || module.subject}
-            </Badge>
-          </HStack>
-          <Heading mb={2} color="gray.600" size="xl">{module.title}</Heading>
-          <Text color="gray.600" fontSize="lg">{module.description}</Text>
-        </Box>
+    <Box minH="100vh" bgGradient="linear-gradient(180deg, blue.50 0%, white 100%)" py={{ base: 4, md: 8 }}>
+      <Container maxW="1200px" px={{ base: 4, md: 6 }}>
+        <VStack spacing={{ base: 4, md: 6 }} align="stretch">
+          <Box bg="white" p={{ base: 4, md: 6 }} borderRadius={{ base: 'xl', md: 'lg' }} boxShadow="sm">
+            <HStack spacing={4} mb={4} flexWrap="wrap">
+              <Badge colorScheme="gray" fontSize={{ base: 'sm', md: 'md' }} px={{ base: 2, md: 3 }} py={1} borderRadius="md">
+                {subjectLabels[module.subject] || module.subject}
+              </Badge>
+            </HStack>
+            <Heading mb={2} color="gray.600" size={{ base: 'lg', md: 'xl' }}>{module.title}</Heading>
+            <Text color="gray.600" fontSize={{ base: 'md', md: 'lg' }}>{module.description}</Text>
+          </Box>
 
-        <Tabs index={tabIndex} onChange={setTabIndex} colorScheme="brand">
-          <TabList>
-            <Tab>{t('moduleDetail.content') || 'Contenu'}</Tab>
-            {hasSimulation && <Tab>{t('moduleDetail.simulation')}</Tab>}
-            <Tab>{t('moduleDetail.objectives')}</Tab>
-            <Tab>TD</Tab>
-            {!hasNoTP && <Tab>TP</Tab>}
-            <Tab>Ressources</Tab>
-            <Tab>{t('moduleDetail.aiTutor')}</Tab>
-            {hasQuiz && <Tab>{t('moduleDetail.quiz')}</Tab>}
-          </TabList>
+          <Tabs index={tabIndex} onChange={setTabIndex} colorScheme="brand">
+            <Box overflowX="auto" className="table-container" mb={4}>
+              <TabList minW="max-content" flexWrap={{ base: 'nowrap', md: 'wrap' }}>
+                <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>{t('moduleDetail.content') || 'Contenu'}</Tab>
+                {hasSimulation && <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>{t('moduleDetail.simulation')}</Tab>}
+                <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>{t('moduleDetail.objectives')}</Tab>
+                <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>TD</Tab>
+                {!hasNoTP && <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>TP</Tab>}
+                <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>Ressources</Tab>
+                <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>{t('moduleDetail.aiTutor')}</Tab>
+                {hasQuiz && <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>{t('moduleDetail.quiz')}</Tab>}
+              </TabList>
+            </Box>
 
           <TabPanels>
             <TabPanel px={0}>
               <Card _hover={{ boxShadow: 'md' }} transition="all 0.2s" bg="white">
-                <CardBody p={8}>
-                  <VStack align="start" spacing={6}>
+                <CardBody p={{ base: 4, md: 8 }}>
+                  <VStack align="start" spacing={{ base: 4, md: 6 }}>
                     <Box width="full" mb={4}>
-                      <HStack justify="space-between" align="center" mb={2}>
-                        <Box>
-                          <Heading size="xl" color="gray.600" mb={2}>
+                      <HStack justify="space-between" align="center" mb={2} flexWrap="wrap" gap={2}>
+                        <Box flex="1" minW="200px">
+                          <Heading size={{ base: 'lg', md: 'xl' }} color="gray.600" mb={2}>
                             {t('moduleDetail.learningContent') || 'Contenu d\'apprentissage'}
                           </Heading>
-                          <Text color="gray.600" fontSize="md">
+                          <Text color="gray.600" fontSize={{ base: 'sm', md: 'md' }}>
                             {t('moduleDetail.learningContentDesc') || 'Apprenez les concepts de ce module étape par étape'}
                           </Text>
                         </Box>
                         {module.content?.lessons && module.content.lessons.length > 0 && (
-                          <Badge colorScheme="gray" fontSize="md" px={4} py={2} borderRadius="full">
+                          <Badge colorScheme="gray" fontSize={{ base: 'sm', md: 'md' }} px={{ base: 3, md: 4 }} py={2} borderRadius="full">
                             {module.content.lessons.length} {module.content.lessons.length > 1 ? t('moduleDetail.lessons') : t('moduleDetail.lesson')}
                           </Badge>
                         )}
@@ -135,43 +142,45 @@ const ModuleDetail = () => {
                         <Box 
                           key={index} 
                           width="full" 
-                          p={8} 
+                          p={{ base: 4, md: 8 }} 
                           bg="white" 
-                          borderRadius="lg" 
+                          borderRadius={{ base: 'md', md: 'lg' }} 
                           borderLeft="4px solid" 
                           borderColor="gray.500"
                           boxShadow="sm"
-                          _hover={{ boxShadow: 'md', transform: 'translateX(4px)' }}
+                          _hover={{ boxShadow: 'md', transform: { base: 'none', md: 'translateX(4px)' } }}
                           transition="all 0.2s"
+                          mb={{ base: 4, md: 6 }}
                         >
-                          <HStack mb={4} spacing={3}>
+                          <HStack mb={4} spacing={3} flexWrap="wrap">
                             <Box
                               bg="gray.500"
                               color="white"
                               borderRadius="full"
-                              width="32px"
-                              height="32px"
+                              width={{ base: '28px', md: '32px' }}
+                              height={{ base: '28px', md: '32px' }}
                               display="flex"
                               alignItems="center"
                               justifyContent="center"
                               fontWeight="bold"
-                              fontSize="lg"
+                              fontSize={{ base: 'md', md: 'lg' }}
+                              flexShrink={0}
                             >
                               {index + 1}
                             </Box>
-                            <Heading size="lg" color="gray.700">
+                            <Heading size={{ base: 'md', md: 'lg' }} color="gray.700">
                               {lesson.title || t('moduleDetail.lessonNumber', { number: index + 1 })}
                             </Heading>
                           </HStack>
                           {lesson.sections?.map((section: Section, secIndex: number) => (
                             <Box key={secIndex} mb={6}>
                               {section.heading && (
-                                <Heading size="md" mb={3} color="gray.800" mt={secIndex > 0 ? 6 : 0}>
+                                <Heading size={{ base: 'sm', md: 'md' }} mb={3} color="gray.800" mt={secIndex > 0 ? { base: 4, md: 6 } : 0}>
                                   {section.heading}
                                 </Heading>
                               )}
                               {section.paragraphs?.map((paragraph: string, pIndex: number) => (
-                                <Text key={pIndex} mb={4} color="gray.700" lineHeight="1.9" fontSize="md">
+                                <Text key={pIndex} mb={4} color="gray.700" lineHeight="1.8" fontSize={{ base: 'sm', md: 'md' }}>
                                   {paragraph}
                                 </Text>
                               ))}
@@ -195,7 +204,7 @@ const ModuleDetail = () => {
                                       >
                                         ✓
                                       </Box>
-                                      <Text color="gray.700" flex="1" fontSize="md" lineHeight="1.7">
+                                      <Text color="gray.700" flex="1" fontSize={{ base: 'sm', md: 'md' }} lineHeight="1.7">
                                         {point}
                                       </Text>
                                     </HStack>
@@ -279,18 +288,18 @@ const ModuleDetail = () => {
 
             <TabPanel>
               <Card _hover={{ boxShadow: 'md' }} transition="all 0.2s">
-                <CardBody>
-                  <VStack align="start" spacing={4}>
-                    <Heading size="md" color="gray.600">{t('moduleDetail.learningObjectives')}</Heading>
+                <CardBody p={{ base: 4, md: 6 }}>
+                  <VStack align="start" spacing={{ base: 3, md: 4 }}>
+                    <Heading size={{ base: 'sm', md: 'md' }} color="gray.600">{t('moduleDetail.learningObjectives')}</Heading>
                     {module.learning_objectives && module.learning_objectives.length > 0 ? (
                       module.learning_objectives.map((objective, index) => (
-                        <HStack key={index} align="start" spacing={3} p={3} bg="gray.50" borderRadius="md" width="full">
-                          <Text fontWeight="bold" color="gray.600" fontSize="lg">{index + 1}.</Text>
-                          <Text color="gray.700" flex="1">{objective}</Text>
+                        <HStack key={index} align="start" spacing={3} p={{ base: 2, md: 3 }} bg="gray.50" borderRadius="md" width="full">
+                          <Text fontWeight="bold" color="gray.600" fontSize={{ base: 'md', md: 'lg' }} flexShrink={0}>{index + 1}.</Text>
+                          <Text color="gray.700" flex="1" fontSize={{ base: 'sm', md: 'md' }}>{objective}</Text>
                         </HStack>
                       ))
                     ) : (
-                      <Text color="gray.500">{t('moduleDetail.noObjectives')}</Text>
+                      <Text color="gray.500" fontSize={{ base: 'sm', md: 'md' }}>{t('moduleDetail.noObjectives')}</Text>
                     )}
                   </VStack>
                 </CardBody>

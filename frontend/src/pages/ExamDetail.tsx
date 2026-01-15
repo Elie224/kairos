@@ -145,9 +145,9 @@ const ExamDetail = () => {
 
   if (loadingPrerequisites) {
     return (
-      <Box minH="100vh" bgGradient="linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" py={8}>
-        <Container maxW="1200px">
-          <Box textAlign="center" py={8}>
+      <Box minH="100vh" bgGradient="linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" py={{ base: 6, md: 8 }} px={{ base: 4, md: 0 }}>
+        <Container maxW="1200px" px={{ base: 4, md: 6 }}>
+          <Box textAlign="center" py={{ base: 8, md: 12 }}>
             <Spinner size="xl" color="gray.500" />
           </Box>
         </Container>
@@ -157,22 +157,25 @@ const ExamDetail = () => {
 
   if (!prerequisites?.can_take_exam) {
     return (
-      <Box minH="100vh" bgGradient="linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" py={8}>
-        <Container maxW="1200px">
+      <Box minH="100vh" bgGradient="linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" py={{ base: 6, md: 8 }} px={{ base: 4, md: 0 }}>
+        <Container maxW="1200px" px={{ base: 4, md: 6 }}>
           <VStack spacing={6} align="stretch">
             <Button
               leftIcon={<FiArrowLeft />}
               onClick={() => navigate(`/modules/${moduleId}`)}
               variant="ghost"
               alignSelf="flex-start"
+              size={{ base: 'sm', md: 'md' }}
+              minH="48px"
+              data-touch-target="true"
             >
               Retour au module
             </Button>
 
             <Card>
-              <CardBody>
-                <VStack spacing={6}>
-                  <Heading size="lg">
+              <CardBody p={{ base: 4, md: 6 }}>
+                <VStack spacing={{ base: 4, md: 6 }}>
+                  <Heading size={{ base: 'md', md: 'lg' }}>
                     Examen du module
                   </Heading>
 
@@ -197,8 +200,10 @@ const ExamDetail = () => {
                   <Button
                     colorScheme="gray"
                     onClick={() => navigate(`/modules/${moduleId}`)}
-                    size="lg"
+                    size={{ base: 'md', md: 'lg' }}
+                    minH="48px"
                     w="full"
+                    data-touch-target="true"
                   >
                     Continuer l'apprentissage
                   </Button>
@@ -213,14 +218,14 @@ const ExamDetail = () => {
 
   if (examLoading) {
     return (
-      <Box minH="100vh" bgGradient="linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" py={8}>
-        <Container maxW="1200px">
-          <VStack spacing={6} align="center" py={12}>
+      <Box minH="100vh" bgGradient="linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" py={{ base: 6, md: 8 }} px={{ base: 4, md: 0 }}>
+        <Container maxW="1200px" px={{ base: 4, md: 6 }}>
+          <VStack spacing={{ base: 4, md: 6 }} align="center" py={{ base: 8, md: 12 }}>
             <Spinner size="xl" color="blue.500" thickness="4px" />
-            <Text fontSize="lg" color="gray.600" textAlign="center">
+            <Text fontSize={{ base: 'md', md: 'lg' }} color="gray.600" textAlign="center">
               Génération de l'examen en cours...
             </Text>
-            <Text fontSize="sm" color="gray.500" textAlign="center" maxW="500px">
+            <Text fontSize={{ base: 'xs', md: 'sm' }} color="gray.500" textAlign="center" maxW="500px" px={4}>
               Cela peut prendre quelques instants, surtout pour les examens de mathématiques avec exercices pratiques.
             </Text>
           </VStack>
@@ -231,14 +236,17 @@ const ExamDetail = () => {
 
   if (!exam) {
     return (
-      <Box minH="100vh" bgGradient="linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" py={8}>
-        <Container maxW="1200px">
-          <VStack spacing={6} align="stretch">
+      <Box minH="100vh" bgGradient="linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" py={{ base: 6, md: 8 }} px={{ base: 4, md: 0 }}>
+        <Container maxW="1200px" px={{ base: 4, md: 6 }}>
+          <VStack spacing={{ base: 4, md: 6 }} align="stretch">
             <Button
               leftIcon={<FiArrowLeft />}
               onClick={() => navigate(`/modules/${moduleId}`)}
               variant="ghost"
               alignSelf="flex-start"
+              size={{ base: 'sm', md: 'md' }}
+              minH="48px"
+              data-touch-target="true"
             >
               Retour au module
             </Button>
@@ -254,22 +262,25 @@ const ExamDetail = () => {
   }
 
   return (
-    <Box minH="100vh" bgGradient="linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" py={8}>
-      <Container maxW="1200px">
-        <VStack spacing={6} align="stretch">
+    <Box minH="100vh" bgGradient="linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" py={{ base: 6, md: 8 }} px={{ base: 4, md: 0 }}>
+      <Container maxW="1200px" px={{ base: 4, md: 6 }}>
+        <VStack spacing={{ base: 4, md: 6 }} align="stretch">
           <Button
             leftIcon={<FiArrowLeft />}
             onClick={() => navigate(`/modules/${moduleId}`)}
             variant="ghost"
             alignSelf="flex-start"
+            size={{ base: 'sm', md: 'md' }}
+            minH="48px"
+            data-touch-target="true"
           >
             Retour au module
           </Button>
 
           {module && (
             <Box>
-              <Heading size="lg" mb={2}>{module.title}</Heading>
-              <Text color="gray.600">{module.description}</Text>
+              <Heading size={{ base: 'md', md: 'lg' }} mb={2}>{module.title}</Heading>
+              <Text color="gray.600" fontSize={{ base: 'sm', md: 'md' }}>{module.description}</Text>
             </Box>
           )}
 
@@ -277,8 +288,8 @@ const ExamDetail = () => {
             <Alert status="success" borderRadius="md">
               <AlertIcon />
               <Box>
-                <AlertTitle>Module validé !</AlertTitle>
-                <AlertDescription>
+                <AlertTitle fontSize={{ base: 'sm', md: 'md' }}>Module validé !</AlertTitle>
+                <AlertDescription fontSize={{ base: 'xs', md: 'sm' }}>
                   Vous avez validé ce module le {new Date(validation.validated_at).toLocaleDateString()} avec un score de {validation.exam_score?.toFixed(1)}%.
                 </AlertDescription>
               </Box>
@@ -286,12 +297,15 @@ const ExamDetail = () => {
           )}
 
           {exam && (
-            <HStack spacing={4} justify="flex-end">
+            <HStack spacing={4} justify={{ base: 'stretch', md: 'flex-end' }} flexWrap="wrap">
               <Button
                 leftIcon={<FiEye />}
                 onClick={handleViewPdf}
                 colorScheme="red"
-                size="md"
+                size={{ base: 'md', md: 'md' }}
+                minH="48px"
+                flex={{ base: 1, md: 'none' }}
+                data-touch-target="true"
               >
                 Voir PDF
               </Button>
@@ -300,7 +314,10 @@ const ExamDetail = () => {
                 onClick={handleDownloadPDF}
                 colorScheme="brand"
                 variant="outline"
-                size="md"
+                size={{ base: 'md', md: 'md' }}
+                minH="48px"
+                flex={{ base: 1, md: 'none' }}
+                data-touch-target="true"
               >
                 Télécharger PDF
               </Button>
