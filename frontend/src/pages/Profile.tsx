@@ -27,20 +27,24 @@ import { countries } from '../constants/countries'
 
 const Profile = () => {
   const { t } = useTranslation()
-  const { user } = useAuthStore()
   const navigate = useNavigate()
   const bgColor = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
 
-  // Récupérer les informations complètes de l'utilisateur
+  // Récupérer les informations complètes de l'utilisateur (désactivé car auth supprimée)
   const { data: userData, isLoading } = useQuery(
     'user-profile',
     async () => {
-      const response = await api.get('/auth/me')
-      return response.data
+      // Retourner des données par défaut car auth supprimée
+      return {
+        username: 'Utilisateur',
+        email: 'user@example.com',
+        first_name: 'Utilisateur',
+        last_name: 'Anonyme'
+      }
     },
     {
-      enabled: !!user,
+      enabled: false, // Désactivé car auth supprimée
       refetchOnWindowFocus: false,
       refetchOnMount: false,
       staleTime: 5 * 60 * 1000, // 5 minutes

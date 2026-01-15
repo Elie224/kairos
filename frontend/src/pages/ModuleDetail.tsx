@@ -11,7 +11,6 @@ import TDList from '../components/TDList'
 import TPList from '../components/TPList'
 import ResourceList from '../components/ResourceList'
 import { useProgressTracker } from '../hooks/useProgressTracker'
-import { useAuthStore } from '../store/authStore'
 import { ModuleContent, Lesson, Section } from '../types/moduleContent'
 
 interface Module {
@@ -28,7 +27,6 @@ interface Module {
 const ModuleDetail = () => {
   const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
-  const { isAuthenticated } = useAuthStore()
   const [tabIndex, setTabIndex] = useState(0)
   
   // Réinitialiser l'onglet à "Contenu" quand le module change
@@ -36,8 +34,8 @@ const ModuleDetail = () => {
     setTabIndex(0)
   }, [id])
   
-  // Suivi automatique de la progression
-  useProgressTracker({ moduleId: id || '', enabled: isAuthenticated })
+  // Suivi automatique de la progression (toujours activé)
+  useProgressTracker({ moduleId: id || '', enabled: true })
 
   const subjectLabels: Record<string, string> = {
     mathematics: t('modules.mathematics'),

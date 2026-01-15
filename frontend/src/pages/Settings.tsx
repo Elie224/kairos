@@ -22,7 +22,6 @@ import {
   HStack
 } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { useAuthStore } from '../store/authStore'
 import { useNavigate } from 'react-router-dom'
 import { useNotification } from '../components/NotificationProvider'
 import api from '../services/api'
@@ -31,22 +30,26 @@ import { useQuery, useQueryClient } from 'react-query'
 
 const Settings = () => {
   const { t } = useTranslation()
-  const { user, setAuth } = useAuthStore()
   const { showNotification } = useNotification()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const bgColor = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
 
-  // Récupérer les informations complètes de l'utilisateur
+  // Récupérer les informations complètes de l'utilisateur (désactivé car auth supprimée)
   const { data: userData } = useQuery(
     'user-profile',
     async () => {
-      const response = await api.get('/auth/me')
-      return response.data
+      // Retourner des données par défaut car auth supprimée
+      return {
+        username: 'Utilisateur',
+        email: 'user@example.com',
+        first_name: 'Utilisateur',
+        last_name: 'Anonyme'
+      }
     },
     {
-      enabled: !!user,
+      enabled: false, // Désactivé car auth supprimée
       refetchOnWindowFocus: false,
     }
   )

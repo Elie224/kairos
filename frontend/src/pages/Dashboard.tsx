@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { FiBook, FiClock, FiTrendingUp, FiAward, FiArrowRight, FiFileText, FiMessageCircle, FiCheckCircle, FiBarChart2, FiUsers, FiCpu } from 'react-icons/fi'
 import api from '../services/api'
-import { useAuthStore } from '../store/authStore'
 import { StatCardSkeleton } from '../components/SkeletonLoader'
 
 interface ProgressStats {
@@ -25,7 +24,6 @@ interface HistoryStats {
 
 const Dashboard = () => {
   const { t } = useTranslation()
-  const { user } = useAuthStore()
   // Chargement prioritaire : Stats d'abord (affichage immédiat)
   const { data: stats, isLoading: statsLoading } = useQuery<ProgressStats>(
     'progress-stats',
@@ -174,7 +172,7 @@ const Dashboard = () => {
                 fontFamily="body"
                 lineHeight="1.7"
               >
-                {t('dashboard.welcome', { username: user?.username || user?.email })}
+                {t('dashboard.welcome', { username: 'Utilisateur' })}
               </Text>
             </VStack>
           </Box>

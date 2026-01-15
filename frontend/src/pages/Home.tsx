@@ -5,20 +5,14 @@ import { Box, Container, Heading, Text, Button, VStack, HStack, SimpleGrid, Badg
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { FiTarget, FiCpu, FiEye, FiZap, FiUsers, FiAward, FiArrowRight, FiPlay, FiBook, FiCheck, FiTrendingUp, FiClock } from 'react-icons/fi'
-import { useAuthStore } from '../store/authStore'
 import { AnimatedBox } from '../components/AnimatedBox'
 
 const Home = () => {
   const { t } = useTranslation()
-  const { isAuthenticated } = useAuthStore()
   const navigate = useNavigate()
 
   const handleExploreModules = () => {
-    if (isAuthenticated) {
-      navigate('/modules')
-    } else {
-      navigate('/login')
-    }
+    navigate('/modules')
   }
 
   return (
