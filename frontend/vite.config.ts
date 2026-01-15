@@ -33,19 +33,23 @@ export default defineConfig(({ mode }) => {
       // Optimisations de build
       rollupOptions: {
         output: {
-          // Code splitting manuel pour optimiser les chunks
+          // Code splitting simplifié pour éviter les problèmes avec React
           manualChunks: (id) => {
-            // Vendor chunks
+            // Vendor chunks - React doit être dans un chunk séparé et chargé en premier
             if (id.includes('node_modules')) {
+              // React, React-DOM et React Router dans le même chunk (chargé en premier)
               if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
                 return 'react-vendor'
               }
+              // Chakra UI et dépendances dans un chunk séparé
               if (id.includes('@chakra-ui') || id.includes('@emotion') || id.includes('framer-motion')) {
                 return 'chakra-vendor'
               }
+              // React Query et Axios
               if (id.includes('react-query') || id.includes('axios')) {
                 return 'query-vendor'
               }
+              // i18next
               if (id.includes('i18next')) {
                 return 'i18n-vendor'
               }
@@ -91,9 +95,26 @@ export default defineConfig(({ mode }) => {
     },
     // Optimiser les dépendances
     optimizeDeps: {
-      include: ['react', 'react-dom', 'react-router-dom', '@chakra-ui/react'],
+      include: [
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
+        'react-router-dom',
+        '@chakra-ui/react',
+        '@emotion/react',
+        '@emotion/styled',
+        'framer-motion'
+      ],
       // Exclure les dépendances qui ne doivent pas être pré-bundlées
       exclude: [],
+      // Forcer la résolution de React pour éviter les duplications
+      esbuildOptions: {
+        jsx: 'automatic',
+      },
+    },
+    // Résolution des dépendances pour éviter les duplications
+    resolve: {
+      dedupe: ['react', 'react-dom'],
     },
   }
 })
