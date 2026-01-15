@@ -7,7 +7,7 @@ from app.models.user_history import (
     HistoryQuery, HistoryStats, SimilarQuestionRequest, SimilarQuestionResponse
 )
 from app.services.user_history_service import UserHistoryService
-from app.utils.permissions import get_current_user
+# Authentification supprimée - toutes les routes sont publiques
 from app.models.user_history import Subject
 
 router = APIRouter()
