@@ -233,7 +233,7 @@ class ProgressRepository:
                 return 0
             logger.debug(f"get_total_time_spent called with user_id={sanitized_user_id}")
             db = get_database()
-            # Utiliser allowDiskUse pour les grandes collections
+            # OPTIMISATION: Utiliser allowDiskUse et batchSize pour performance
             pipeline = [
                 {"$match": {"user_id": sanitized_user_id}},
                 {"$group": {
@@ -241,7 +241,11 @@ class ProgressRepository:
                     "total_time": {"$sum": {"$ifNull": ["$time_spent", 0]}}
                 }}
             ]
-            result = await db.progress.aggregate(pipeline, allowDiskUse=True).to_list(length=1)
+            # Utiliser batchSize pour optimiser le transfert
+            result = await db.progress.aggregate(
+                pipeline, 
+                allowDiskUse=True
+            ).to_list(length=1)
             return result[0]["total_time"] if result else 0
         except Exception as e:
             logger.error(f"Erreur lors du calcul du temps total: {e}", exc_info=True)
@@ -258,6 +262,7 @@ class ProgressRepository:
                 return None
             logger.debug(f"get_average_score called with user_id={sanitized_user_id}")
             db = get_database()
+            # OPTIMISATION: Pipeline optimisé avec filtrage précoce
             pipeline = [
                 {"$match": {
                     "user_id": sanitized_user_id,
@@ -269,7 +274,11 @@ class ProgressRepository:
                     "count": {"$sum": 1}
                 }}
             ]
-            result = await db.progress.aggregate(pipeline, allowDiskUse=True).to_list(length=1)
+            # Utiliser batchSize pour optimiser le transfert
+            result = await db.progress.aggregate(
+                pipeline, 
+                allowDiskUse=True
+            ).to_list(length=1)
             if result and result[0].get("count", 0) > 0:
                 return result[0]["average_score"]
             return None

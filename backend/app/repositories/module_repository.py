@@ -52,9 +52,6 @@ class ModuleRepository:
             # Trier par created_at (plus rapide avec index)
             sort_key = [("created_at", -1)]
             
-            # Trier par created_at (plus rapide avec index)
-            sort_key = [("created_at", -1)]
-            
             # Projection pour exclure le contenu volumineux (optimisation performance)
             # Le contenu sera chargé uniquement si nécessaire (détail du module)
             projection = {

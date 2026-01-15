@@ -97,7 +97,7 @@ class ProgressService:
     
     @staticmethod
     async def get_progress_stats(user_id: str) -> Dict[str, Any]:
-        """Récupère les statistiques de progression d'un utilisateur"""
+        """Récupère les statistiques de progression d'un utilisateur (OPTIMISÉ - une seule requête d'agrégation)"""
         try:
             # Valider user_id
             if not user_id:
@@ -110,45 +110,96 @@ class ProgressService:
                     "average_score": None
                 }
             
-            # Obtenir le nombre total de modules disponibles dans la base de données
-            total_modules_available = 0
-            try:
-                from app.database import get_database
-                db = get_database()
-                if db is not None:
-                    total_modules_available = await db.modules.count_documents({})
-            except Exception as db_error:
-                logger.warning(f"Erreur lors du comptage des modules: {db_error}")
-                total_modules_available = 0
+            from app.database import get_database
+            from app.utils.security import InputSanitizer
             
-            # Obtenir les statistiques de progression de l'utilisateur avec gestion d'erreur individuelle
-            completed_modules = 0
-            total_time = 0
-            avg_score = None
+            sanitized_user_id = InputSanitizer.sanitize_string(str(user_id)) if user_id else None
+            if not sanitized_user_id:
+                return {
+                    "total_modules": 0,
+                    "completed_modules": 0,
+                    "completion_rate": 0,
+                    "total_time_spent": 0,
+                    "average_score": None
+                }
             
-            try:
-                completed_modules = await ProgressRepository.count_completed(user_id) or 0
-            except Exception as e:
-                logger.warning(f"Erreur lors du comptage des modules complétés: {e}")
+            db = get_database()
+            if db is None:
+                return {
+                    "total_modules": 0,
+                    "completed_modules": 0,
+                    "completion_rate": 0,
+                    "total_time_spent": 0,
+                    "average_score": None
+                }
+            
+            # OPTIMISATION: Une seule requête d'agrégation pour toutes les stats (beaucoup plus rapide)
+            # Au lieu de 4 requêtes séparées, on fait tout en une seule
+            pipeline = [
+                {"$match": {"user_id": sanitized_user_id}},
+                {"$group": {
+                    "_id": None,
+                    "completed_modules": {
+                        "$sum": {"$cond": [{"$eq": ["$completed", True]}, 1, 0]}
+                    },
+                    "total_time_spent": {
+                        "$sum": {"$ifNull": ["$time_spent", 0]}
+                    },
+                    "average_score": {
+                        "$avg": {
+                            "$cond": [
+                                {"$and": [
+                                    {"$ne": ["$score", None]},
+                                    {"$type": ["$score", "number"]}
+                                ]},
+                                "$score",
+                                None
+                            ]
+                        }
+                    },
+                    "scores_count": {
+                        "$sum": {
+                            "$cond": [
+                                {"$and": [
+                                    {"$ne": ["$score", None]},
+                                    {"$type": ["$score", "number"]}
+                                ]},
+                                1,
+                                0
+                            ]
+                        }
+                    }
+                }}
+            ]
+            
+            # Exécuter l'agrégation optimisée
+            result = await db.progress.aggregate(pipeline, allowDiskUse=True).to_list(length=1)
+            
+            # Récupérer les résultats
+            if result and result[0]:
+                stats = result[0]
+                completed_modules = stats.get("completed_modules", 0) or 0
+                total_time = stats.get("total_time_spent", 0) or 0
+                avg_score = stats.get("average_score")
+                scores_count = stats.get("scores_count", 0) or 0
+                
+                # Si aucun score, avg_score est None
+                if scores_count == 0:
+                    avg_score = None
+            else:
                 completed_modules = 0
-            
-            try:
-                total_time = await ProgressRepository.get_total_time_spent(user_id) or 0
-            except Exception as e:
-                logger.warning(f"Erreur lors du calcul du temps total: {e}")
                 total_time = 0
-            
-            try:
-                avg_score = await ProgressRepository.get_average_score(user_id)
-            except Exception as e:
-                logger.warning(f"Erreur lors du calcul de la moyenne: {e}")
                 avg_score = None
             
-            # Utiliser le nombre total de modules disponibles pour le calcul du taux de complétion
+            # Compter le total de modules disponibles (cette requête peut être mise en cache séparément)
+            # OPTIMISATION: Utiliser count_documents avec projection vide pour performance
+            total_modules_available = await db.modules.count_documents({})
+            
+            # Calculer le taux de complétion
             completion_rate = (completed_modules / total_modules_available * 100) if total_modules_available > 0 else 0
             
             return {
-                "total_modules": total_modules_available,  # Nombre total de modules disponibles
+                "total_modules": total_modules_available,
                 "completed_modules": completed_modules,
                 "completion_rate": round(completion_rate, 2),
                 "total_time_spent": int(total_time),

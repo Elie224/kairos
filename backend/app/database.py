@@ -31,8 +31,8 @@ async def connect_to_mongo():
             maxPoolSize=max_pool_size,  # Pool de connexions configurable
             minPoolSize=min_pool_size,  # Maintenir plus de connexions actives
             maxIdleTimeMS=60000,  # Fermer les connexions inactives après 60s (augmenté)
-            connectTimeoutMS=10000,  # Timeout de connexion
-            socketTimeoutMS=30000,  # Timeout socket
+            connectTimeoutMS=5000,  # Timeout de connexion réduit pour réponses rapides
+            socketTimeoutMS=20000,  # Timeout socket réduit pour réponses rapides
             retryWrites=True,  # Réessayer les écritures en cas d'erreur
             retryReads=True,  # Réessayer les lectures en cas d'erreur
             # Optimisations supplémentaires pour performance
