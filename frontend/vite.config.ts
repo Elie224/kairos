@@ -30,47 +30,13 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      // Optimisations de build
+      // Optimisations de build - Code splitting désactivé pour éviter les erreurs React
+      // Vite gérera automatiquement le code splitting de manière sûre
       rollupOptions: {
         output: {
-          // Code splitting simplifié pour éviter les problèmes avec React
-          manualChunks: (id) => {
-            // Vendor chunks - React doit être dans un chunk séparé et chargé en premier
-            if (id.includes('node_modules')) {
-              // React, React-DOM et React Router dans le même chunk (chargé en premier)
-              if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-                return 'react-vendor'
-              }
-              // Chakra UI et dépendances dans un chunk séparé
-              if (id.includes('@chakra-ui') || id.includes('@emotion') || id.includes('framer-motion')) {
-                return 'chakra-vendor'
-              }
-              // React Query et Axios
-              if (id.includes('react-query') || id.includes('axios')) {
-                return 'query-vendor'
-              }
-              // i18next
-              if (id.includes('i18next')) {
-                return 'i18n-vendor'
-              }
-              // Autres vendors
-              return 'vendor'
-            }
-            // Pages en chunks séparés pour lazy loading optimal
-            if (id.includes('/pages/')) {
-              const pageName = id.split('/pages/')[1]?.split('/')[0]
-              if (pageName) {
-                return `page-${pageName}`
-              }
-            }
-            // Components en chunks séparés pour les gros composants
-            if (id.includes('/components/')) {
-              const componentName = id.split('/components/')[1]?.split('/')[0]
-              if (componentName && ['AITutor', 'Admin', 'Exam', 'Quiz'].includes(componentName)) {
-                return `component-${componentName}`
-              }
-            }
-          },
+          // Désactiver le code splitting manuel pour éviter l'erreur useLayoutEffect
+          // Vite utilisera son code splitting automatique qui est plus sûr
+          manualChunks: undefined,
         },
       },
       // Augmenter la limite de taille des chunks
@@ -107,12 +73,8 @@ export default defineConfig(({ mode }) => {
       ],
       // Exclure les dépendances qui ne doivent pas être pré-bundlées
       exclude: [],
-      // Forcer la résolution de React pour éviter les duplications
-      esbuildOptions: {
-        jsx: 'automatic',
-      },
     },
-    // Résolution des dépendances pour éviter les duplications
+    // Résolution des dépendances pour éviter les duplications de React
     resolve: {
       dedupe: ['react', 'react-dom'],
     },
