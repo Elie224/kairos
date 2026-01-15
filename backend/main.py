@@ -355,6 +355,7 @@ async def root():
     }
 
 @app.get("/health")
+@app.head("/health")  # Support HEAD pour les health checks Render
 async def health_check():
     """Vérifie l'état de santé de l'API et toutes les bases de données"""
     from app.database import db
