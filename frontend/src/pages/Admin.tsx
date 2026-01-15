@@ -450,7 +450,12 @@ const Admin = () => {
         return
       }
       
-      console.log('Payload envoyé:', { ...payload, content: { ...payload.content, lessons: `${payload.content.lessons.length} leçons` } })
+      // Logging via le système centralisé (seulement en dev)
+      if (import.meta.env.DEV) {
+        import('../utils/logger').then(({ logger }) => {
+          logger.debug('Payload envoyé', { ...payload, content: { ...payload.content, lessons: `${payload.content.lessons.length} leçons` } }, 'Admin')
+        })
+      }
 
       if (editingModule) {
         await api.put(`/modules/${editingModule.id}`, payload, {
@@ -477,7 +482,9 @@ const Admin = () => {
       onClose()
       loadModules()
     } catch (error: any) {
-      console.error('Erreur lors de la création/modification du module:', error)
+      import('../utils/logger').then(({ logger }) => {
+        logger.error('Erreur lors de la création/modification du module', error, 'Admin')
+      })
       const errorDetail = error.response?.data?.detail
       let errorMessage = 'Une erreur est survenue'
       
@@ -523,8 +530,12 @@ const Admin = () => {
       })
       const result = response.data
       
-      // Log pour debug
-      console.log('Résultat de la génération:', result)
+      // Log pour debug (seulement en dev)
+      if (import.meta.env.DEV) {
+        import('../utils/logger').then(({ logger }) => {
+          logger.debug('Résultat de la génération', result, 'Admin')
+        })
+      }
       
       // Toujours afficher le message complet de la réponse
       const message = result.message || `Génération terminée: ${result.tds_generated} TD, ${result.tps_generated} TP générés.`
@@ -545,8 +556,10 @@ const Admin = () => {
           isClosable: true,
         })
         
-        // Afficher aussi dans la console pour debug
-        console.error('Erreurs de génération:', result.errors)
+        // Logger les erreurs
+        import('../utils/logger').then(({ logger }) => {
+          logger.error('Erreurs de génération', result.errors, 'Admin')
+        })
       } else if (result.tds_generated === 0 && result.tps_generated === 0) {
         // Si aucun TD/TP généré et pas d'erreurs, c'est suspect
         toast({

@@ -117,12 +117,12 @@ api.interceptors.response.use(
           }
           // Pour les autres méthodes, logger seulement en développement
           if (import.meta.env.DEV) {
-            console.warn('Timeout de requête (peut être normal pour les opérations longues)')
+            // Timeout géré silencieusement (retry automatique)
           }
         } else {
           // Autre erreur réseau
           if (import.meta.env.DEV) {
-            console.error('Erreur réseau: Pas de réponse du serveur', error.message)
+            // Erreur réseau gérée par retry automatique
           }
         }
         
@@ -142,7 +142,7 @@ api.interceptors.response.use(
       const retryAfter = error.response.headers['retry-after']
       const delay = retryAfter ? parseInt(retryAfter) * 1000 : 5000
       if (import.meta.env.DEV) {
-        console.warn(`Rate limit atteint. Nouvelle tentative dans ${delay}ms`)
+        // Rate limit géré automatiquement avec retry
       }
       
       if (originalRequest && !originalRequest._retry) {

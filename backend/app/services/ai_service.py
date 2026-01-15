@@ -8,6 +8,7 @@ from app.config import settings
 from app.repositories.module_repository import ModuleRepository
 from app.repositories.resource_repository import ResourceRepository
 from app.utils.retry import retry_with_backoff
+from app.utils.circuit_breaker import openai_circuit_breaker, CircuitBreakerOpenError
 import logging
 import json
 
@@ -371,7 +372,7 @@ class AIService:
             # Ajouter le message actuel
             messages.append({"role": "user", "content": message})
             
-            # Utiliser retry avec backoff pour les appels OpenAI
+            # Utiliser retry avec backoff et circuit breaker pour les appels OpenAI
             async def call_openai():
                 max_tokens_value = 4000 if research_mode else (1500 if expert_mode else 500)
                 temperature_value = 0.2 if research_mode else (0.3 if expert_mode else 0.7)
@@ -385,14 +386,26 @@ class AIService:
                 create_params.update(_get_max_tokens_param(model_to_use, max_tokens_value))
                 return client.chat.completions.create(**create_params)
             
-            # Retry avec backoff exponentiel pour les erreurs temporaires
-            response = await retry_with_backoff(
-                call_openai,
-                max_retries=3,
-                initial_delay=1.0,
-                max_delay=10.0,
-                exceptions=(APIConnectionError, APITimeoutError, RateLimitError)
-            )
+            # Utiliser circuit breaker pour protéger contre les pannes en cascade
+            try:
+                async def protected_call():
+                    # Retry avec backoff exponentiel pour les erreurs temporaires
+                    return await retry_with_backoff(
+                        call_openai,
+                        max_retries=3,
+                        initial_delay=1.0,
+                        max_delay=10.0,
+                        exceptions=(APIConnectionError, APITimeoutError, RateLimitError)
+                    )
+                
+                response = await openai_circuit_breaker.call(protected_call)
+            except CircuitBreakerOpenError as e:
+                logger.error(f"Circuit breaker ouvert pour OpenAI: {e}")
+                return {
+                    "response": "Service temporairement indisponible. Veuillez réessayer dans quelques instants.",
+                    "suggestions": _get_demo_suggestions(language),
+                    "error": "service_unavailable"
+                }
             
             ai_response = response.choices[0].message.content
             

@@ -215,8 +215,12 @@ const Register = () => {
       showNotification('Inscription réussie ! Vous pouvez maintenant vous connecter.', 'success')
       navigate('/login')
     } catch (err: any) {
-      console.error('Registration error:', err)
-      console.error('Error response:', err.response)
+      import('../utils/logger').then(({ logger }) => {
+        logger.error('Registration error', err, 'Register')
+        if (err.response) {
+          logger.error('Error response', err.response.data, 'Register')
+        }
+      })
       
       // Extraire le message d'erreur avec plus de détails
       let errorMessage = t('auth.registerError') || 'Erreur lors de l\'inscription'
@@ -261,7 +265,8 @@ const Register = () => {
         }
         
         // Afficher aussi dans la console pour le débogage
-        console.error('Erreur serveur complète:', {
+        import('../utils/logger').then(({ logger }) => {
+          logger.error('Erreur serveur complète', {
           status,
           data: responseData,
           headers: err.response.headers
@@ -270,7 +275,9 @@ const Register = () => {
       } else if (err.request) {
         // Requête envoyée mais pas de réponse
         errorMessage = "Pas de réponse du serveur. Vérifiez que le backend est démarré."
-        console.error('Pas de réponse du serveur:', err.request)
+        import('../utils/logger').then(({ logger }) => {
+          logger.error('Pas de réponse du serveur', err.request, 'Register')
+        })
       } else if (err.message) {
         errorMessage = err.message
       }

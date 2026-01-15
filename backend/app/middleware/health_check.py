@@ -37,10 +37,12 @@ class HealthCheckMiddleware(BaseHTTPMiddleware):
             from app.database import get_database
             db = get_database()
             if db is not None:
+                start = time.time()
                 await db.client.admin.command('ping')
+                response_time = (time.time() - start) * 1000
                 health_status["services"]["mongodb"] = {
                     "status": "healthy",
-                    "response_time_ms": 0  # TODO: Mesurer le temps de réponse
+                    "response_time_ms": round(response_time, 2)
                 }
             else:
                 health_status["services"]["mongodb"] = {

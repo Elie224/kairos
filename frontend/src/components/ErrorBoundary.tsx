@@ -31,13 +31,10 @@ class ErrorBoundary extends Component<Props, State> {
       url: window.location.href,
     }
     
-    console.error('Erreur capturée par ErrorBoundary:', errorDetails)
-    
-    // En production, envoyer l'erreur à un service de logging (optionnel)
-    if (import.meta.env.PROD) {
-      // TODO: Intégrer un service de logging comme Sentry, LogRocket, etc.
-      // Exemple: logErrorToService(errorDetails)
-    }
+    // Utiliser le système de logging centralisé
+    import('../utils/logger').then(({ logger }) => {
+      logger.error('Erreur capturée par ErrorBoundary', errorDetails, 'ErrorBoundary')
+    })
   }
 
   public render() {
