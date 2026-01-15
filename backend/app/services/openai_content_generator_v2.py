@@ -64,12 +64,14 @@ class OpenAIContentGeneratorV2:
             raise ValueError("OpenAI client non initialisé. Vérifiez OPENAI_API_KEY.")
         
         async def _do_call():
+            from app.services.ai_service import _get_max_tokens_param
             params = {
                 "model": model,
                 "messages": messages,
                 "temperature": temperature,
-                "max_tokens": max_tokens,
             }
+            # Utiliser _get_max_tokens_param pour gérer max_tokens vs max_completion_tokens
+            params.update(_get_max_tokens_param(model, max_tokens))
             if response_format:
                 params["response_format"] = response_format
             

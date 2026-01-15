@@ -266,16 +266,19 @@ LANGUE : Génère TOUJOURS en {language}
 FORMAT: JSON valide uniquement, pas de markdown"""
 
             # Utiliser GPT-5.2 pour les TP Machine Learning (expert)
+            from app.services.ai_service import _get_max_tokens_param
             model_to_use = settings.gpt_5_2_model if subject == "computer_science" else settings.gpt_5_mini_model
-            response = client.chat.completions.create(
-                model=model_to_use,
-                messages=[
+            max_tokens_value = 4000 if model_to_use == settings.gpt_5_2_model else 3000
+            create_params = {
+                "model": model_to_use,
+                "messages": [
                     {"role": "system", "content": "Tu es un expert en pédagogie. Génère toujours du JSON valide."},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.3 if model_to_use == settings.gpt_5_2_model else 0.7,
-                max_tokens=4000 if model_to_use == settings.gpt_5_2_model else 3000
-            )
+                "temperature": 0.3 if model_to_use == settings.gpt_5_2_model else 0.7,
+            }
+            create_params.update(_get_max_tokens_param(model_to_use, max_tokens_value))
+            response = client.chat.completions.create(**create_params)
             
             content = response.choices[0].message.content.strip()
             

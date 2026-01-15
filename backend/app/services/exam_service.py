@@ -475,6 +475,7 @@ IMPORTANT :
 - Génère exactement 3 à 5 exercices MAJEURS au format JSON ci-dessus."""
 
             # client.chat.completions.create() est synchrone, utiliser asyncio.to_thread
+            from app.services.ai_service import _get_max_tokens_param
             create_params = {
                 "model": AI_MODEL,
                 "messages": [
@@ -482,8 +483,9 @@ IMPORTANT :
                     {"role": "user", "content": prompt}
                 ],
                 "temperature": 0.6,  # Légèrement plus bas pour plus de cohérence
-                "max_tokens": 6000  # Plus de tokens pour des exercices plus détaillés
             }
+            # Utiliser _get_max_tokens_param pour gérer max_tokens vs max_completion_tokens
+            create_params.update(_get_max_tokens_param(AI_MODEL, 6000))
             response = await asyncio.to_thread(client.chat.completions.create, **create_params)
             
             content = response.choices[0].message.content.strip()
