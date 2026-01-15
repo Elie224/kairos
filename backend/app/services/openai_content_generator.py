@@ -373,16 +373,18 @@ LANGUE : Génère TOUJOURS en {language}
 FORMAT: JSON valide uniquement, tableau de questions"""
 
             # Utiliser GPT-5-nano pour les QCM (rapide/économique)
+            from app.services.ai_service import _get_max_tokens_param
             nano_model = getattr(settings, 'gpt_5_nano_model', 'gpt-5-mini')  # Fallback sur mini si nano n'existe pas
-            response = client.chat.completions.create(
-                model=nano_model,
-                messages=[
+            create_params = {
+                "model": nano_model,
+                "messages": [
                     {"role": "system", "content": "Tu es un assistant pédagogique rapide. Génère toujours du JSON valide."},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.8,
-                max_tokens=2000
-            )
+                "temperature": 0.8,
+            }
+            create_params.update(_get_max_tokens_param(nano_model, 2000))
+            response = client.chat.completions.create(**create_params)
             
             content = response.choices[0].message.content.strip()
             
