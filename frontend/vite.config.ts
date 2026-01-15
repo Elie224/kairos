@@ -28,6 +28,10 @@ export default defineConfig(({ mode }) => {
           // Pas de rewrite : garder /api dans l'URL finale
         },
       },
+      // Gérer les erreurs 404 pour les fichiers statiques
+      fs: {
+        strict: false, // Permettre l'accès aux fichiers en dehors de root
+      },
     },
     build: {
       // Optimisations de build - Code splitting désactivé pour éviter les erreurs React
