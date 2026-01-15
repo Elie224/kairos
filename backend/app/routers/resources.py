@@ -72,9 +72,8 @@ async def get_module_resources(
 @router.get("/files/{filename}")
 async def download_resource_file(
     filename: str,
-    current_user: dict = Depends(get_current_user)
 ):
-    """Télécharge un fichier de ressource"""
+    """Télécharge un fichier de ressource (route publique)"""
     file_path = UPLOAD_DIR / filename
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="Fichier non trouvé")
@@ -118,9 +117,8 @@ async def download_resource_file(
 @router.get("/{resource_id}", response_model=Resource)
 async def get_resource(
     resource_id: str,
-    current_user: dict = Depends(get_current_user)
 ):
-    """Récupère une ressource par son ID"""
+    """Récupère une ressource par son ID (route publique)"""
     sanitized_id = InputSanitizer.sanitize_object_id(resource_id)
     if not sanitized_id:
         raise HTTPException(status_code=400, detail="ID de ressource invalide")
@@ -135,9 +133,8 @@ async def upload_resource(
     description: Optional[str] = Form(default=None),
     resource_type: str = Form(...),
     file: UploadFile = File(...),
-    admin_user: dict = Depends(require_admin)
 ):
-    """Upload un fichier et crée une ressource (admin seulement)"""
+    """Upload un fichier et crée une ressource (route publique)"""
     # Convertir les chaînes vides en None pour les champs optionnels
     if description is not None and description.strip() == "":
         description = None
@@ -227,9 +224,8 @@ async def upload_resource(
 @router.post("/link", response_model=Resource, status_code=201)
 async def create_link_resource(
     resource_data: ResourceCreate,
-    admin_user: dict = Depends(require_admin)
 ):
-    """Crée une ressource de type lien (admin seulement)"""
+    """Crée une ressource de type lien (route publique)"""
     # Forcer le type à LINK
     resource_data.resource_type = ResourceType.LINK
     
@@ -250,9 +246,8 @@ async def create_link_resource(
 async def update_resource(
     resource_id: str,
     update_data: dict,
-    admin_user: dict = Depends(require_admin)
 ):
-    """Met à jour une ressource (admin seulement)"""
+    """Met à jour une ressource (route publique)"""
     sanitized_id = InputSanitizer.sanitize_object_id(resource_id)
     if not sanitized_id:
         raise HTTPException(status_code=400, detail="ID de ressource invalide")
@@ -263,9 +258,8 @@ async def update_resource(
 @router.delete("/{resource_id}", status_code=204)
 async def delete_resource(
     resource_id: str,
-    admin_user: dict = Depends(require_admin)
 ):
-    """Supprime une ressource (admin seulement)"""
+    """Supprime une ressource (route publique)"""
     sanitized_id = InputSanitizer.sanitize_object_id(resource_id)
     if not sanitized_id:
         raise HTTPException(status_code=400, detail="ID de ressource invalide")

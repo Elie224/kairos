@@ -19,12 +19,11 @@ async def get_history(
     module_id: Optional[str] = Query(None),
     limit: int = Query(50, ge=1, le=100),
     offset: int = Query(0, ge=0),
-    current_user: dict = Depends(get_current_user)
 ):
     """
-    Récupère l'historique de l'utilisateur connecté
+    Récupère l'historique (route publique)
     """
-    user_id = current_user["id"]
+    user_id = "anonymous"  # Auth supprimée
     history = await UserHistoryService.get_user_history(
         user_id=user_id,
         subject=subject,
@@ -36,11 +35,11 @@ async def get_history(
 
 
 @router.get("/stats", response_model=dict)
-async def get_history_stats(current_user: dict = Depends(get_current_user)):
+async def get_history_stats():
     """
-    Récupère les statistiques de l'historique utilisateur
+    Récupère les statistiques de l'historique (route publique)
     """
-    user_id = current_user["id"]
+    user_id = "anonymous"  # Auth supprimée
     stats = await UserHistoryService.get_stats(user_id)
     return stats
 
@@ -48,32 +47,31 @@ async def get_history_stats(current_user: dict = Depends(get_current_user)):
 @router.post("/similar", response_model=SimilarQuestionResponse)
 async def find_similar_questions(
     request: SimilarQuestionRequest,
-    current_user: dict = Depends(get_current_user)
 ):
     """
-    Trouve des questions similaires dans l'historique
+    Trouve des questions similaires dans l'historique (route publique)
     """
     if not request.user_id:
-        request.user_id = current_user["id"]
+        request.user_id = "anonymous"  # Auth supprimée
     
     result = await UserHistoryService.find_similar_questions(request)
     return result
 
 
 @router.delete("/history", response_model=dict)
-async def delete_history(current_user: dict = Depends(get_current_user)):
+async def delete_history():
     """
-    Supprime tout l'historique de l'utilisateur (RGPD)
+    Supprime tout l'historique (route publique)
     """
-    user_id = current_user["id"]
+    user_id = "anonymous"  # Auth supprimée
     result = await UserHistoryService.delete_user_history(user_id)
     return result
 
 
 @router.get("/cache/stats", response_model=dict)
-async def get_cache_stats(current_user: dict = Depends(get_current_user)):
+async def get_cache_stats():
     """
-    Récupère les statistiques du cache pour l'utilisateur
+    Récupère les statistiques du cache (route publique)
     """
     from app.services.semantic_cache import SemanticCache
     stats = await SemanticCache.get_stats()

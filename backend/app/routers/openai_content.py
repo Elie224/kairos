@@ -30,8 +30,7 @@ class GenerateContentRequest(BaseModel):
 
 @router.post("/chat")
 async def chat_with_ai(
-    request: ChatRequest,
-    current_user: dict = Depends(get_current_user)
+    request: ChatRequest
 ):
     """
     Chat conversationnel avec l'assistant IA
@@ -70,10 +69,9 @@ async def generate_content(
     module_id: str = Query(...),
     lesson_index: Optional[int] = Query(None),
     num_questions: int = Query(10, ge=1, le=50),
-    current_user: dict = Depends(get_current_user)
 ):
     """
-    Génère du contenu pédagogique (TD, TP, Quiz) avec OpenAI
+    Génère du contenu pédagogique (TD, TP, Quiz) avec OpenAI (route publique)
     
     content_type: "td", "tp", ou "quiz"
     """
@@ -154,10 +152,9 @@ async def generate_content(
 @router.post("/generate-all/{module_id}")
 async def generate_all_content(
     module_id: str,
-    current_user: dict = Depends(require_admin)
 ):
     """
-    Génère automatiquement TD, TP et Quiz pour un module (Admin seulement)
+    Génère automatiquement TD, TP et Quiz pour un module (route publique)
     """
     try:
         sanitized_id = InputSanitizer.sanitize_object_id(module_id)
