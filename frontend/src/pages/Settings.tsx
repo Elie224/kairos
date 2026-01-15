@@ -385,6 +385,8 @@ const Settings = () => {
                             onChange={handleChange}
                             onBlur={handleBlur}
                             size="lg"
+                            fontSize={{ base: '16px', md: '14px' }}
+                            minH="48px"
                             bg="white"
                             border="2px solid"
                             borderColor={errors.dateOfBirth ? 'red.300' : 'gray.200'}
@@ -448,6 +450,8 @@ const Settings = () => {
                           onBlur={handleBlur}
                           placeholder="+33 6 12 34 56 78"
                           size="lg"
+                          fontSize={{ base: '16px', md: '14px' }}
+                          minH="48px"
                           bg="white"
                           border="2px solid"
                           borderColor={errors.phone ? 'red.300' : 'gray.200'}
