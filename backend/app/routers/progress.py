@@ -164,8 +164,7 @@ async def get_progress_stats():
 
 @router.get("/{module_id}", response_model=Progress)
 async def get_module_progress(
-    module_id: str,
-    current_user: dict = Depends(get_current_user)
+    module_id: str
 ):
     """Récupère la progression pour un module spécifique"""
     # Valider l'ObjectId

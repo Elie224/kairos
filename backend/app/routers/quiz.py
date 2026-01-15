@@ -83,10 +83,9 @@ async def regenerate_quiz(
 
 @router.delete("/module/{module_id}")
 async def delete_module_quiz(
-    module_id: str,
-    admin_user: dict = Depends(require_admin)
+    module_id: str
 ):
-    """Supprime le quiz d'un module (admin seulement)"""
+    """Supprime le quiz d'un module (route publique)"""
     success = await CachedQuizService.delete_quiz(module_id)
     if not success:
         raise HTTPException(status_code=404, detail="Quiz non trouvé")
@@ -95,13 +94,10 @@ async def delete_module_quiz(
 
 @router.post("/attempt", response_model=QuizAttempt)
 async def save_quiz_attempt(
-    request: QuizAttemptCreate,
-    current_user: dict = Depends(get_current_user)
+    request: QuizAttemptCreate
 ):
-    """Sauvegarde une tentative de quiz"""
-    user_id = current_user.get("id")
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+    """Sauvegarde une tentative de quiz (route publique)"""
+    user_id = "anonymous"  # Auth supprimée
     
     attempt = await QuizService.save_attempt(
         user_id=user_id,
@@ -130,13 +126,10 @@ async def save_quiz_attempt(
 
 @router.get("/module/{module_id}/attempts", response_model=List[QuizAttempt])
 async def get_quiz_attempts(
-    module_id: str,
-    current_user: dict = Depends(get_current_user)
+    module_id: str
 ):
-    """Récupère toutes les tentatives de quiz d'un utilisateur pour un module"""
-    user_id = current_user.get("id")
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+    """Récupère toutes les tentatives de quiz pour un module (route publique)"""
+    user_id = "anonymous"  # Auth supprimée
     
     attempts = await QuizService.get_user_attempts(user_id, module_id)
     return [
@@ -159,13 +152,10 @@ async def get_quiz_attempts(
 
 @router.get("/module/{module_id}/statistics", response_model=QuizStatistics)
 async def get_quiz_statistics(
-    module_id: str,
-    current_user: dict = Depends(get_current_user)
+    module_id: str
 ):
-    """Récupère les statistiques de quiz pour un utilisateur et un module"""
-    user_id = current_user.get("id")
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+    """Récupère les statistiques de quiz pour un module (route publique)"""
+    user_id = "anonymous"  # Auth supprimée
     
     stats = await QuizService.get_statistics(user_id, module_id)
     if not stats:
