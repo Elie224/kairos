@@ -2,7 +2,7 @@
 Cache ultra-rapide pour requêtes fréquentes
 Utilise Redis si disponible, sinon cache en mémoire
 """
-from typing import Optional, Any, Callable
+from typing import Optional, Any, Callable, Dict
 import asyncio
 import time
 import hashlib
