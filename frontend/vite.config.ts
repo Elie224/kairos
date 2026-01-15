@@ -83,21 +83,17 @@ export default defineConfig(({ mode }) => {
       assetsDir: 'assets',
       // Source maps seulement en développement
       sourcemap: !import.meta.env.PROD,
+      // CSS code splitting
+      cssCodeSplit: true,
+      cssMinify: true,
+      // Désactiver le rapport de taille compressée pour accélérer le build
+      reportCompressedSize: false,
     },
     // Optimiser les dépendances
     optimizeDeps: {
       include: ['react', 'react-dom', 'react-router-dom', '@chakra-ui/react'],
       // Exclure les dépendances qui ne doivent pas être pré-bundlées
       exclude: [],
-    },
-    // Optimisations de performance
-    build: {
-      ...(import.meta.env.PROD ? {
-        // En production, activer les optimisations agressives
-        cssCodeSplit: true,
-        cssMinify: true,
-        reportCompressedSize: false, // Désactiver pour accélérer le build
-      } : {}),
     },
   }
 })
