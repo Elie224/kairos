@@ -51,7 +51,22 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), request: Reque
             elif hasattr(request, 'client') and request.client:
                 client_ip = request.client.host
     
-    return await AuthService.login_user(form_data.username, form_data.password, client_ip)
+    # Logger pour debug
+    logger.info(f"Tentative de connexion pour: {form_data.username}")
+    
+    try:
+        result = await AuthService.login_user(form_data.username, form_data.password, client_ip)
+        logger.info(f"Connexion réussie pour: {form_data.username}")
+        return result
+    except HTTPException as e:
+        logger.warning(f"Échec de connexion pour {form_data.username}: {e.detail}")
+        raise
+    except Exception as e:
+        logger.error(f"Erreur inattendue lors de la connexion: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur serveur lors de la connexion"
+        )
 
 @router.post("/refresh", response_model=TokenResponse)
 async def refresh_token(request: RefreshTokenRequest):
