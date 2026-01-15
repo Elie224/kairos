@@ -42,6 +42,15 @@ export default defineConfig(({ mode }) => {
           // Vite utilisera son code splitting automatique qui est plus sûr
           manualChunks: undefined,
         },
+        // Ignorer les avertissements Three.js (BatchedMesh n'est pas critique)
+        onwarn(warning, warn) {
+          // Ignorer l'avertissement BatchedMesh de three-mesh-bvh
+          if (warning.code === 'UNRESOLVED_IMPORT' && warning.message.includes('BatchedMesh')) {
+            return;
+          }
+          // Afficher les autres avertissements
+          warn(warning);
+        },
       },
       // Augmenter la limite de taille des chunks
       chunkSizeWarningLimit: 1000,
