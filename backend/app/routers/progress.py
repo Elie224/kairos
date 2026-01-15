@@ -4,7 +4,7 @@ Routeur pour le suivi de progression - Refactorisé avec services
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from typing import List, Optional
 from app.models import Progress, ProgressCreate
-from app.utils.permissions import get_current_user
+# Authentification supprimée - toutes les routes sont publiques
 from app.services.progress_service import ProgressService
 from app.services.cached_progress_service import CachedProgressService
 from app.utils.security import InputSanitizer
@@ -17,19 +17,12 @@ router = APIRouter()
 
 @router.get("/")
 async def get_user_progress(
-    current_user: dict = Depends(get_current_user),
     module_id: Optional[str] = Query(None, description="Filtrer par module"),
     limit: int = Query(100, description="Nombre maximum d'entrées retournées")
 ):
-    """Récupère la progression de l'utilisateur"""
+    """Récupère la progression (route publique)"""
     try:
-        if not current_user or not current_user.get("id"):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
-        
-        user_id = current_user["id"]
+        user_id = "anonymous"  # Auth supprimée
         if not user_id:
             logger.warning("GET /api/progress - user_id vide")
             return []
@@ -88,20 +81,14 @@ async def create_progress(progress_data: ProgressCreate, current_user: dict = De
     progress_data.module_id = sanitized_module_id
     
     # Utiliser le service avec cache
-    return await CachedProgressService.create_or_update_progress(current_user["id"], progress_data)
+    return await CachedProgressService.create_or_update_progress("anonymous", progress_data)  # Auth supprimée
 
 
 @router.get("/stats")
-async def get_progress_stats(current_user: dict = Depends(get_current_user)):
-    """Récupère les statistiques de progression"""
+async def get_progress_stats():
+    """Récupère les statistiques de progression (route publique)"""
     try:
-        if not current_user or not current_user.get("id"):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
-        
-        user_id = current_user["id"]
+        user_id = "anonymous"  # Auth supprimée
         if not user_id:
             logger.warning("GET /api/progress/stats - user_id vide")
             return {
@@ -186,7 +173,7 @@ async def get_module_progress(
     if not sanitized_id:
         raise HTTPException(status_code=400, detail="ID de module invalide")
     
-    progress = await CachedProgressService.get_module_progress(current_user["id"], sanitized_id)
+    progress = await CachedProgressService.get_module_progress("anonymous", sanitized_id)  # Auth supprimée
     if not progress:
         raise HTTPException(status_code=404, detail="Progression non trouvée")
     

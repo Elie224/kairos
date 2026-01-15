@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, UploadFile, File, Form
 from fastapi.responses import StreamingResponse
 from typing import List, Optional
 from app.models import AIChatRequest, AIChatResponse, QuizGenerateRequest, QuizResponse, ImmersiveContextRequest, ImmersiveContextResponse
-from app.utils.permissions import get_current_user
+# Authentification supprimée - toutes les routes sont publiques
 from app.services.ai_service import AIService
 from app.services.ai_routing_service import AIRoutingService
 import json
@@ -37,10 +37,10 @@ router = APIRouter()
 
 
 @router.post("/chat", response_model=AIChatResponse)
-async def chat_with_ai(request: AIChatRequest, current_user: dict = Depends(get_current_user)):
-    """Chat avec Kaïros (mode standard, Expert ou Research) avec cache intelligent et historique"""
+async def chat_with_ai(request: AIChatRequest):
+    """Chat avec Kaïros (mode standard, Expert ou Research) avec cache intelligent et historique (route publique)"""
     language = request.language or "fr"
-    user_id = current_user.get("id")
+    user_id = "anonymous"  # Auth supprimée
     
     # Récupérer l'historique de conversation de l'utilisateur si non fourni par le frontend
     conversation_history = request.conversation_history
@@ -129,10 +129,10 @@ async def chat_with_ai(request: AIChatRequest, current_user: dict = Depends(get_
 
 
 @router.post("/chat/stream")
-async def chat_with_ai_stream(request: AIChatRequest, current_user: dict = Depends(get_current_user)):
-    """Chat avec Kaïros en streaming (optimisé pour 100k utilisateurs) avec historique de conversation"""
+async def chat_with_ai_stream(request: AIChatRequest):
+    """Chat avec Kaïros en streaming (optimisé pour 100k utilisateurs) avec historique de conversation (route publique)"""
     language = request.language or "fr"
-    user_id = current_user.get("id")
+    user_id = "anonymous"  # Auth supprimée
     
     # Récupérer le contexte du module si disponible
     context = None
@@ -272,14 +272,13 @@ async def chat_with_ai_stream_files(
     expert_mode: bool = Form(False),
     research_mode: bool = Form(False),
     conversation_history: Optional[str] = Form(None),  # JSON string
-    files: List[UploadFile] = File([]),
-    current_user: dict = Depends(get_current_user)
+    files: List[UploadFile] = File([])
 ):
     """
     Chat avec Kaïros en streaming avec support des fichiers/images.
-    Utilise OpenAI Vision pour analyser les images.
+    Utilise OpenAI Vision pour analyser les images. (route publique)
     """
-    user_id = current_user.get("id")
+    user_id = "anonymous"  # Auth supprimée
     
     # Parser l'historique de conversation si fourni
     parsed_history = None
@@ -486,8 +485,8 @@ async def chat_with_ai_stream_files(
 
 
 @router.post("/immersive-context", response_model=ImmersiveContextResponse)
-async def get_immersive_context(request: ImmersiveContextRequest, current_user: dict = Depends(get_current_user)):
-    """Obtient un contexte IA pour une expérience immersive"""
+async def get_immersive_context(request: ImmersiveContextRequest):
+    """Obtient un contexte IA pour une expérience immersive (route publique)"""
     return await AIService.get_immersive_context(
         module_id=request.module_id,
         mode=request.mode,
@@ -496,8 +495,8 @@ async def get_immersive_context(request: ImmersiveContextRequest, current_user: 
 
 
 @router.post("/generate-quiz", response_model=QuizResponse)
-async def generate_quiz(request: QuizGenerateRequest, current_user: dict = Depends(get_current_user)):
-    """Génère un quiz personnalisé basé sur un module"""
+async def generate_quiz(request: QuizGenerateRequest):
+    """Génère un quiz personnalisé basé sur un module (route publique)"""
     # Validation serveur stricte du nombre de questions (max 50)
     if request.num_questions < 1 or request.num_questions > 50:
         from fastapi import HTTPException, status

@@ -12,7 +12,7 @@ from app.models import (
 )
 from app.services.quiz_service import QuizService
 from app.services.cached_quiz_service import CachedQuizService
-from app.utils.permissions import get_current_user, require_admin
+# Authentification supprimée - toutes les routes sont publiques
 
 router = APIRouter()
 
@@ -20,8 +20,7 @@ router = APIRouter()
 @router.get("/module/{module_id}", response_model=QuizResponse)
 async def get_module_quiz(
     module_id: str,
-    num_questions: int = Query(50, ge=1, le=50, description="Nombre de questions à retourner"),
-    current_user: dict = Depends(get_current_user)
+    num_questions: int = Query(50, ge=1, le=50, description="Nombre de questions à retourner")
 ):
     """
     Récupère le quiz d'un module.
@@ -41,8 +40,7 @@ async def get_module_quiz(
 
 @router.post("/generate", response_model=QuizResponse)
 async def generate_quiz(
-    request: QuizGenerateRequest,
-    current_user: dict = Depends(get_current_user)
+    request: QuizGenerateRequest
 ):
     """
     Génère ou récupère le quiz d'un module.
@@ -64,11 +62,10 @@ async def generate_quiz(
 
 @router.post("/regenerate", response_model=QuizResponse)
 async def regenerate_quiz(
-    request: QuizGenerateRequest,
-    admin_user: dict = Depends(require_admin)
+    request: QuizGenerateRequest
 ):
     """
-    Force la régénération d'un quiz pour un module (admin seulement).
+    Force la régénération d'un quiz pour un module (route publique).
     Utile pour mettre à jour un quiz existant.
     """
     difficulty = request.difficulty.value if request.difficulty else None
