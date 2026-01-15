@@ -20,6 +20,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Profile = lazy(() => import('./pages/Profile'))
 const Settings = lazy(() => import('./pages/Settings'))
 const Support = lazy(() => import('./pages/Support'))
+const Feedback = lazy(() => import('./pages/Feedback'))
 const Admin = lazy(() => import('./pages/Admin'))
 const Exams = lazy(() => import('./pages/Exams'))
 const ExamDetail = lazy(() => import('./pages/ExamDetail'))
@@ -111,6 +112,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Support />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/feedback" 
+            element={
+              <ProtectedRoute>
+                <Feedback />
               </ProtectedRoute>
             } 
           />

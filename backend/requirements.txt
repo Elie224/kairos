@@ -26,5 +26,8 @@ gunicorn>=21.2.0
 stripe>=7.0.0
 PyMuPDF>=1.23.0
 python-snappy>=0.7.0
+prometheus-client>=0.20.0
+celery>=5.3.0
+redis>=5.0.0
 
 

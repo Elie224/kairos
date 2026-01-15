@@ -29,7 +29,7 @@ except ImportError:
     # Redis est optionnel
     init_redis = None
     close_redis = None
-from app.routers import auth, modules, ai_tutor, progress, badges, favorites, recommendations, support, quiz, exam, validation, td, tp, adaptive_learning, pathways, exercise_generator, error_learning, analytics, anti_cheat, virtual_labs, avatar, gamification, collaboration, gdpr, subscriptions, prompt_router, user_history, resources, openai_content
+from app.routers import auth, modules, ai_tutor, progress, badges, favorites, recommendations, support, quiz, exam, validation, td, tp, adaptive_learning, pathways, exercise_generator, error_learning, analytics, anti_cheat, virtual_labs, avatar, gamification, collaboration, gdpr, subscriptions, prompt_router, user_history, resources, openai_content, feedback, pedagogical_memory
 from app.middleware.error_handler import (
     validation_exception_handler,
     http_exception_handler,
@@ -45,6 +45,8 @@ from app.middleware.request_size import RequestSizeLimitMiddleware
 from app.middleware.registration_rate_limit import RegistrationRateLimitMiddleware
 from app.middleware.performance import PerformanceMiddleware
 from app.middleware.health_check import HealthCheckMiddleware
+from app.middleware.prometheus_middleware import PrometheusMiddleware
+from app.middleware.abuse_detection import AbuseDetectionMiddleware
 # CSRF middleware optionnel (peut être désactivé pour les API pures)
 try:
     from app.middleware.csrf import CSRFMiddleware
@@ -78,19 +80,35 @@ async def lifespan(app: FastAPI):
     if init_postgres:
         try:
             logger.info("Initialisation PostgreSQL...")
-            init_postgres()
-            postgres_connected = True
-            logger.info("✅ PostgreSQL initialisé avec succès")
+            # Vérifier si PostgreSQL est réellement configuré avant d'initialiser
+            from app.database.postgres import IS_POSTGRES_CONFIGURED, engine
+            from sqlalchemy import text
+            if IS_POSTGRES_CONFIGURED and engine is not None:
+                init_postgres()
+                # Tester la connexion pour confirmer
+                try:
+                    with engine.connect() as conn:
+                        conn.execute(text("SELECT 1"))
+                    postgres_connected = True
+                    logger.info("✅ PostgreSQL initialisé et connecté avec succès")
+                except Exception as conn_error:
+                    logger.warning(f"⚠️  PostgreSQL configuré mais connexion échouée: {conn_error}")
+                    logger.warning("   L'application continuera avec MongoDB uniquement")
+                    postgres_connected = False
+            else:
+                logger.info("ℹ️  PostgreSQL non configuré - Utilisation MongoDB uniquement")
+                logger.info("   Pour activer PostgreSQL sur Render, configurez les variables d'environnement:")
+                logger.info("   - POSTGRES_HOST (doit être différent de localhost)")
+                logger.info("   - POSTGRES_USER")
+                logger.info("   - POSTGRES_PASSWORD")
+                logger.info("   - POSTGRES_DB")
+                postgres_connected = False
         except Exception as e:
             logger.warning(f"⚠️  PostgreSQL non disponible: {e}")
             logger.warning("   L'application continuera avec MongoDB uniquement")
-            logger.warning("   Pour activer PostgreSQL:")
-            logger.warning("   1. Démarrez PostgreSQL: docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres:15-alpine")
-            logger.warning("   2. Créez la base: CREATE DATABASE eduverse;")
-            logger.warning("   3. Vérifiez les variables POSTGRES_* dans .env")
             postgres_connected = False
     else:
-        logger.info("PostgreSQL désactivé - Utilisation MongoDB uniquement")
+        logger.info("ℹ️  PostgreSQL désactivé - Utilisation MongoDB uniquement")
     
     # Initialiser Redis si disponible (optionnel mais recommandé pour la performance)
     redis_connected = False
@@ -100,24 +118,27 @@ async def lifespan(app: FastAPI):
             from app.utils.cache import get_redis
             redis = get_redis()
             if redis:
-                await redis.ping()
-                redis_connected = True
-                logger.info("✅ Redis connecté - Cache activé (performance optimale)")
+                try:
+                    await redis.ping()
+                    redis_connected = True
+                    logger.info("✅ Redis connecté - Cache activé (performance optimale)")
+                except Exception as ping_error:
+                    logger.info(f"ℹ️  Redis configuré mais connexion échouée: {ping_error}")
+                    logger.info("   L'application fonctionnera sans cache")
+                    redis_connected = False
             else:
-                logger.warning("⚠️  Redis non configuré ou connexion refusée")
-                logger.warning("   Cache désactivé (performance réduite)")
-                logger.warning("   Solutions:")
-                logger.warning("   1. Démarrez Redis: docker run -d -p 6379:6379 --name kairos-redis redis:7-alpine")
-                logger.warning("   2. Vérifiez REDIS_URL dans .env: REDIS_URL=redis://localhost:6379/0")
-                logger.warning("   3. Vérifiez que le port 6379 n'est pas bloqué par un firewall")
+                logger.info("ℹ️  Redis non configuré - Cache désactivé (optionnel)")
+                logger.info("   Pour activer Redis et améliorer les performances:")
+                logger.info("   1. Sur Render: Créez un service Redis et configurez REDIS_URL")
+                logger.info("   2. Localement: docker run -d -p 6379:6379 --name kairos-redis redis:7-alpine")
+                logger.info("   3. Configurez REDIS_URL dans .env: REDIS_URL=redis://localhost:6379/0")
         except Exception as e:
-            logger.warning(f"⚠️  Redis non disponible: {e}")
-            logger.warning("   L'application fonctionnera sans cache (performance réduite)")
-            logger.warning("   Consultez backend/DEMARRER_REDIS.md pour plus d'informations")
+            logger.info(f"ℹ️  Redis non disponible: {e}")
+            logger.info("   L'application fonctionnera sans cache (Redis est optionnel)")
     else:
-        logger.warning("⚠️  Redis non disponible - Cache désactivé")
-        logger.warning("   Installez redis: pip install redis[hiredis]")
-        logger.warning("   Configurez REDIS_URL dans .env")
+        logger.info("ℹ️  Redis non disponible - Cache désactivé (optionnel)")
+        logger.info("   Pour activer Redis, installez: pip install redis[hiredis]")
+        logger.info("   Et configurez REDIS_URL dans .env")
     
     yield
     
@@ -135,9 +156,90 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Kaïros API",
-    description="API pour la plateforme d'apprentissage immersif avec IA",
+    description="""
+    ## API pour la plateforme d'apprentissage immersif avec IA
+    
+    Kaïros est une plateforme éducative innovante qui combine l'apprentissage traditionnel avec des technologies immersives (AR/VR) et l'intelligence artificielle.
+    
+    ### Fonctionnalités principales:
+    
+    * **Modules d'apprentissage**: Gestion de modules éducatifs avec contenu structuré
+    * **IA Tutor (Kaïrox)**: Assistant pédagogique intelligent pour l'aide aux étudiants
+    * **Examens et Quiz**: Génération automatique d'examens et quiz adaptatifs
+    * **TD et TP**: Travaux dirigés et pratiques générés par IA
+    * **Expériences immersives**: Support AR/VR pour l'apprentissage
+    * **Suivi de progression**: Suivi détaillé de la progression des étudiants
+    * **Badges et gamification**: Système de badges et récompenses
+    * **Apprentissage adaptatif**: Adaptation du contenu selon le profil de l'étudiant
+    * **Feedback utilisateur**: Système de feedback pour améliorer l'expérience
+    
+    ### Authentification
+    
+    L'API utilise JWT (JSON Web Tokens) pour l'authentification. 
+    Obtenez un token via `/api/auth/login` et incluez-le dans l'en-tête `Authorization: Bearer <token>`.
+    
+    ### Rate Limiting
+    
+    L'API applique des limites de taux pour protéger les ressources:
+    * **Général**: 60 requêtes/minute par IP
+    * **Inscriptions**: 3/heure, 5/jour par IP
+    * **Endpoints IA**: 20/minute, 100/heure par utilisateur
+    
+    ### Support
+    
+    Pour toute question ou problème, contactez le support via `/api/support/contact` ou consultez la documentation complète.
+    """,
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
+    contact={
+        "name": "Support Kaïros",
+        "url": "https://kairos-frontend-hjg9.onrender.com/support",
+        "email": "support@kairos.education"
+    },
+    license_info={
+        "name": "Proprietary",
+        "url": "https://kairos-frontend-hjg9.onrender.com"
+    },
+    servers=[
+        {
+            "url": "https://kairos-0aoy.onrender.com",
+            "description": "Production server"
+        },
+        {
+            "url": "http://localhost:8000",
+            "description": "Development server"
+        }
+    ],
+    tags_metadata=[
+        {
+            "name": "Authentication",
+            "description": "Endpoints pour l'authentification et la gestion des utilisateurs"
+        },
+        {
+            "name": "Modules",
+            "description": "Gestion des modules d'apprentissage"
+        },
+        {
+            "name": "AI Tutor",
+            "description": "Interactions avec l'assistant IA Kaïrox"
+        },
+        {
+            "name": "Exams",
+            "description": "Génération et gestion des examens"
+        },
+        {
+            "name": "Progress",
+            "description": "Suivi de la progression des étudiants"
+        },
+        {
+            "name": "Feedback",
+            "description": "Système de feedback utilisateur"
+        },
+        {
+            "name": "Admin",
+            "description": "Endpoints d'administration (accès restreint)"
+        }
+    ]
 )
 
 # Middlewares de sécurité (ordre important - du plus général au plus spécifique)
@@ -188,6 +290,12 @@ if CSRF_AVAILABLE and settings.enable_csrf:
     logger.info("✅ Protection CSRF activée")
 else:
     logger.info("⚠️  Protection CSRF désactivée (normal pour les API REST)")
+
+# 8. Prometheus Middleware pour les métriques
+app.add_middleware(PrometheusMiddleware)
+
+# 9. Abuse Detection Middleware
+app.add_middleware(AbuseDetectionMiddleware)
 
 # 7. Configuration CORS (dynamique selon l'environnement)
 # En développement, autoriser localhost par défaut
@@ -364,6 +472,8 @@ app.include_router(collaboration.router, prefix="/api/collaboration", tags=["Col
 app.include_router(gdpr.router, prefix="/api/gdpr", tags=["RGPD"])
 app.include_router(subscriptions.router, prefix="/api/subscriptions", tags=["Abonnements"])
 app.include_router(openai_content.router, prefix="/api", tags=["OpenAI Content Generation"])
+app.include_router(feedback.router, prefix="/api/feedback", tags=["Feedback Utilisateur"])
+app.include_router(pedagogical_memory.router, prefix="/api/pedagogical-memory", tags=["Mémoire Pédagogique"])
 
 @app.get("/")
 @app.head("/")  # Support HEAD pour les health checks Render

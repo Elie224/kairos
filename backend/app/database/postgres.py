@@ -77,7 +77,10 @@ if IS_POSTGRES_CONFIGURED:
         IS_POSTGRES_CONFIGURED = False
         engine = None
 else:
-    logger.info("PostgreSQL non configuré - Host: localhost non autorisé en production")
+    if is_production:
+        logger.info("ℹ️  PostgreSQL non configuré - Host: localhost non autorisé en production")
+    else:
+        logger.info("ℹ️  PostgreSQL non configuré - Host: localhost (développement local uniquement)")
     POSTGRES_URL = None
     engine = None
 
@@ -123,7 +126,7 @@ def init_postgres():
     """Initialise les tables PostgreSQL"""
     # Vérifier d'abord si PostgreSQL est configuré
     if not IS_POSTGRES_CONFIGURED:
-        logger.info("PostgreSQL non configuré - Skipping initialization")
+        logger.info("ℹ️  PostgreSQL non configuré - Initialisation ignorée (optionnel)")
         logger.info(f"  POSTGRES_HOST={POSTGRES_HOST} (doit être différent de localhost en production)")
         logger.info(f"  POSTGRES_USER={POSTGRES_USER}")
         logger.info(f"  POSTGRES_DB={POSTGRES_DB}")

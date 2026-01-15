@@ -284,6 +284,19 @@ class AIService:
         expert_mode: Si True, utilise GPT-5.2 avec prompt Expert pour explications approfondies
         research_mode: Si True, utilise GPT-5.2 Pro avec prompt Research AI
         """
+        # 0. Adapter selon la mémoire pédagogique (si user_id fourni)
+        adaptation = {}
+        if user_id and module_id:
+            try:
+                from app.services.pedagogical_memory_service import PedagogicalMemoryService
+                from app.repositories.module_repository import ModuleRepository
+                module = await ModuleRepository.find_by_id(module_id)
+                if module:
+                    subject = module.get("subject", "").lower()
+                    adaptation = await PedagogicalMemoryService.adapt_explanation(user_id, subject)
+            except Exception as e:
+                logger.debug(f"Erreur adaptation mémoire pédagogique: {e}")
+        
         # 1. Vérifier le cache/historique utilisateur (si user_id fourni)
         if user_id:
             try:

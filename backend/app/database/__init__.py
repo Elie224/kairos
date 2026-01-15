@@ -11,9 +11,11 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 database_file = os.path.join(parent_dir, 'database.py')
 
 if os.path.exists(database_file):
-    spec = importlib.util.spec_from_file_location("app.database_mongo", database_file)
+    spec = importlib.util.spec_from_file_location("app.database", database_file)
     mongo_db = importlib.util.module_from_spec(spec)
+    # Créer aussi l'alias database_mongo pour compatibilité avec les logs
     sys.modules["app.database_mongo"] = mongo_db
+    sys.modules["app.database"] = mongo_db
     spec.loader.exec_module(mongo_db)
     
     # Réexporter les fonctions MongoDB

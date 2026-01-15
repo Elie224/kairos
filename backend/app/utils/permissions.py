@@ -1,55 +1,66 @@
 """
-Utilitaires pour la gestion des permissions et rôles
+Utilitaires pour les permissions et l'authentification
 """
-from fastapi import HTTPException, status, Depends
-from fastapi.security import OAuth2PasswordBearer
-from typing import Dict, Any
+from fastapi import Depends, HTTPException, status, Request
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.services.auth_service import AuthService
+from typing import Optional
 import logging
 
 logger = logging.getLogger(__name__)
 
-# OAuth2 scheme pour l'authentification
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+security = HTTPBearer()
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
-    """Récupère l'utilisateur actuel depuis le token"""
-    return await AuthService.get_current_user_from_token(token)
-
-
-async def require_admin(current_user: Dict[str, Any] = Depends(get_current_user)) -> Dict[str, Any]:
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
     """
-    Dépendance FastAPI qui vérifie que l'utilisateur est admin.
-    À utiliser dans les endpoints qui nécessitent des permissions admin.
-    
-    Usage:
-        @router.post("/admin-only")
-        async def admin_endpoint(admin_user: dict = Depends(require_admin)):
-            ...
+    Récupère l'utilisateur actuel depuis le token JWT
+    """
+    try:
+        token = credentials.credentials
+        user = AuthService.decode_token(token)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token invalide ou expiré",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        return user
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Erreur lors de la récupération de l'utilisateur: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Erreur d'authentification",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+
+async def get_current_user_optional(request: Request) -> Optional[dict]:
+    """
+    Récupère l'utilisateur actuel de manière optionnelle (ne lève pas d'exception si absent)
+    Utile pour les middlewares qui doivent fonctionner même sans authentification
+    """
+    try:
+        authorization = request.headers.get("Authorization")
+        if not authorization or not authorization.startswith("Bearer "):
+            return None
+        
+        token = authorization.replace("Bearer ", "")
+        user = AuthService.decode_token(token)
+        return user
+    except Exception:
+        return None
+
+
+async def require_admin(current_user: dict = Depends(get_current_user)) -> dict:
+    """
+    Vérifie que l'utilisateur est administrateur
     """
     if not current_user.get("is_admin", False):
-        logger.warning(f"Tentative d'accès admin par un utilisateur non-admin: {current_user.get('id')}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Accès refusé: cette opération nécessite des permissions administrateur"
+            detail="Accès réservé aux administrateurs"
         )
     return current_user
-
-
-def is_admin(user: Dict[str, Any]) -> bool:
-    """Vérifie si un utilisateur est admin"""
-    return user.get("is_admin", False)
-
-
-def require_admin_sync(user: Dict[str, Any]) -> None:
-    """
-    Vérifie de manière synchrone si un utilisateur est admin.
-    Lève une exception si ce n'est pas le cas.
-    """
-    if not is_admin(user):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Accès refusé: cette opération nécessite des permissions administrateur"
-        )
-
