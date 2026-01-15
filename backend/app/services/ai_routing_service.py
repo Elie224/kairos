@@ -172,7 +172,11 @@ class AIRoutingService:
             return
         
         # Utiliser GPT-5.2 avec vision si des images sont présentes
-        model = force_model or "gpt-5.2"  # GPT-5.2 supporte la vision
+        model = force_model or GPT_5_2_MODEL  # GPT-5.2 supporte la vision
+        # Mapper le modèle fictif vers le vrai modèle OpenAI
+        actual_model = map_to_real_model(model)
+        if model != actual_model:
+            logger.debug(f"Modèle '{model}' mappé vers '{actual_model}' (modèle réel OpenAI)")
         
         try:
             # Construire le contexte système
@@ -230,13 +234,13 @@ LANGUE : Réponds TOUJOURS en {language}"""
             max_tokens_value = 4000
             temperature_value = 0.7
             create_params = {
-                "model": model,
+                "model": actual_model,  # Utiliser le modèle réel mappé
                 "messages": messages,
                 "stream": True,
                 "timeout": 120.0
             }
-            create_params.update(_get_max_tokens_param(model, max_tokens_value))
-            create_params.update(_get_temperature_param(model, temperature_value))
+            create_params.update(_get_max_tokens_param(actual_model, max_tokens_value))
+            create_params.update(_get_temperature_param(actual_model, temperature_value))
             
             stream: Stream[ChatCompletionChunk] = client.chat.completions.create(**create_params)
             
