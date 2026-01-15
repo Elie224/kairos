@@ -23,24 +23,26 @@ POSTGRES_PORT = settings.postgres_port
 POSTGRES_DB = settings.postgres_db
 
 # Vérifier si PostgreSQL est réellement configuré
-# Sur Render, si POSTGRES_HOST n'est pas défini ou pointe vers localhost, PostgreSQL n'est pas disponible
+# PostgreSQL est activé si toutes les variables nécessaires sont présentes
 # Détecter si on est sur Render (production déployée)
 is_on_render = os.getenv("RENDER") == "true" or os.getenv("RENDER_EXTERNAL_HOSTNAME") is not None
 is_production = settings.is_production or is_on_render
 
+# PostgreSQL est configuré si toutes les variables nécessaires sont présentes
+# On permet localhost même en production si l'utilisateur a explicitement configuré PostgreSQL
 IS_POSTGRES_CONFIGURED = (
     POSTGRES_HOST and 
     POSTGRES_HOST.strip() and 
-    POSTGRES_HOST.lower() not in ["localhost", "127.0.0.1"] and
     POSTGRES_USER and
-    POSTGRES_DB
-) or (
-    # En développement local uniquement, permettre localhost si PostgreSQL est démarré
-    not is_production and
-    POSTGRES_HOST in ["localhost", "127.0.0.1"] and
-    POSTGRES_USER and
-    POSTGRES_DB
+    POSTGRES_USER.strip() and
+    POSTGRES_DB and
+    POSTGRES_DB.strip()
 )
+
+# Avertissement si localhost en production (mais on permet quand même)
+if IS_POSTGRES_CONFIGURED and is_production and POSTGRES_HOST.lower() in ["localhost", "127.0.0.1"]:
+    logger.warning(f"⚠️  PostgreSQL configuré avec localhost en production - Assurez-vous que PostgreSQL est accessible")
+    logger.warning(f"   POSTGRES_HOST={POSTGRES_HOST} (sur Render, utilisez un service PostgreSQL externe)")
 
 # URL de connexion PostgreSQL avec encodage UTF-8
 # Gérer le cas où le mot de passe est vide et encoder correctement les caractères spéciaux
@@ -77,10 +79,20 @@ if IS_POSTGRES_CONFIGURED:
         IS_POSTGRES_CONFIGURED = False
         engine = None
 else:
-    if is_production:
-        logger.info("ℹ️  PostgreSQL non configuré - Host: localhost non autorisé en production")
-    else:
-        logger.info("ℹ️  PostgreSQL non configuré - Host: localhost (développement local uniquement)")
+    # PostgreSQL non configuré - variables manquantes
+    missing_vars = []
+    if not POSTGRES_HOST or not POSTGRES_HOST.strip():
+        missing_vars.append("POSTGRES_HOST")
+    if not POSTGRES_USER or not POSTGRES_USER.strip():
+        missing_vars.append("POSTGRES_USER")
+    if not POSTGRES_DB or not POSTGRES_DB.strip():
+        missing_vars.append("POSTGRES_DB")
+    
+    logger.info(f"ℹ️  PostgreSQL non configuré - Variables manquantes: {', '.join(missing_vars) if missing_vars else 'Aucune (toutes présentes mais peut-être vides)'}")
+    logger.info(f"   POSTGRES_HOST={POSTGRES_HOST or '(non défini)'}")
+    logger.info(f"   POSTGRES_USER={POSTGRES_USER or '(non défini)'}")
+    logger.info(f"   POSTGRES_DB={POSTGRES_DB or '(non défini)'}")
+    logger.info("   Pour activer PostgreSQL, configurez toutes les variables: POSTGRES_HOST, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB")
     POSTGRES_URL = None
     engine = None
 
@@ -126,11 +138,21 @@ def init_postgres():
     """Initialise les tables PostgreSQL"""
     # Vérifier d'abord si PostgreSQL est configuré
     if not IS_POSTGRES_CONFIGURED:
+        missing_vars = []
+        if not POSTGRES_HOST or not POSTGRES_HOST.strip():
+            missing_vars.append("POSTGRES_HOST")
+        if not POSTGRES_USER or not POSTGRES_USER.strip():
+            missing_vars.append("POSTGRES_USER")
+        if not POSTGRES_DB or not POSTGRES_DB.strip():
+            missing_vars.append("POSTGRES_DB")
+        
         logger.info("ℹ️  PostgreSQL non configuré - Initialisation ignorée (optionnel)")
-        logger.info(f"  POSTGRES_HOST={POSTGRES_HOST} (doit être différent de localhost en production)")
-        logger.info(f"  POSTGRES_USER={POSTGRES_USER}")
-        logger.info(f"  POSTGRES_DB={POSTGRES_DB}")
-        logger.info("  Pour activer PostgreSQL sur Render, configurez POSTGRES_HOST, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB")
+        if missing_vars:
+            logger.info(f"  Variables manquantes: {', '.join(missing_vars)}")
+        logger.info(f"  POSTGRES_HOST={POSTGRES_HOST or '(non défini)'}")
+        logger.info(f"  POSTGRES_USER={POSTGRES_USER or '(non défini)'}")
+        logger.info(f"  POSTGRES_DB={POSTGRES_DB or '(non défini)'}")
+        logger.info("  Pour activer PostgreSQL, configurez toutes les variables: POSTGRES_HOST, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB")
         return
     
     if engine is None:
