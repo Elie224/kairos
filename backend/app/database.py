@@ -19,16 +19,28 @@ async def connect_to_mongo():
         logger.info(f"Tentative de connexion à MongoDB: {settings.mongodb_url}")
         # Optimisations de performance pour MongoDB
         timeout_ms = getattr(settings, 'mongodb_timeout_ms', 5000)
+        # Optimisations pour supporter des milliers d'utilisateurs simultanés
+        # maxPoolSize augmenté pour gérer plus de connexions concurrentes
+        # minPoolSize augmenté pour maintenir plus de connexions actives
+        max_pool_size = getattr(settings, 'mongodb_max_pool_size', 200)
+        min_pool_size = getattr(settings, 'mongodb_min_pool_size', 20)
+        
         db.client = AsyncIOMotorClient(
             settings.mongodb_url,
             serverSelectionTimeoutMS=timeout_ms,
-            maxPoolSize=50,  # Pool de connexions pour la performance
-            minPoolSize=10,  # Maintenir des connexions actives
-            maxIdleTimeMS=45000,  # Fermer les connexions inactives après 45s
+            maxPoolSize=max_pool_size,  # Pool de connexions configurable
+            minPoolSize=min_pool_size,  # Maintenir plus de connexions actives
+            maxIdleTimeMS=60000,  # Fermer les connexions inactives après 60s (augmenté)
             connectTimeoutMS=10000,  # Timeout de connexion
             socketTimeoutMS=30000,  # Timeout socket
             retryWrites=True,  # Réessayer les écritures en cas d'erreur
-            retryReads=True  # Réessayer les lectures en cas d'erreur
+            retryReads=True,  # Réessayer les lectures en cas d'erreur
+            # Optimisations supplémentaires pour performance
+            waitQueueTimeoutMS=5000,  # Timeout pour attendre une connexion du pool
+            heartbeatFrequencyMS=10000,  # Fréquence de heartbeat (10s)
+            # Compression pour réduire la bande passante
+            compressors=['snappy', 'zlib'],  # Compression des données
+            zlibCompressionLevel=6  # Niveau de compression zlib (équilibré)
         )
         db.database = db.client[settings.mongodb_db_name]
         logger.info("Connexion à MongoDB établie")

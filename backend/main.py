@@ -147,8 +147,8 @@ app.add_middleware(HealthCheckMiddleware)
 # 1. Performance monitoring (en premier pour mesurer tout)
 app.add_middleware(PerformanceMiddleware)
 
-# 2. Compression GZip (en premier pour compresser toutes les réponses)
-app.add_middleware(GZipMiddleware, minimum_size=1000)  # Compresser les réponses > 1KB
+# 2. Compression GZip optimisée pour haute performance (compresser même les petites réponses)
+app.add_middleware(GZipMiddleware, minimum_size=500)  # Compresser les réponses > 500B pour réduire bande passante
 
 # 3. Logging de sécurité (en premier pour logger toutes les requêtes)
 app.add_middleware(SecurityLoggingMiddleware)

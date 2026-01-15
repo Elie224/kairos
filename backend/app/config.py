@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     # Timeout MongoDB en millisecondes (5 secondes par défaut)
     mongodb_timeout_ms: int = int(os.getenv("MONGODB_TIMEOUT_MS", "5000"))
     
+    # Configuration MongoDB pour haute performance
+    mongodb_max_pool_size: int = int(os.getenv("MONGODB_MAX_POOL_SIZE", "200"))
+    mongodb_min_pool_size: int = int(os.getenv("MONGODB_MIN_POOL_SIZE", "20"))
+    
     # Sécurité JWT - OBLIGATOIRE en production
     secret_key: str = os.getenv("SECRET_KEY", "")
     algorithm: str = "HS256"
