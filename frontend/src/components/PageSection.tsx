@@ -27,7 +27,7 @@ export const PageSection = ({
       color: 'white',
     },
     gradient: {
-      bgGradient: 'gradient.primary',
+      bgGradient: 'linear-gradient(135deg, blue.500 0%, blue.600 100%)',
       color: 'white',
     },
     glass: {

@@ -214,7 +214,7 @@ const Settings = () => {
             <HStack justify="space-between" align="center" flexWrap="wrap" gap={4}>
               <Heading 
                 size={{ base: 'lg', md: 'xl' }}
-                bgGradient="gradient.primary"
+                bgGradient="linear-gradient(135deg, blue.500 0%, blue.600 100%)"
                 bgClip="text"
                 className="gradient-text"
               >

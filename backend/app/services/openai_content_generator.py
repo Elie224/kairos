@@ -121,15 +121,17 @@ LANGUE : Génère TOUJOURS en {language}
 FORMAT: JSON valide uniquement, pas de markdown"""
 
             # Utiliser GPT-5-mini pour les TD standards (pédagogique)
-            response = client.chat.completions.create(
-                model=settings.gpt_5_mini_model,  # GPT-5-mini pour TD standards
-                messages=[
+            from app.services.ai_service import _get_max_tokens_param
+            create_params = {
+                "model": settings.gpt_5_mini_model,  # GPT-5-mini pour TD standards
+                "messages": [
                     {"role": "system", "content": "Tu es un expert en pédagogie. Génère toujours du JSON valide."},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.7,
-                max_tokens=3000
-            )
+                "temperature": 0.7,
+            }
+            create_params.update(_get_max_tokens_param(settings.gpt_5_mini_model, 3000))
+            response = client.chat.completions.create(**create_params)
             
             content = response.choices[0].message.content.strip()
             
@@ -481,12 +483,14 @@ LANGUE: Réponds TOUJOURS en {language}"""
             # Ajouter le message actuel
             messages.append({"role": "user", "content": user_message})
             
-            response = client.chat.completions.create(
-                model=settings.gpt_5_mini_model,  # GPT-5-mini pour le chat
-                messages=messages,
-                temperature=0.7,
-                max_tokens=1000
-            )
+            from app.services.ai_service import _get_max_tokens_param
+            create_params = {
+                "model": settings.gpt_5_mini_model,  # GPT-5-mini pour le chat
+                "messages": messages,
+                "temperature": 0.7,
+            }
+            create_params.update(_get_max_tokens_param(settings.gpt_5_mini_model, 1000))
+            response = client.chat.completions.create(**create_params)
             
             ai_response = response.choices[0].message.content.strip()
             

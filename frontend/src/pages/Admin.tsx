@@ -819,8 +819,8 @@ const Admin = () => {
                     <Button
                       leftIcon={<FiPlus />}
                       colorScheme="gray"
-                      bgGradient="gradient.primary"
-                      _hover={{ bgGradient: 'gradient.secondary' }}
+                      bgGradient="linear-gradient(135deg, blue.500 0%, blue.600 100%)"
+                      _hover={{ bgGradient: 'linear-gradient(135deg, blue.600 0%, blue.700 100%)' }}
                       onClick={handleCreate}
                       size={{ base: 'sm', md: 'md' }}
                       minH="48px"

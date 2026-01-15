@@ -180,7 +180,7 @@ const Login = () => {
               <Heading 
                 size={{ base: 'lg', md: 'xl' }}
                 id="login-heading"
-                bgGradient="gradient.primary"
+                bgGradient="linear-gradient(135deg, blue.500 0%, blue.600 100%)"
                 bgClip="text"
                 fontWeight="bold"
                 letterSpacing="tight"
