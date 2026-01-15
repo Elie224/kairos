@@ -267,11 +267,14 @@ const Register = () => {
         // Afficher aussi dans la console pour le débogage
         import('../utils/logger').then(({ logger }) => {
           logger.error('Erreur serveur complète', {
-          status,
-          data: responseData,
-          headers: err.response.headers
+            status,
+            data: responseData,
+            headers: err.response.headers
+          })
+        }).catch(() => {
+          // Fallback si le logger échoue
+          console.error('Détails de l\'erreur:', JSON.stringify(responseData, null, 2))
         })
-        console.error('Détails de l\'erreur:', JSON.stringify(responseData, null, 2))
       } else if (err.request) {
         // Requête envoyée mais pas de réponse
         errorMessage = "Pas de réponse du serveur. Vérifiez que le backend est démarré."
