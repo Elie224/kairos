@@ -181,8 +181,7 @@ app = FastAPI(
     
     L'API applique des limites de taux pour protéger les ressources:
     * **Général**: 60 requêtes/minute par IP
-    * **Inscriptions**: 3/heure, 5/jour par IP
-    * **Endpoints IA**: 20/minute, 100/heure par utilisateur
+    * **Endpoints IA**: 20/minute, 100/heure par IP
     
     ### Support
     
