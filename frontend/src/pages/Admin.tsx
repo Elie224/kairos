@@ -759,15 +759,15 @@ const Admin = () => {
   }
 
   return (
-    <Box bg="gray.50" minH="100vh" py={8}>
-      <Container maxW="1400px">
-        <VStack spacing={8} align="stretch">
+    <Box bgGradient="linear-gradient(180deg, blue.50 0%, white 100%)" minH="100vh" py={{ base: 4, md: 8 }} px={{ base: 4, md: 0 }}>
+      <Container maxW="1400px" px={{ base: 4, md: 6 }}>
+        <VStack spacing={{ base: 4, md: 8 }} align="stretch">
           {/* En-tête */}
           <Box>
-            <Heading size="2xl" color="gray.800" fontWeight="bold" mb={2}>
+            <Heading size={{ base: 'xl', md: '2xl' }} color="gray.800" fontWeight="bold" mb={2}>
               Administration
             </Heading>
-            <Text color="gray.600" fontSize="lg">
+            <Text color="gray.600" fontSize={{ base: 'md', md: 'lg' }}>
               Gestion complète de la plateforme Kaïrox
             </Text>
           </Box>
