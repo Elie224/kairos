@@ -226,9 +226,10 @@ const Navbar = () => {
             display={{ base: 'flex', md: 'none' }}
             onClick={onOpen}
             size="lg"
-            minW="44px"
-            minH="44px"
+            minW="48px"
+            minH="48px"
             fontSize="xl"
+            data-touch-target="true"
           />
         </Flex>
       </Box>
@@ -236,8 +237,8 @@ const Navbar = () => {
       {/* Mobile Drawer */}
       <Drawer isOpen={isOpen} placement="right" onClose={onClose} size={{ base: 'full', sm: 'xs' }}>
         <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton size="lg" minW="44px" minH="44px" />
+        <DrawerContent data-safe-area-top="true" data-safe-area-bottom="true">
+          <DrawerCloseButton size="lg" minW="48px" minH="48px" data-touch-target="true" />
           <DrawerHeader px={4} py={4} borderBottom="1px solid" borderColor="gray.200">
             <HStack spacing={2}>
               <Logo size="8" variant="default" />

@@ -26,16 +26,18 @@ const Home = () => {
       {/* Hero Section - Design Premium Amélioré */}
       <Box
         color="white"
-        py={{ base: 20, md: 32 }}
+        py={{ base: 12, md: 32 }}
+        px={{ base: 4, md: 0 }}
         position="relative"
         overflow="hidden"
-        minH={{ base: '85vh', md: '90vh' }}
+        minH={{ base: '70vh', md: '90vh' }}
         display="flex"
         alignItems="center"
         backgroundImage="url('/background.jfif')"
         backgroundSize="cover"
         backgroundPosition="center"
         backgroundRepeat="no-repeat"
+        data-hero="true"
       >
         {/* Overlay sombre pour améliorer la lisibilité */}
         <Box

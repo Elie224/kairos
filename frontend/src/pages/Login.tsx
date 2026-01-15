@@ -147,8 +147,9 @@ const Login = () => {
         <Box
           bg="rgba(255, 255, 255, 0.95)"
           backdropFilter="blur(20px)"
-          p={{ base: 5, sm: 6, md: 8 }}
-          borderRadius={{ base: '2xl', md: '3xl' }}
+          p={{ base: 6, sm: 6, md: 8 }}
+          borderRadius={{ base: 'xl', md: '3xl' }}
+          data-full-width-mobile="true"
           boxShadow="0 25px 80px -15px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.2)"
           border="1px solid"
           borderColor="rgba(255, 255, 255, 0.3)"

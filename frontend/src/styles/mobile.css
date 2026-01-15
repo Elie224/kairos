@@ -1,10 +1,10 @@
 /**
- * Styles Mobile - Optimisations pour l'affichage mobile
- * Améliore l'expérience utilisateur sur les petits écrans
+ * Styles Mobile - Optimisations complètes pour l'affichage mobile
+ * Améliore l'expérience utilisateur sur les petits écrans avec un design moderne
  */
 
 /* ============================================
-   BASE MOBILE
+   BASE MOBILE - FONDATIONS
    ============================================ */
 
 /* Viewport fix pour éviter le zoom automatique */
@@ -19,12 +19,14 @@
 * {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
   -webkit-touch-callout: none;
+  box-sizing: border-box;
 }
 
 /* Optimisation du scroll sur mobile */
 html {
   -webkit-overflow-scrolling: touch;
   overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -33,6 +35,31 @@ body {
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
   position: relative;
+  width: 100%;
+}
+
+/* ============================================
+   BREAKPOINTS MOBILE
+   ============================================ */
+
+/* Mobile Small (jusqu'à 480px) */
+@media (max-width: 480px) {
+  :root {
+    --mobile-padding: 0.75rem;
+    --mobile-gap: 0.75rem;
+    --mobile-font-base: 0.875rem;
+    --mobile-font-heading: 1.5rem;
+  }
+}
+
+/* Mobile Medium (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  :root {
+    --mobile-padding: 1rem;
+    --mobile-gap: 1rem;
+    --mobile-font-base: 0.9375rem;
+    --mobile-font-heading: 1.75rem;
+  }
 }
 
 /* ============================================
@@ -42,66 +69,113 @@ body {
 @media (max-width: 768px) {
   /* Réduction des paddings sur mobile */
   .chakra-container {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
+    padding-left: var(--mobile-padding, 1rem) !important;
+    padding-right: var(--mobile-padding, 1rem) !important;
+    max-width: 100% !important;
   }
 
   /* Espacement réduit entre les sections */
-  section {
-    padding: 2rem 1rem !important;
+  section,
+  .chakra-box[data-section] {
+    padding: 1.5rem var(--mobile-padding, 1rem) !important;
   }
 
   /* Cards plus compactes */
-  .chakra-card {
+  .chakra-card,
+  [class*="Card"] {
     padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    border-radius: 1rem !important;
   }
 
   /* Headings plus petits sur mobile */
-  h1 {
-    font-size: 1.75rem !important;
+  h1,
+  .chakra-heading[data-heading="h1"] {
+    font-size: var(--mobile-font-heading, 1.75rem) !important;
     line-height: 1.2 !important;
+    margin-bottom: 1rem !important;
   }
 
-  h2 {
+  h2,
+  .chakra-heading[data-heading="h2"] {
     font-size: 1.5rem !important;
     line-height: 1.3 !important;
+    margin-bottom: 0.875rem !important;
   }
 
-  h3 {
+  h3,
+  .chakra-heading[data-heading="h3"] {
     font-size: 1.25rem !important;
     line-height: 1.4 !important;
+    margin-bottom: 0.75rem !important;
   }
 
   /* Textes plus lisibles */
-  p {
-    font-size: 0.9375rem !important;
+  p,
+  .chakra-text {
+    font-size: var(--mobile-font-base, 0.9375rem) !important;
     line-height: 1.6 !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* VStack et HStack avec espacement réduit */
+  .chakra-stack {
+    gap: var(--mobile-gap, 1rem) !important;
+  }
+
+  .chakra-vstack {
+    gap: var(--mobile-gap, 1rem) !important;
+  }
+
+  .chakra-hstack {
+    gap: var(--mobile-gap, 1rem) !important;
+    flex-wrap: wrap !important;
   }
 }
 
 /* ============================================
-   BOUTONS MOBILE
+   BOUTONS MOBILE - OPTIMISATION TOUCH
    ============================================ */
 
 @media (max-width: 768px) {
   /* Boutons plus grands pour faciliter le clic */
   button,
-  .chakra-button {
-    min-height: 44px !important; /* Taille minimale recommandée pour le touch */
-    padding: 0.75rem 1.5rem !important;
+  .chakra-button,
+  [role="button"] {
+    min-height: 48px !important; /* Taille minimale recommandée pour le touch (augmentée) */
+    min-width: 48px !important;
+    padding: 0.875rem 1.5rem !important;
     font-size: 1rem !important;
     border-radius: 0.75rem !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
   }
 
   /* Boutons full width sur mobile */
   .chakra-button[data-full-width="true"],
-  button.full-width-mobile {
+  button.full-width-mobile,
+  .chakra-button[width="100%"] {
     width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Boutons avec icônes */
+  .chakra-button[data-icon-only] {
+    min-width: 48px !important;
+    min-height: 48px !important;
+    padding: 0.75rem !important;
+  }
+
+  /* Feedback visuel au touch */
+  button:active,
+  .chakra-button:active {
+    transform: scale(0.96) !important;
+    opacity: 0.9 !important;
   }
 }
 
 /* ============================================
-   FORMULAIRES MOBILE
+   FORMULAIRES MOBILE - UX OPTIMISÉE
    ============================================ */
 
 @media (max-width: 768px) {
@@ -112,67 +186,137 @@ body {
   .chakra-input,
   .chakra-textarea,
   .chakra-select {
-    min-height: 44px !important;
+    min-height: 48px !important;
     font-size: 16px !important; /* Évite le zoom automatique sur iOS */
-    padding: 0.75rem 1rem !important;
+    padding: 0.875rem 1rem !important;
     border-radius: 0.75rem !important;
+    width: 100% !important;
+    border-width: 2px !important;
   }
 
-  /* Labels plus espacés */
+  /* Focus visible sur mobile */
+  input:focus,
+  textarea:focus,
+  select:focus,
+  .chakra-input:focus,
+  .chakra-textarea:focus,
+  .chakra-select:focus {
+    border-width: 2px !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2) !important;
+  }
+
+  /* Labels plus espacés et visibles */
   label,
-  .chakra-form__label {
-    margin-bottom: 0.5rem !important;
+  .chakra-form__label,
+  .chakra-form-label {
+    margin-bottom: 0.625rem !important;
     font-size: 0.9375rem !important;
     font-weight: 600 !important;
+    color: #1a202c !important;
+    display: block !important;
   }
 
   /* Form controls avec espacement */
   .chakra-form-control {
-    margin-bottom: 1.25rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  /* Groupes de champs */
+  .chakra-form-control-group {
+    gap: 1rem !important;
+  }
+
+  /* Messages d'erreur */
+  .chakra-form__error-message {
+    font-size: 0.875rem !important;
+    margin-top: 0.5rem !important;
+    padding: 0.5rem !important;
+    border-radius: 0.5rem !important;
   }
 }
 
 /* ============================================
-   NAVIGATION MOBILE
+   NAVIGATION MOBILE - HAMBURGER MENU
    ============================================ */
 
 @media (max-width: 768px) {
   /* Navbar plus compacte */
   nav,
-  .chakra-nav {
+  .chakra-nav,
+  [role="navigation"] {
     padding: 0.75rem 1rem !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    backdrop-filter: blur(10px) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
   }
 
   /* Menu hamburger plus visible */
   .chakra-menu__button,
   [aria-label*="menu"],
-  [aria-label*="Menu"] {
-    min-width: 44px !important;
-    min-height: 44px !important;
-    padding: 0.5rem !important;
+  [aria-label*="Menu"],
+  button[aria-label*="menu"] {
+    min-width: 48px !important;
+    min-height: 48px !important;
+    padding: 0.75rem !important;
+    border-radius: 0.5rem !important;
   }
 
   /* Drawer full screen sur mobile */
   .chakra-drawer__content {
     width: 100% !important;
     max-width: 100% !important;
+    border-radius: 0 !important;
+  }
+
+  /* Liens de navigation dans le drawer */
+  .chakra-drawer a,
+  .chakra-drawer button {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    padding: 1rem !important;
+    min-height: 48px !important;
+    font-size: 1rem !important;
+  }
+
+  /* Logo dans la navbar */
+  nav img,
+  nav [class*="logo"] {
+    max-height: 40px !important;
+    width: auto !important;
   }
 }
 
 /* ============================================
-   CARDS ET GRIDS MOBILE
+   CARDS ET GRIDS MOBILE - LAYOUT OPTIMISÉ
    ============================================ */
 
 @media (max-width: 768px) {
   /* Cards en colonne unique */
-  .chakra-simple-grid {
+  .chakra-simple-grid,
+  [class*="SimpleGrid"] {
     grid-template-columns: 1fr !important;
     gap: 1rem !important;
   }
 
   /* Cards avec padding réduit */
-  .chakra-card {
+  .chakra-card,
+  [class*="Card"] {
     margin-bottom: 1rem !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Grid responsive */
+  .chakra-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Flexbox responsive */
+  .chakra-flex[data-responsive] {
+    flex-direction: column !important;
   }
 
   /* Espacement réduit dans les VStack */
@@ -182,10 +326,19 @@ body {
 }
 
 /* ============================================
-   TABLES MOBILE
+   TABLES MOBILE - SCROLL HORIZONTAL
    ============================================ */
 
 @media (max-width: 768px) {
+  /* Container pour tables scrollables */
+  .table-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+    margin: 0 -1rem !important;
+    padding: 0 1rem !important;
+  }
+
   /* Tables scrollables horizontalement */
   table,
   .chakra-table {
@@ -193,6 +346,15 @@ body {
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
     width: 100% !important;
+    min-width: 600px !important;
+  }
+
+  /* Headers de table sticky */
+  .chakra-table thead {
+    position: sticky !important;
+    top: 0 !important;
+    background: white !important;
+    z-index: 10 !important;
   }
 
   /* Masquer certaines colonnes sur mobile */
@@ -200,16 +362,25 @@ body {
   .chakra-table td:nth-child(n+4) {
     display: none !important;
   }
+
+  /* Colonnes importantes toujours visibles */
+  .chakra-table th:first-child,
+  .chakra-table td:first-child,
+  .chakra-table th:nth-child(2),
+  .chakra-table td:nth-child(2) {
+    display: table-cell !important;
+  }
 }
 
 /* ============================================
-   MODALS ET DIALOGS MOBILE
+   MODALS ET DIALOGS MOBILE - FULL SCREEN
    ============================================ */
 
 @media (max-width: 768px) {
   /* Modals full screen sur mobile */
   .chakra-modal__content-container {
     padding: 0 !important;
+    margin: 0 !important;
   }
 
   .chakra-modal__content {
@@ -219,19 +390,47 @@ body {
     height: 100vh !important;
     max-height: 100vh !important;
     border-radius: 0 !important;
+    padding: 1rem !important;
   }
 
   /* Close button plus visible */
   .chakra-modal__close-btn {
-    min-width: 44px !important;
-    min-height: 44px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
     top: 1rem !important;
     right: 1rem !important;
+    z-index: 1001 !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-radius: 50% !important;
+  }
+
+  /* Modal header */
+  .chakra-modal__header {
+    padding: 1rem !important;
+    font-size: 1.25rem !important;
+  }
+
+  /* Modal body */
+  .chakra-modal__body {
+    padding: 1rem !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Modal footer */
+  .chakra-modal__footer {
+    padding: 1rem !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+
+  .chakra-modal__footer button {
+    width: 100% !important;
   }
 }
 
 /* ============================================
-   IMAGES ET MEDIA MOBILE
+   IMAGES ET MEDIA MOBILE - RESPONSIVE
    ============================================ */
 
 @media (max-width: 768px) {
@@ -239,6 +438,7 @@ body {
   img {
     max-width: 100% !important;
     height: auto !important;
+    display: block !important;
   }
 
   /* Vidéos responsives */
@@ -246,71 +446,104 @@ body {
   iframe {
     max-width: 100% !important;
     height: auto !important;
+    border-radius: 0.75rem !important;
+  }
+
+  /* Background images */
+  [style*="background-image"] {
+    background-size: cover !important;
+    background-position: center !important;
   }
 }
 
 /* ============================================
-   UTILITAIRES MOBILE
+   UTILITAIRES MOBILE - CLASSES HELPERS
    ============================================ */
 
 /* Masquer sur mobile */
 @media (max-width: 768px) {
-  .hide-mobile {
+  .hide-mobile,
+  [data-hide-mobile="true"] {
     display: none !important;
   }
 }
 
 /* Afficher uniquement sur mobile */
 @media (min-width: 769px) {
-  .show-mobile-only {
+  .show-mobile-only,
+  [data-show-mobile-only="true"] {
     display: none !important;
   }
 }
 
 @media (max-width: 768px) {
-  .show-mobile-only {
+  .show-mobile-only,
+  [data-show-mobile-only="true"] {
     display: block !important;
   }
 }
 
 /* Text align center sur mobile */
 @media (max-width: 768px) {
-  .text-center-mobile {
+  .text-center-mobile,
+  [data-text-center-mobile="true"] {
     text-align: center !important;
   }
 }
 
 /* Full width sur mobile */
 @media (max-width: 768px) {
-  .full-width-mobile {
+  .full-width-mobile,
+  [data-full-width-mobile="true"] {
     width: 100% !important;
     max-width: 100% !important;
   }
 }
 
+/* Stack vertical sur mobile */
+@media (max-width: 768px) {
+  .stack-mobile,
+  [data-stack-mobile="vertical"] {
+    flex-direction: column !important;
+  }
+}
+
 /* ============================================
-   TOUCH OPTIMIZATIONS
+   TOUCH OPTIMIZATIONS - ZONES DE TOUCH
    ============================================ */
 
 /* Zone de touch optimale */
-.touch-target {
-  min-width: 44px;
-  min-height: 44px;
+.touch-target,
+[data-touch-target="true"] {
+  min-width: 48px;
+  min-height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 /* Amélioration du feedback tactile */
 button:active,
 a:active,
-.touch-target:active {
-  transform: scale(0.98);
+.touch-target:active,
+[data-touch-target="true"]:active {
+  transform: scale(0.96);
   transition: transform 0.1s ease;
+  opacity: 0.9;
+}
+
+/* Désactiver la sélection de texte sur les boutons */
+button,
+.touch-target {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 /* ============================================
-   SCROLL SMOOTH MOBILE
+   SCROLL SMOOTH MOBILE - PERFORMANCE
    ============================================ */
 
 @media (max-width: 768px) {
@@ -334,32 +567,47 @@ a:active,
     background: rgba(0, 0, 0, 0.2);
     border-radius: 2px;
   }
+
+  /* Scrollbar plus visible au scroll */
+  *:hover::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.4);
+  }
 }
 
 /* ============================================
-   SAFE AREA (iPhone X et plus)
+   SAFE AREA (iPhone X et plus) - NOTCHES
    ============================================ */
 
 @supports (padding: max(0px)) {
-  .safe-area-top {
+  .safe-area-top,
+  [data-safe-area-top="true"] {
     padding-top: max(1rem, env(safe-area-inset-top));
   }
 
-  .safe-area-bottom {
+  .safe-area-bottom,
+  [data-safe-area-bottom="true"] {
     padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 
-  .safe-area-left {
+  .safe-area-left,
+  [data-safe-area-left="true"] {
     padding-left: max(1rem, env(safe-area-inset-left));
   }
 
-  .safe-area-right {
+  .safe-area-right,
+  [data-safe-area-right="true"] {
     padding-right: max(1rem, env(safe-area-inset-right));
+  }
+
+  /* Navbar avec safe area */
+  nav[data-safe-area] {
+    padding-top: max(0.75rem, env(safe-area-inset-top));
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
   }
 }
 
 /* ============================================
-   PERFORMANCE MOBILE
+   PERFORMANCE MOBILE - OPTIMISATIONS
    ============================================ */
 
 /* Réduire les animations sur mobile pour économiser la batterie */
@@ -382,7 +630,7 @@ a:active,
 }
 
 /* ============================================
-   FIXES SPÉCIFIQUES
+   FIXES SPÉCIFIQUES - COMPATIBILITÉ
    ============================================ */
 
 /* Fix pour iOS Safari - input zoom */
@@ -392,9 +640,13 @@ a:active,
   input[type="password"],
   input[type="tel"],
   input[type="number"],
+  input[type="search"],
+  input[type="url"],
   textarea,
   select {
     font-size: 16px !important; /* Évite le zoom automatique */
+    -webkit-appearance: none !important;
+    appearance: none !important;
   }
 }
 
@@ -422,5 +674,92 @@ a:active,
     -moz-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     text-size-adjust: 100%;
+  }
+}
+
+/* Fix pour les flexbox sur iOS */
+@supports (-webkit-touch-callout: none) {
+  .chakra-stack,
+  .chakra-vstack,
+  .chakra-hstack {
+    -webkit-flex-direction: column;
+  }
+}
+
+/* ============================================
+   SPÉCIFIQUE CHAKRA UI - OVERRIDES
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Badges plus compacts */
+  .chakra-badge {
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+
+  /* Alerts plus visibles */
+  .chakra-alert {
+    padding: 1rem !important;
+    border-radius: 0.75rem !important;
+    font-size: 0.9375rem !important;
+  }
+
+  /* Spinner plus grands */
+  .chakra-spinner {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+
+  /* Tooltips désactivés sur mobile (trop petits) */
+  .chakra-tooltip {
+    display: none !important;
+  }
+
+  /* Popovers full width */
+  .chakra-popover__content {
+    width: calc(100vw - 2rem) !important;
+    max-width: calc(100vw - 2rem) !important;
+  }
+}
+
+/* ============================================
+   HERO SECTIONS MOBILE - OPTIMISATION
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Hero sections plus compactes */
+  [class*="hero"],
+  [data-hero="true"] {
+    min-height: 60vh !important;
+    padding: 2rem 1rem !important;
+  }
+
+  /* Textes dans hero */
+  [class*="hero"] h1 {
+    font-size: 1.75rem !important;
+    line-height: 1.2 !important;
+  }
+
+  [class*="hero"] p {
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+  }
+}
+
+/* ============================================
+   FOOTER MOBILE - COMPACT
+   ============================================ */
+
+@media (max-width: 768px) {
+  footer,
+  .chakra-footer {
+    padding: 2rem 1rem !important;
+    text-align: center !important;
+  }
+
+  footer .chakra-stack,
+  .chakra-footer .chakra-stack {
+    flex-direction: column !important;
+    gap: 1.5rem !important;
   }
 }
