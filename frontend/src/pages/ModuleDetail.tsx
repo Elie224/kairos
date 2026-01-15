@@ -333,6 +333,7 @@ const ModuleDetail = () => {
         </Tabs>
       </VStack>
     </Container>
+    </Box>
   )
 }
 
