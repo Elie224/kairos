@@ -9,6 +9,13 @@ from contextlib import asynccontextmanager
 import logging
 import os
 
+# Configuration du logging AVANT tout import qui pourrait l'utiliser
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
 from app.database import connect_to_mongo, close_mongo_connection
 try:
     from app.database.postgres import init_postgres
@@ -40,13 +47,6 @@ from app.middleware.performance import PerformanceMiddleware
 from app.config import settings
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
-
-# Configuration du logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
