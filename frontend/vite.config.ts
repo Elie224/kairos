@@ -42,10 +42,15 @@ export default defineConfig(({ mode }) => {
           // Vite utilisera son code splitting automatique qui est plus sûr
           manualChunks: undefined,
         },
-        // Ignorer les avertissements Three.js (BatchedMesh n'est pas critique)
+        // Ignorer les avertissements non critiques
         onwarn(warning, warn) {
           // Ignorer l'avertissement BatchedMesh de three-mesh-bvh
           if (warning.code === 'UNRESOLVED_IMPORT' && warning.message.includes('BatchedMesh')) {
+            return;
+          }
+          // Ignorer les avertissements de chunks manquants (code splitting automatique)
+          if (warning.code === 'MISSING_EXPORT' || warning.code === 'MISSING_NAME_OR_FUNCTION') {
+            // Ces avertissements peuvent être normaux avec le code splitting automatique
             return;
           }
           // Afficher les autres avertissements
