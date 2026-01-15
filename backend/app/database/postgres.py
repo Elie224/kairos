@@ -184,8 +184,20 @@ def init_postgres():
         from app.models.postgres_models import User, Course, Module, Enrollment, UserProgress
         
         # Créer les tables seulement si la connexion fonctionne
-        Base.metadata.create_all(bind=engine)
-        logger.info("Tables PostgreSQL initialisées avec succès")
+        # Utiliser checkfirst=True pour éviter les erreurs si les tables existent déjà
+        try:
+            Base.metadata.create_all(bind=engine, checkfirst=True)
+            logger.info("Tables PostgreSQL initialisées avec succès")
+        except Exception as create_error:
+            # Si l'erreur est liée à l'existence des tables ou à un conflit de type, c'est OK
+            error_str = str(create_error).lower()
+            if ("already exists" in error_str or 
+                "duplicate" in error_str or 
+                "pg_type_typname_nsp_index" in error_str):
+                logger.info("Tables PostgreSQL existent déjà ou conflit de type - Initialisation ignorée (non critique)")
+            else:
+                # Relever l'erreur si ce n'est pas lié à l'existence des tables
+                raise
     except Exception as e:
         error_msg = str(e)
         logger.error(f"Erreur lors de l'initialisation PostgreSQL: {error_msg}")
