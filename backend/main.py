@@ -346,6 +346,7 @@ app.include_router(subscriptions.router, prefix="/api/subscriptions", tags=["Abo
 app.include_router(openai_content.router, prefix="/api", tags=["OpenAI Content Generation"])
 
 @app.get("/")
+@app.head("/")  # Support HEAD pour les health checks Render
 async def root():
     return {
         "message": "Bienvenue sur l'API Kaïros",
