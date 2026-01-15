@@ -329,18 +329,23 @@ class SecurityLoggingMiddleware(BaseHTTPMiddleware):
         
         response = await call_next(request)
         
-        # Logger les erreurs de sécurité
+        # Logger les erreurs de sécurité (401 est normal pour les utilisateurs non connectés)
         if response.status_code == 401:
-            logger.warning(f"Tentative d'accès non autorisé: {request.method} {request.url.path} depuis {ip}")
+            # Ne logger qu'en DEBUG - les 401 sont normaux (utilisateur non connecté)
+            logger.debug(f"Accès non authentifié: {request.method} {request.url.path} depuis {ip}")
         elif response.status_code == 403:
             logger.warning(f"Accès interdit: {request.method} {request.url.path} depuis {ip}")
         elif response.status_code == 429:
             logger.warning(f"Rate limit dépassé: {request.method} {request.url.path} depuis {ip}")
         
-        # Logger les requêtes suspectes
+        # Logger les requêtes suspectes (seuil augmenté pour éviter les faux positifs)
         duration = time.time() - start_time
-        if duration > 5:  # Requêtes lentes (possible attaque)
-            logger.warning(f"Requête lente détectée: {request.method} {request.url.path} ({duration:.2f}s) depuis {ip}")
+        # Routes qui peuvent être lentes normalement
+        slow_allowed_routes = ['/api/auth/login', '/api/auth/register', '/api/ai/chat', '/api/exams/generate']
+        is_slow_allowed = any(request.url.path.startswith(route) for route in slow_allowed_routes)
+        
+        if duration > 10 and not is_slow_allowed:  # Seuil augmenté à 10s pour éviter les faux positifs
+            logger.warning(f"Requête très lente détectée: {request.method} {request.url.path} ({duration:.2f}s) depuis {ip}")
         
         # Détecter les user agents suspects
         suspicious_agents = ["curl", "wget", "python-requests", "scanner", "bot"]

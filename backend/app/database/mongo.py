@@ -332,8 +332,12 @@ async def ensure_collections_and_indexes():
 async def close_mongo_connection():
     """Fermeture de la connexion MongoDB"""
     if db.client:
-        db.client.close()
-        logger.info("Connexion MongoDB fermée")
+        try:
+            db.client.close()
+            logger.info("Connexion MongoDB fermée")
+        except Exception as e:
+            # Ignorer les erreurs de fermeture (sockets déjà fermés, etc.)
+            logger.debug(f"Erreur lors de la fermeture MongoDB (non critique): {e}")
 
 def get_database():
     """Retourne la base de données"""

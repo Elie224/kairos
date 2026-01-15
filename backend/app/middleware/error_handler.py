@@ -36,7 +36,13 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 async def http_exception_handler(request: Request, exc: StarletteHTTPException):
     """Gère les exceptions HTTP"""
-    logger.warning(f"Exception HTTP {exc.status_code}: {exc.detail}")
+    # Les erreurs 401 (non authentifié) sont normales et ne doivent pas être loggées comme warnings
+    if exc.status_code == 401:
+        logger.debug(f"Utilisateur non authentifié: {request.method} {request.url.path}")
+    elif exc.status_code == 404:
+        logger.debug(f"Ressource non trouvée: {request.method} {request.url.path}")
+    else:
+        logger.warning(f"Exception HTTP {exc.status_code}: {exc.detail}")
     
     return JSONResponse(
         status_code=exc.status_code,
