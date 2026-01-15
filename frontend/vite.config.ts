@@ -77,12 +77,12 @@ export default defineConfig(({ mode }) => {
       minify: 'esbuild',
       // Supprimer les console.log en production (via esbuild)
       esbuildOptions: {
-        drop: import.meta.env.PROD ? ['console', 'debugger'] : [],
+        drop: mode === 'production' ? ['console', 'debugger'] : [],
       },
       // Compression des assets
       assetsDir: 'assets',
       // Source maps seulement en développement
-      sourcemap: !import.meta.env.PROD,
+      sourcemap: mode !== 'production',
       // CSS code splitting
       cssCodeSplit: true,
       cssMinify: true,
