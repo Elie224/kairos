@@ -21,7 +21,7 @@ try:
     from app.database.postgres import init_postgres
 except (ImportError, Exception) as e:
     # PostgreSQL est optionnel
-    logger.warning(f"⚠️  PostgreSQL non disponible à l'import: {e}")
+    logger.info(f"ℹ️  PostgreSQL non disponible à l'import: {e}")
     init_postgres = None
 try:
     from app.utils.cache import init_redis, close_redis

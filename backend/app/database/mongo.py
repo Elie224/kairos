@@ -52,7 +52,8 @@ async def connect_to_mongo():
             heartbeatFrequencyMS=10000,  # Fréquence de heartbeat (10s)
             # Compression pour réduire la bande passante
             compressors=compressors,  # Compression des données (snappy si disponible, sinon zlib)
-            zlibCompressionLevel=6  # Niveau de compression zlib (équilibré)
+            zlibCompressionLevel=6,  # Niveau de compression zlib (équilibré)
+            appname="KairosBackend" # Nom de l'application pour le monitoring
         )
         db.database = db.client[settings.mongodb_db_name]
         logger.info("Connexion à MongoDB établie")
@@ -341,4 +342,3 @@ def get_database():
         # Lever une exception pour que les repositories puissent la gérer
         raise ConnectionError("Base de données non initialisée. Vérifiez que MongoDB est démarré et que la connexion a réussi.")
     return db.database
-
