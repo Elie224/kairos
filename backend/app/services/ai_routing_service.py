@@ -6,6 +6,7 @@ from typing import Dict, Any, Optional, AsyncGenerator, List
 from openai import OpenAI, Stream
 from openai.types.chat import ChatCompletionChunk
 from app.config import settings
+from app.utils.model_mapper import map_to_real_model
 import logging
 import asyncio
 from datetime import datetime
@@ -347,19 +348,24 @@ LANGUE : Réponds TOUJOURS en {language}"""
             # Ajouter le message actuel
             messages.append({"role": "user", "content": message})
             
+            # Mapper le modèle fictif vers le vrai modèle OpenAI
+            actual_model = map_to_real_model(model)
+            if model != actual_model:
+                logger.debug(f"Modèle '{model}' mappé vers '{actual_model}' (modèle réel OpenAI)")
+            
             # Créer le stream
             from app.services.ai_service import _get_max_tokens_param, _get_temperature_param
             max_tokens_value = 4000 if model == GPT_5_2_MODEL else (2000 if model == GPT_5_MINI_MODEL else 1000)
             temperature_value = 0.3 if model == GPT_5_2_MODEL else (0.7 if model == GPT_5_MINI_MODEL else 0.8)
             create_params = {
-                "model": model,
+                "model": actual_model,  # Utiliser le modèle réel mappé
                 "messages": messages,
                 "stream": True,
                 "timeout": 120.0 if model == GPT_5_2_MODEL else (60.0 if model == GPT_5_MINI_MODEL else 30.0)
             }
             # Ajouter temperature seulement si le modèle le supporte
-            create_params.update(_get_temperature_param(model, temperature_value))
-            create_params.update(_get_max_tokens_param(model, max_tokens_value))
+            create_params.update(_get_temperature_param(actual_model, temperature_value))
+            create_params.update(_get_max_tokens_param(actual_model, max_tokens_value))
             
             stream: Stream[ChatCompletionChunk] = client.chat.completions.create(**create_params)
             
@@ -476,17 +482,22 @@ LANGUE : Réponds TOUJOURS en {language}"""
             # Ajouter le message actuel
             messages.append({"role": "user", "content": message})
             
+            # Mapper le modèle fictif vers le vrai modèle OpenAI
+            actual_model = map_to_real_model(model)
+            if model != actual_model:
+                logger.debug(f"Modèle '{model}' mappé vers '{actual_model}' (modèle réel OpenAI)")
+            
             from app.services.ai_service import _get_max_tokens_param, _get_temperature_param
             max_tokens_value = 4000 if model == GPT_5_2_MODEL else (2000 if model == GPT_5_MINI_MODEL else 1000)
             temperature_value = 0.3 if model == GPT_5_2_MODEL else (0.7 if model == GPT_5_MINI_MODEL else 0.8)
             create_params = {
-                "model": model,
+                "model": actual_model,  # Utiliser le modèle réel mappé
                 "messages": messages,
                 "timeout": 120.0 if model == GPT_5_2_MODEL else (60.0 if model == GPT_5_MINI_MODEL else 30.0)
             }
             # Ajouter temperature seulement si le modèle le supporte
-            create_params.update(_get_temperature_param(model, temperature_value))
-            create_params.update(_get_max_tokens_param(model, max_tokens_value))
+            create_params.update(_get_temperature_param(actual_model, temperature_value))
+            create_params.update(_get_max_tokens_param(actual_model, max_tokens_value))
             
             response = client.chat.completions.create(**create_params)
             
