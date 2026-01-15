@@ -54,6 +54,8 @@ import {
   SimpleGrid,
   Switch,
   Tooltip,
+  Card,
+  CardBody,
 } from '@chakra-ui/react'
 import { FiEdit, FiTrash2, FiPlus, FiSave, FiX, FiUsers, FiBook, FiBarChart2, FiShield, FiUserCheck, FiUserX, FiRefreshCw, FiMessageSquare, FiMail, FiPhone, FiCheck, FiClock } from 'react-icons/fi'
 import { useTranslation } from 'react-i18next'
@@ -810,8 +812,8 @@ const Admin = () => {
               {/* Panel Modules */}
               <TabPanel px={0}>
                 <VStack spacing={6} align="stretch">
-                  <Flex justify="space-between" align="center">
-                    <Text color="gray.700" fontSize="lg" fontWeight="medium">
+                  <Flex justify="space-between" align="center" flexWrap="wrap" gap={4}>
+                    <Text color="gray.700" fontSize={{ base: 'md', md: 'lg' }} fontWeight="medium">
                       Gestion des modules d'apprentissage
                     </Text>
                     <Button
@@ -820,7 +822,10 @@ const Admin = () => {
                       bgGradient="gradient.primary"
                       _hover={{ bgGradient: 'gradient.secondary' }}
                       onClick={handleCreate}
-                      size="md"
+                      size={{ base: 'sm', md: 'md' }}
+                      minH="48px"
+                      w={{ base: 'full', md: 'auto' }}
+                      data-touch-target="true"
                     >
                       Nouveau Module
                     </Button>
@@ -836,67 +841,150 @@ const Admin = () => {
                       Aucun module trouvé. Créez votre premier module !
                     </Alert>
                   ) : (
-                    <Box bg="white" borderRadius="lg" boxShadow="sm" overflow="hidden">
-                      <Table variant="simple">
-                        <Thead bg="gray.100">
-                          <Tr>
-                            <Th color="gray.700" fontWeight="bold">Titre</Th>
-                            <Th color="gray.700" fontWeight="bold">Matière</Th>
-                            <Th color="gray.700" fontWeight="bold">Difficulté</Th>
-                            <Th color="gray.700" fontWeight="bold">Temps estimé</Th>
-                            <Th color="gray.700" fontWeight="bold">Actions</Th>
-                          </Tr>
-                        </Thead>
-                        <Tbody>
-                          {modules.map((module) => (
-                            <Tr key={module.id} _hover={{ bg: 'gray.50' }}>
-                              <Td fontWeight="medium">{module.title}</Td>
-                              <Td>
-                                <Badge colorScheme="gray" variant="subtle">
-                                  {getSubjectLabel(module.subject)}
-                                </Badge>
-                              </Td>
-                              <Td>
-                                <Badge colorScheme={getDifficultyColor(module.difficulty)}>
-                                  {getDifficultyLabel(module.difficulty)}
-                                </Badge>
-                              </Td>
-                              <Td>{module.estimated_time} min</Td>
-                              <Td>
-                                <HStack spacing={2}>
+                    <>
+                      {/* Version Desktop - Tableau */}
+                      <Box bg="white" borderRadius="lg" boxShadow="sm" overflow="hidden" display={{ base: 'none', md: 'block' }}>
+                        <Box overflowX="auto" className="table-container">
+                          <Table variant="simple">
+                            <Thead bg="gray.100">
+                              <Tr>
+                                <Th color="gray.700" fontWeight="bold">Titre</Th>
+                                <Th color="gray.700" fontWeight="bold">Matière</Th>
+                                <Th color="gray.700" fontWeight="bold">Difficulté</Th>
+                                <Th color="gray.700" fontWeight="bold">Temps estimé</Th>
+                                <Th color="gray.700" fontWeight="bold">Actions</Th>
+                              </Tr>
+                            </Thead>
+                            <Tbody>
+                              {modules.map((module) => (
+                                <Tr key={module.id} _hover={{ bg: 'gray.50' }}>
+                                  <Td fontWeight="medium">{module.title}</Td>
+                                  <Td>
+                                    <Badge colorScheme="gray" variant="subtle">
+                                      {getSubjectLabel(module.subject)}
+                                    </Badge>
+                                  </Td>
+                                  <Td>
+                                    <Badge colorScheme={getDifficultyColor(module.difficulty)}>
+                                      {getDifficultyLabel(module.difficulty)}
+                                    </Badge>
+                                  </Td>
+                                  <Td>{module.estimated_time} min</Td>
+                                  <Td>
+                                    <HStack spacing={2}>
+                                      <Tooltip label="Générer Quiz, TD et TP">
+                                        <IconButton
+                                          icon={<FiRefreshCw />}
+                                          aria-label="Générer le contenu"
+                                          size="sm"
+                                          colorScheme="blue"
+                                          variant="ghost"
+                                          onClick={() => handleGenerateContent(module.id)}
+                                          minH="48px"
+                                          minW="48px"
+                                          data-touch-target="true"
+                                        />
+                                      </Tooltip>
+                                      <IconButton
+                                        icon={<FiEdit />}
+                                        aria-label="Modifier"
+                                        size="sm"
+                                        colorScheme="gray"
+                                        variant="ghost"
+                                        onClick={() => handleEdit(module)}
+                                        minH="48px"
+                                        minW="48px"
+                                        data-touch-target="true"
+                                      />
+                                      <IconButton
+                                        icon={<FiTrash2 />}
+                                        aria-label="Supprimer"
+                                        size="sm"
+                                        colorScheme="gray"
+                                        variant="ghost"
+                                        onClick={() => handleDelete(module.id)}
+                                        minH="48px"
+                                        minW="48px"
+                                        data-touch-target="true"
+                                      />
+                                    </HStack>
+                                  </Td>
+                                </Tr>
+                              ))}
+                            </Tbody>
+                          </Table>
+                        </Box>
+                      </Box>
+
+                      {/* Version Mobile - Cards */}
+                      <SimpleGrid columns={{ base: 1, md: 0 }} spacing={4} display={{ base: 'grid', md: 'none' }}>
+                        {modules.map((module) => (
+                          <Card key={module.id} bg="white" borderRadius="lg" boxShadow="sm">
+                            <CardBody p={{ base: 4, md: 6 }}>
+                              <VStack spacing={4} align="stretch">
+                                <Box>
+                                  <Heading size="sm" color="gray.800" mb={2} fontWeight="bold">
+                                    {module.title}
+                                  </Heading>
+                                </Box>
+                                
+                                <HStack spacing={2} flexWrap="wrap">
+                                  <Badge colorScheme="gray" variant="subtle" fontSize={{ base: 'xs', md: 'sm' }}>
+                                    {getSubjectLabel(module.subject)}
+                                  </Badge>
+                                  <Badge colorScheme={getDifficultyColor(module.difficulty)} fontSize={{ base: 'xs', md: 'sm' }}>
+                                    {getDifficultyLabel(module.difficulty)}
+                                  </Badge>
+                                  <Badge colorScheme="blue" variant="outline" fontSize={{ base: 'xs', md: 'sm' }}>
+                                    {module.estimated_time} min
+                                  </Badge>
+                                </HStack>
+
+                                <Divider />
+
+                                <HStack spacing={2} justify="flex-end" flexWrap="wrap">
                                   <Tooltip label="Générer Quiz, TD et TP">
                                     <IconButton
                                       icon={<FiRefreshCw />}
                                       aria-label="Générer le contenu"
-                                      size="sm"
+                                      size={{ base: 'md', md: 'sm' }}
                                       colorScheme="blue"
                                       variant="ghost"
                                       onClick={() => handleGenerateContent(module.id)}
+                                      minH="48px"
+                                      minW="48px"
+                                      data-touch-target="true"
                                     />
                                   </Tooltip>
                                   <IconButton
                                     icon={<FiEdit />}
                                     aria-label="Modifier"
-                                    size="sm"
+                                    size={{ base: 'md', md: 'sm' }}
                                     colorScheme="gray"
                                     variant="ghost"
                                     onClick={() => handleEdit(module)}
+                                    minH="48px"
+                                    minW="48px"
+                                    data-touch-target="true"
                                   />
                                   <IconButton
                                     icon={<FiTrash2 />}
                                     aria-label="Supprimer"
-                                    size="sm"
-                                    colorScheme="gray"
+                                    size={{ base: 'md', md: 'sm' }}
+                                    colorScheme="red"
                                     variant="ghost"
                                     onClick={() => handleDelete(module.id)}
+                                    minH="48px"
+                                    minW="48px"
+                                    data-touch-target="true"
                                   />
                                 </HStack>
-                              </Td>
-                            </Tr>
-                          ))}
-                        </Tbody>
-                      </Table>
-                    </Box>
+                              </VStack>
+                            </CardBody>
+                          </Card>
+                        ))}
+                      </SimpleGrid>
+                    </>
                   )}
                 </VStack>
               </TabPanel>
@@ -904,7 +992,7 @@ const Admin = () => {
               {/* Panel Utilisateurs */}
               <TabPanel px={0}>
                 <VStack spacing={6} align="stretch">
-                  <Text color="gray.700" fontSize="lg" fontWeight="medium">
+                  <Text color="gray.700" fontSize={{ base: 'md', md: 'lg' }} fontWeight="medium">
                     Gestion des utilisateurs
                   </Text>
 
@@ -918,61 +1006,132 @@ const Admin = () => {
                       Aucun utilisateur trouvé.
                     </Alert>
                   ) : (
-                    <Box bg="white" borderRadius="lg" boxShadow="sm" overflow="hidden">
-                      <Table variant="simple">
-                        <Thead bg="gray.100">
-                          <Tr>
-                            <Th color="gray.700" fontWeight="bold">Email</Th>
-                            <Th color="gray.700" fontWeight="bold">Nom d'utilisateur</Th>
-                            <Th color="gray.700" fontWeight="bold">Admin</Th>
-                            <Th color="gray.700" fontWeight="bold">Actif</Th>
-                            <Th color="gray.700" fontWeight="bold">Actions</Th>
-                          </Tr>
-                        </Thead>
-                        <Tbody>
-                          {users.map((user) => (
-                            <Tr key={user.id} _hover={{ bg: 'gray.50' }}>
-                              <Td>{user.email}</Td>
-                              <Td fontWeight="medium">{user.username}</Td>
-                              <Td>
-                                <Badge colorScheme={user.is_admin ? 'gray' : 'gray'}>
-                                  {user.is_admin ? 'Admin' : 'Utilisateur'}
-                                </Badge>
-                              </Td>
-                              <Td>
-                                <Badge colorScheme={user.is_active !== false ? 'gray' : 'gray'}>
-                                  {user.is_active !== false ? 'Actif' : 'Inactif'}
-                                </Badge>
-                              </Td>
-                              <Td>
-                                <HStack spacing={2}>
+                    <>
+                      {/* Version Desktop - Tableau */}
+                      <Box bg="white" borderRadius="lg" boxShadow="sm" overflow="hidden" display={{ base: 'none', md: 'block' }}>
+                        <Box overflowX="auto" className="table-container">
+                          <Table variant="simple">
+                            <Thead bg="gray.100">
+                              <Tr>
+                                <Th color="gray.700" fontWeight="bold">Email</Th>
+                                <Th color="gray.700" fontWeight="bold">Nom d'utilisateur</Th>
+                                <Th color="gray.700" fontWeight="bold">Admin</Th>
+                                <Th color="gray.700" fontWeight="bold">Actif</Th>
+                                <Th color="gray.700" fontWeight="bold">Actions</Th>
+                              </Tr>
+                            </Thead>
+                            <Tbody>
+                              {users.map((user) => (
+                                <Tr key={user.id} _hover={{ bg: 'gray.50' }}>
+                                  <Td>{user.email}</Td>
+                                  <Td fontWeight="medium">{user.username}</Td>
+                                  <Td>
+                                    <Badge colorScheme={user.is_admin ? 'gray' : 'gray'}>
+                                      {user.is_admin ? 'Admin' : 'Utilisateur'}
+                                    </Badge>
+                                  </Td>
+                                  <Td>
+                                    <Badge colorScheme={user.is_active !== false ? 'gray' : 'gray'}>
+                                      {user.is_active !== false ? 'Actif' : 'Inactif'}
+                                    </Badge>
+                                  </Td>
+                                  <Td>
+                                    <HStack spacing={2}>
+                                      <Tooltip label={user.is_admin ? 'Rétrograder' : 'Promouvoir admin'}>
+                                        <IconButton
+                                          icon={user.is_admin ? <FiShield /> : <FiUserCheck />}
+                                          aria-label={user.is_admin ? 'Rétrograder' : 'Promouvoir admin'}
+                                          size="sm"
+                                          colorScheme={user.is_admin ? 'gray' : 'gray'}
+                                          variant="ghost"
+                                          onClick={() => handleToggleAdmin(user)}
+                                          minH="48px"
+                                          minW="48px"
+                                          data-touch-target="true"
+                                        />
+                                      </Tooltip>
+                                      <Tooltip label={user.is_active !== false ? 'Désactiver' : 'Activer'}>
+                                        <IconButton
+                                          icon={user.is_active !== false ? <FiUserX /> : <FiUserCheck />}
+                                          aria-label={user.is_active !== false ? 'Désactiver' : 'Activer'}
+                                          size="sm"
+                                          colorScheme="gray"
+                                          variant="ghost"
+                                          onClick={() => handleToggleActive(user)}
+                                          minH="48px"
+                                          minW="48px"
+                                          data-touch-target="true"
+                                        />
+                                      </Tooltip>
+                                    </HStack>
+                                  </Td>
+                                </Tr>
+                              ))}
+                            </Tbody>
+                          </Table>
+                        </Box>
+                      </Box>
+
+                      {/* Version Mobile - Cards */}
+                      <SimpleGrid columns={{ base: 1, md: 0 }} spacing={4} display={{ base: 'grid', md: 'none' }}>
+                        {users.map((user) => (
+                          <Card key={user.id} bg="white" borderRadius="lg" boxShadow="sm">
+                            <CardBody p={{ base: 4, md: 6 }}>
+                              <VStack spacing={4} align="stretch">
+                                <Box>
+                                  <Heading size="sm" color="gray.800" mb={1} fontWeight="bold">
+                                    {user.username}
+                                  </Heading>
+                                  <Text fontSize={{ base: 'xs', md: 'sm' }} color="gray.600">
+                                    {user.email}
+                                  </Text>
+                                </Box>
+                                
+                                <HStack spacing={2} flexWrap="wrap">
+                                  <Badge colorScheme={user.is_admin ? 'purple' : 'gray'} fontSize={{ base: 'xs', md: 'sm' }}>
+                                    {user.is_admin ? 'Admin' : 'Utilisateur'}
+                                  </Badge>
+                                  <Badge colorScheme={user.is_active !== false ? 'green' : 'red'} fontSize={{ base: 'xs', md: 'sm' }}>
+                                    {user.is_active !== false ? 'Actif' : 'Inactif'}
+                                  </Badge>
+                                </HStack>
+
+                                <Divider />
+
+                                <HStack spacing={2} justify="flex-end" flexWrap="wrap">
                                   <Tooltip label={user.is_admin ? 'Rétrograder' : 'Promouvoir admin'}>
                                     <IconButton
                                       icon={user.is_admin ? <FiShield /> : <FiUserCheck />}
                                       aria-label={user.is_admin ? 'Rétrograder' : 'Promouvoir admin'}
-                                      size="sm"
-                                      colorScheme={user.is_admin ? 'gray' : 'gray'}
+                                      size={{ base: 'md', md: 'sm' }}
+                                      colorScheme={user.is_admin ? 'purple' : 'gray'}
                                       variant="ghost"
                                       onClick={() => handleToggleAdmin(user)}
+                                      minH="48px"
+                                      minW="48px"
+                                      data-touch-target="true"
                                     />
                                   </Tooltip>
                                   <Tooltip label={user.is_active !== false ? 'Désactiver' : 'Activer'}>
                                     <IconButton
                                       icon={user.is_active !== false ? <FiUserX /> : <FiUserCheck />}
                                       aria-label={user.is_active !== false ? 'Désactiver' : 'Activer'}
-                                      size="sm"
-                                      colorScheme="gray"
+                                      size={{ base: 'md', md: 'sm' }}
+                                      colorScheme={user.is_active !== false ? 'red' : 'green'}
                                       variant="ghost"
                                       onClick={() => handleToggleActive(user)}
+                                      minH="48px"
+                                      minW="48px"
+                                      data-touch-target="true"
                                     />
                                   </Tooltip>
                                 </HStack>
-                              </Td>
-                            </Tr>
-                          ))}
-                        </Tbody>
-                      </Table>
-                    </Box>
+                              </VStack>
+                            </CardBody>
+                          </Card>
+                        ))}
+                      </SimpleGrid>
+                    </>
                   )}
                 </VStack>
               </TabPanel>
@@ -980,7 +1139,7 @@ const Admin = () => {
               {/* Panel Statistiques */}
               <TabPanel px={0}>
                 <VStack spacing={6} align="stretch">
-                  <Text color="gray.700" fontSize="lg" fontWeight="medium">
+                  <Text color="gray.700" fontSize={{ base: 'md', md: 'lg' }} fontWeight="medium">
                     Statistiques de la plateforme
                   </Text>
 
@@ -1024,31 +1183,35 @@ const Admin = () => {
               {/* Panel Messages de Support */}
               <TabPanel px={0}>
                 <VStack spacing={6} align="stretch">
-                  <Flex justify="space-between" align="center">
-                    <Text color="gray.700" fontSize="lg" fontWeight="medium">
+                  <Flex justify="space-between" align="center" flexWrap="wrap" gap={4}>
+                    <Text color="gray.700" fontSize={{ base: 'md', md: 'lg' }} fontWeight="medium">
                       Messages de support
                     </Text>
-                    <HStack spacing={4}>
-                      <HStack spacing={2}>
+                    <VStack spacing={2} align={{ base: 'stretch', md: 'flex-end' }} w={{ base: 'full', md: 'auto' }}>
+                      <HStack spacing={2} w={{ base: 'full', md: 'auto' }}>
                         <Switch
                           isChecked={showUnreadOnly}
                           onChange={(e) => setShowUnreadOnly(e.target.checked)}
                           colorScheme="blue"
+                          size={{ base: 'md', md: 'sm' }}
                         />
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize={{ base: 'xs', md: 'sm' }} color="gray.600">
                           Non lus uniquement
                         </Text>
                       </HStack>
                       <Button
                         leftIcon={<FiRefreshCw />}
-                        size="sm"
+                        size={{ base: 'sm', md: 'sm' }}
                         variant="outline"
                         colorScheme="gray"
                         onClick={loadSupportMessages}
+                        minH="48px"
+                        w={{ base: 'full', md: 'auto' }}
+                        data-touch-target="true"
                       >
                         Actualiser
                       </Button>
-                    </HStack>
+                    </VStack>
                   </Flex>
 
                   {isLoadingMessages ? (
