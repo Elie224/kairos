@@ -1,11 +1,10 @@
 """
 Routeur pour le feedback utilisateur
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, HTTPException, status
 from typing import Optional
 from app.models.feedback import Feedback
 from app.services.feedback_service import FeedbackService
-from app.utils.permissions import get_current_user
 from app.utils.security import InputSanitizer
 import logging
 
@@ -16,19 +15,13 @@ router = APIRouter(prefix="/feedback", tags=["Feedback"])
 
 @router.post("/", status_code=201)
 async def create_feedback(
-    feedback: Feedback,
-    current_user: dict = Depends(get_current_user)
+    feedback: Feedback
 ):
-    """Crée un nouveau feedback"""
+    """Crée un nouveau feedback (route publique)"""
     try:
-        if not current_user or not current_user.get("id"):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
-        
         feedback_data = feedback.dict()
-        feedback_data["user_id"] = current_user["id"]
+        # Utiliser un user_id par défaut car auth supprimée
+        feedback_data["user_id"] = "anonymous"
         
         # Sanitizer les champs
         if "question" in feedback_data:
@@ -68,18 +61,13 @@ async def create_feedback(
 
 @router.get("/")
 async def get_my_feedback(
-    current_user: dict = Depends(get_current_user),
     limit: int = 100
 ):
-    """Récupère les feedbacks de l'utilisateur actuel"""
+    """Récupère tous les feedbacks (route publique)"""
     try:
-        if not current_user or not current_user.get("id"):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
-        
-        return await FeedbackService.get_user_feedback(current_user["id"], limit)
+        # Retourner tous les feedbacks car auth supprimée
+        from app.repositories.feedback_repository import FeedbackRepository
+        return await FeedbackRepository.find_all(limit=limit)
     except HTTPException:
         raise
     except Exception as e:
@@ -92,18 +80,12 @@ async def get_my_feedback(
 
 @router.get("/stats")
 async def get_feedback_stats(
-    current_user: dict = Depends(get_current_user),
     model: Optional[str] = None
 ):
-    """Récupère les statistiques de feedback"""
+    """Récupère les statistiques de feedback (route publique)"""
     try:
-        if not current_user or not current_user.get("id"):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
-        
-        return await FeedbackService.get_stats(current_user["id"], model)
+        # Retourner les stats globales car auth supprimée
+        return await FeedbackService.get_stats("anonymous", model)
     except HTTPException:
         raise
     except Exception as e:

@@ -7,7 +7,7 @@ from app.models import Module, ModuleCreate, Subject, Difficulty
 from app.services.module_service import ModuleService
 from app.services.cached_module_service import CachedModuleService
 from app.utils.security import InputSanitizer
-from app.utils.permissions import require_admin, get_current_user
+# Authentification supprimée - toutes les routes sont publiques
 import logging
 import asyncio
 
@@ -94,10 +94,9 @@ async def get_modules(
 
 @router.post("/", response_model=Module, status_code=201)
 async def create_module(
-    module_data: ModuleCreate,
-    admin_user: dict = Depends(require_admin)
+    module_data: ModuleCreate
 ):
-    """Crée un nouveau module (admin seulement)"""
+    """Crée un nouveau module (route publique)"""
     return await CachedModuleService.create_module(module_data)
 
 
@@ -302,13 +301,12 @@ async def _perform_content_generation(module_id: str) -> Dict[str, Any]:
 
 @router.post("/{module_id}/generate-content", status_code=200)
 async def generate_content_for_module(
-    module_id: str,
-    admin_user: dict = Depends(require_admin)
+    module_id: str
 ):
     """
     Force la génération automatique de quiz, TD et TP pour un module existant
     Utile pour régénérer le contenu après avoir ajouté des leçons manuellement
-    Lance la génération en arrière-plan et retourne immédiatement
+    Lance la génération en arrière-plan et retourne immédiatement (route publique)
     """
     # Valider l'ObjectId
     sanitized_id = InputSanitizer.sanitize_object_id(module_id)
@@ -541,10 +539,9 @@ async def get_module(module_id: str):
 @router.put("/{module_id}", response_model=Module)
 async def update_module(
     module_id: str,
-    update_data: ModuleCreate,  # Utiliser ModuleCreate pour validation complète
-    admin_user: dict = Depends(require_admin)
+    update_data: ModuleCreate  # Utiliser ModuleCreate pour validation complète
 ):
-    """Met à jour un module (admin seulement)"""
+    """Met à jour un module (route publique)"""
     # Valider l'ObjectId
     sanitized_id = InputSanitizer.sanitize_object_id(module_id)
     if not sanitized_id:
@@ -557,10 +554,9 @@ async def update_module(
 
 @router.delete("/{module_id}", status_code=204)
 async def delete_module(
-    module_id: str,
-    admin_user: dict = Depends(require_admin)
+    module_id: str
 ):
-    """Supprime un module (admin seulement)"""
+    """Supprime un module (route publique)"""
     # Valider l'ObjectId
     sanitized_id = InputSanitizer.sanitize_object_id(module_id)
     if not sanitized_id:

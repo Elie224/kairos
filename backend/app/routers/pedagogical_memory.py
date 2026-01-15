@@ -1,10 +1,9 @@
 """
 Routeur pour la mémoire pédagogique utilisateur
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, HTTPException, status
 from typing import Optional
 from app.services.pedagogical_memory_service import PedagogicalMemoryService
-from app.utils.permissions import get_current_user
 import logging
 
 logger = logging.getLogger(__name__)
@@ -13,19 +12,14 @@ router = APIRouter(prefix="/pedagogical-memory", tags=["Pedagogical Memory"])
 
 
 @router.get("/")
-async def get_my_memory(current_user: dict = Depends(get_current_user)):
-    """Récupère la mémoire pédagogique de l'utilisateur actuel"""
+async def get_my_memory():
+    """Récupère la mémoire pédagogique (route publique)"""
     try:
-        if not current_user or not current_user.get("id"):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
-        
-        memory = await PedagogicalMemoryService.get_memory(current_user["id"])
+        # Utiliser un user_id par défaut car auth supprimée
+        memory = await PedagogicalMemoryService.get_memory("anonymous")
         if not memory:
             return {
-                "user_id": current_user["id"],
+                "user_id": "anonymous",
                 "subject_levels": {},
                 "error_history": [],
                 "learning_style": {
@@ -48,18 +42,12 @@ async def get_my_memory(current_user: dict = Depends(get_current_user)):
 
 @router.get("/subject/{subject}/level")
 async def get_subject_level(
-    subject: str,
-    current_user: dict = Depends(get_current_user)
+    subject: str
 ):
-    """Récupère le niveau d'un utilisateur pour une matière"""
+    """Récupère le niveau pour une matière (route publique)"""
     try:
-        if not current_user or not current_user.get("id"):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
-        
-        level = await PedagogicalMemoryService.get_subject_level(current_user["id"], subject)
+        # Utiliser un user_id par défaut car auth supprimée
+        level = await PedagogicalMemoryService.get_subject_level("anonymous", subject)
         return {"subject": subject, "level": level}
     except HTTPException:
         raise
@@ -73,18 +61,12 @@ async def get_subject_level(
 
 @router.get("/errors/frequent")
 async def get_frequent_errors(
-    limit: int = 5,
-    current_user: dict = Depends(get_current_user)
+    limit: int = 5
 ):
-    """Récupère les erreurs fréquentes d'un utilisateur"""
+    """Récupère les erreurs fréquentes (route publique)"""
     try:
-        if not current_user or not current_user.get("id"):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
-        
-        errors = await PedagogicalMemoryService.get_frequent_errors(current_user["id"], limit)
+        # Utiliser un user_id par défaut car auth supprimée
+        errors = await PedagogicalMemoryService.get_frequent_errors("anonymous", limit)
         return {"errors": errors}
     except HTTPException:
         raise
@@ -99,18 +81,12 @@ async def get_frequent_errors(
 @router.post("/errors")
 async def record_error(
     concept: str,
-    error_type: str,
-    current_user: dict = Depends(get_current_user)
+    error_type: str
 ):
-    """Enregistre une erreur dans la mémoire pédagogique"""
+    """Enregistre une erreur dans la mémoire pédagogique (route publique)"""
     try:
-        if not current_user or not current_user.get("id"):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
-        
-        await PedagogicalMemoryService.record_error(current_user["id"], concept, error_type)
+        # Utiliser un user_id par défaut car auth supprimée
+        await PedagogicalMemoryService.record_error("anonymous", concept, error_type)
         return {"message": "Erreur enregistrée"}
     except HTTPException:
         raise
@@ -126,25 +102,19 @@ async def record_error(
 async def update_subject_level(
     subject: str,
     level: str,
-    confidence_score: float = 0.5,
-    current_user: dict = Depends(get_current_user)
+    confidence_score: float = 0.5
 ):
-    """Met à jour le niveau d'un utilisateur pour une matière"""
+    """Met à jour le niveau pour une matière (route publique)"""
     try:
-        if not current_user or not current_user.get("id"):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
-        
         if level not in ["beginner", "intermediate", "advanced"]:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Le niveau doit être 'beginner', 'intermediate' ou 'advanced'"
             )
         
+        # Utiliser un user_id par défaut car auth supprimée
         await PedagogicalMemoryService.update_level(
-            current_user["id"], subject, level, confidence_score
+            "anonymous", subject, level, confidence_score
         )
         return {"message": "Niveau mis à jour", "subject": subject, "level": level}
     except HTTPException:
