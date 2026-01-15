@@ -25,6 +25,18 @@ async def connect_to_mongo():
         max_pool_size = getattr(settings, 'mongodb_max_pool_size', 200)
         min_pool_size = getattr(settings, 'mongodb_min_pool_size', 20)
         
+        # Déterminer les compressors disponibles
+        # Snappy est plus rapide mais nécessite python-snappy
+        # Zlib est toujours disponible
+        compressors = ['zlib']  # Zlib est toujours disponible
+        try:
+            import snappy
+            compressors = ['snappy', 'zlib']  # Snappy disponible, l'utiliser en priorité
+            logger.debug("Compression Snappy disponible")
+        except ImportError:
+            logger.warning("python-snappy non installé - utilisation de zlib uniquement pour la compression MongoDB")
+            logger.warning("Pour activer Snappy (plus rapide), installez: pip install python-snappy")
+        
         db.client = AsyncIOMotorClient(
             settings.mongodb_url,
             serverSelectionTimeoutMS=timeout_ms,
@@ -39,7 +51,7 @@ async def connect_to_mongo():
             waitQueueTimeoutMS=5000,  # Timeout pour attendre une connexion du pool
             heartbeatFrequencyMS=10000,  # Fréquence de heartbeat (10s)
             # Compression pour réduire la bande passante
-            compressors=['snappy', 'zlib'],  # Compression des données
+            compressors=compressors,  # Compression des données (snappy si disponible, sinon zlib)
             zlibCompressionLevel=6  # Niveau de compression zlib (équilibré)
         )
         db.database = db.client[settings.mongodb_db_name]
