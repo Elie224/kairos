@@ -191,9 +191,6 @@ const Settings = () => {
       const response = await api.put('/auth/me', updateData)
       const updatedUser = response.data
 
-      // Mettre à jour le store
-      setAuth(updatedUser, useAuthStore.getState().token || '')
-
       // Invalider le cache pour forcer le rafraîchissement
       queryClient.invalidateQueries(['user-profile'])
 
