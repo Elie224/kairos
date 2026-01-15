@@ -175,8 +175,7 @@ app = FastAPI(
     
     ### Authentification
     
-    L'API utilise JWT (JSON Web Tokens) pour l'authentification. 
-    Obtenez un token via `/api/auth/login` et incluez-le dans l'en-tête `Authorization: Bearer <token>`.
+    L'API est entièrement publique, aucune authentification requise.
     
     ### Rate Limiting
     
@@ -211,10 +210,6 @@ app = FastAPI(
         }
     ],
     tags_metadata=[
-        {
-            "name": "Authentication",
-            "description": "Endpoints pour l'authentification et la gestion des utilisateurs"
-        },
         {
             "name": "Modules",
             "description": "Gestion des modules d'apprentissage"

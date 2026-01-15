@@ -5,7 +5,7 @@ from fastapi import Request, HTTPException, status
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 from app.services.abuse_detection_service import AbuseDetectionService
-from app.utils.permissions import get_current_user_optional
+# Authentification supprimée - get_current_user_optional remplacé
 import logging
 
 logger = logging.getLogger(__name__)
@@ -27,12 +27,8 @@ class AbuseDetectionMiddleware(BaseHTTPMiddleware):
         if not any(request.url.path.startswith(endpoint) for endpoint in self.AI_ENDPOINTS):
             return await call_next(request)
         
-        # Récupérer l'utilisateur (optionnel, peut être None pour les endpoints publics)
-        try:
-            user = await get_current_user_optional(request)
-            user_id = user.get("id") if user else request.client.host  # Utiliser IP si pas d'utilisateur
-        except Exception:
-            user_id = request.client.host
+        # Authentification supprimée - utiliser l'IP comme identifiant
+        user_id = request.client.host
         
         # Vérifier si l'utilisateur est bloqué
         if user_id:

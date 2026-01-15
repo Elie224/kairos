@@ -13,7 +13,7 @@ from app.models import Subject, Difficulty
 from app.services.pathway_generator_service import PathwayGeneratorService
 from app.services.prerequisite_detector import PrerequisiteDetector
 from app.repositories.pathway_repository import PathwayRepository
-from app.utils.permissions import get_current_user, require_admin
+# Authentification supprimée - toutes les routes sont publiques
 import logging
 
 logger = logging.getLogger(__name__)
@@ -26,18 +26,12 @@ async def generate_pathway(
     subject: Subject,
     target_level: Difficulty,
     learning_objectives: Optional[List[str]] = None,
-    current_user: dict = Depends(get_current_user)
 ):
     """
-    Génère automatiquement un parcours d'apprentissage personnalisé
+    Génère automatiquement un parcours d'apprentissage personnalisé (route publique)
     """
     try:
-        user_id = current_user.get("id")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
+        user_id = "anonymous"  # Auth supprimée
         
         pathway = await PathwayGeneratorService.generate_pathway(
             subject=subject,
@@ -63,18 +57,12 @@ async def generate_pathway(
 @router.get("/recommendations", response_model=List[PathwayRecommendation])
 async def get_pathway_recommendations(
     limit: int = Query(5, ge=1, le=20),
-    current_user: dict = Depends(get_current_user)
 ):
     """
-    Recommande des parcours pour l'utilisateur connecté
+    Recommande des parcours (route publique)
     """
     try:
-        user_id = current_user.get("id")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
+        user_id = "anonymous"  # Auth supprimée
         
         recommendations = await PathwayGeneratorService.recommend_pathways(
             user_id=user_id,
@@ -133,10 +121,9 @@ async def get_pathway(pathway_id: str):
 @router.post("/", response_model=Pathway, status_code=status.HTTP_201_CREATED)
 async def create_pathway(
     pathway_data: PathwayCreate,
-    admin_user: dict = Depends(require_admin)
 ):
     """
-    Crée un nouveau parcours (admin seulement)
+    Crée un nouveau parcours (route publique)
     """
     try:
         from datetime import datetime, timezone
@@ -160,18 +147,12 @@ async def create_pathway(
 @router.get("/prerequisites/{module_id}", response_model=PrerequisiteAnalysis)
 async def analyze_prerequisites(
     module_id: str,
-    current_user: dict = Depends(get_current_user)
 ):
     """
-    Analyse les prérequis d'un module
+    Analyse les prérequis d'un module (route publique)
     """
     try:
-        user_id = current_user.get("id")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
+        user_id = "anonymous"  # Auth supprimée
         
         analysis = await PrerequisiteDetector.analyze_prerequisites(
             module_id=module_id,
