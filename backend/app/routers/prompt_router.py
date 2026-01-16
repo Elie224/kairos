@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 @router.get("/stats", response_model=Dict[str, Any])
-async def get_router_stats(current_user: dict = Depends(get_current_user)):
+async def get_router_stats():
     """
     Récupère les statistiques du Prompt Router
     """

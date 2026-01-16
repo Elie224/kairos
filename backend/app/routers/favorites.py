@@ -50,7 +50,7 @@ async def remove_favorite(
 
 
 @router.get("/", response_model=List[Favorite])
-async def get_favorites(current_user: dict = Depends(get_current_user)):
+async def get_favorites():
     """Récupère tous les favoris de l'utilisateur"""
     return await FavoriteRepository.find_by_user("anonymous")  # Auth supprimée
 
