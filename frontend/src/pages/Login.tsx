@@ -52,10 +52,11 @@ const Login = () => {
       await login(email, password)
       navigate('/dashboard')
     } catch (err: any) {
-      setError(
-        err.response?.data?.detail || 
+      const errorMessage = err.response?.data?.detail || 
+        err.message || 
         'Email ou mot de passe incorrect'
-      )
+      setError(errorMessage)
+      console.error('Erreur de connexion:', err)
     }
   }
 
