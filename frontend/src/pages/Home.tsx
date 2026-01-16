@@ -19,10 +19,12 @@ const Home = () => {
   const { data: stats, isLoading: statsLoading } = useQuery(
     'home-stats',
     async () => {
-      try {
-        const response = await api.get('/auth/stats')
-        return response.data
-      } catch {
+          try {
+            const response = await api.get('/auth/stats', {
+              timeout: 8000, // Timeout rapide pour les stats
+            })
+            return response.data
+          } catch {
         // Si l'utilisateur n'est pas admin, retourner des stats par défaut
         return null
       }

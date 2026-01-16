@@ -31,7 +31,7 @@ const Dashboard = () => {
     'progress-stats',
     async () => {
       const response = await api.get('/progress/stats', {
-        timeout: 30000, // Timeout de 30 secondes
+        timeout: 10000, // Timeout de 10 secondes (réduit pour éviter les blocages)
       })
       return response.data
     },
@@ -50,8 +50,8 @@ const Dashboard = () => {
     'modules',
     async () => {
       const response = await api.get('/modules/', {
-        timeout: 30000, // Timeout de 30 secondes
-        params: { limit: 50 }, // Limiter à 50 modules pour la performance
+        timeout: 10000, // Timeout de 10 secondes
+        params: { limit: 30 }, // Limiter à 30 modules pour la performance
       })
       return response.data
     },
@@ -70,7 +70,7 @@ const Dashboard = () => {
     'progress',
     async () => {
       const response = await api.get('/progress/', {
-        timeout: 30000, // Timeout de 30 secondes
+        timeout: 8000, // Timeout de 8 secondes
         params: { limit: 10 }, // Limiter à 10 pour la performance
       })
       return response.data
@@ -90,7 +90,7 @@ const Dashboard = () => {
     'validated-modules',
     async () => {
       const response = await api.get('/validations/modules', {
-        timeout: 30000, // Timeout de 30 secondes
+        timeout: 8000, // Timeout de 8 secondes
       })
       return response.data as string[]
     },
@@ -109,7 +109,7 @@ const Dashboard = () => {
     'history-stats',
     async () => {
       const response = await api.get('/user-history/stats', {
-        timeout: 30000, // Timeout de 30 secondes
+        timeout: 8000, // Timeout de 8 secondes
       })
       return response.data
     },

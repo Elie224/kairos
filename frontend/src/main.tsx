@@ -26,6 +26,11 @@ const queryClient = new QueryClient({
       // Optimisations supplémentaires
       keepPreviousData: true, // Garder les données précédentes pendant le chargement (react-query v3)
       structuralSharing: true, // Partage structurel pour éviter les re-renders inutiles
+      refetchOnMount: false, // Ne pas refetch automatiquement
+      refetchOnWindowFocus: false, // Ne pas refetch au focus de la fenêtre
+      refetchOnReconnect: false, // Ne pas refetch à la reconnexion
+      retry: 1, // Réessayer seulement 1 fois en cas d'erreur
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Backoff exponentiel
     },
     mutations: {
       retry: 1,

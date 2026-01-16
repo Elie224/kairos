@@ -38,9 +38,27 @@ export default defineConfig(({ mode }) => {
       // Vite gérera automatiquement le code splitting de manière sûre
       rollupOptions: {
         output: {
-          // Désactiver le code splitting manuel pour éviter l'erreur useLayoutEffect
-          // Vite utilisera son code splitting automatique qui est plus sûr
-          manualChunks: undefined,
+          // Code splitting manuel optimisé pour réduire la taille des bundles
+          manualChunks: (id) => {
+            // Séparer les bibliothèques lourdes
+            if (id.includes('node_modules')) {
+              // Three.js et dépendances 3D dans un chunk séparé
+              if (id.includes('three') || id.includes('@react-three')) {
+                return 'vendor-3d'
+              }
+              // Chakra UI dans un chunk séparé
+              if (id.includes('@chakra-ui') || id.includes('@emotion')) {
+                return 'vendor-ui'
+              }
+              // React et React Router dans un chunk
+              if (id.includes('react') || id.includes('react-router')) {
+                return 'vendor-react'
+              }
+              // Autres node_modules dans vendor
+              return 'vendor'
+            }
+            // Pas de chunking personnalisé pour le code source (Vite le gère bien)
+          },
         },
         // Ignorer les avertissements non critiques
         onwarn(warning, warn) {
@@ -57,8 +75,8 @@ export default defineConfig(({ mode }) => {
           warn(warning);
         },
       },
-      // Augmenter la limite de taille des chunks
-      chunkSizeWarningLimit: 1000,
+      // Augmenter la limite de taille des chunks (mais viser < 500KB par chunk)
+      chunkSizeWarningLimit: 500,
       // Optimiser les assets
       assetsInlineLimit: 4096, // Inline les assets < 4KB
       // Minification avec esbuild (inclus avec Vite, pas besoin de terser)
