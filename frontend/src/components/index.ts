@@ -13,6 +13,7 @@ export { ErrorDisplay } from './ErrorDisplay'
 export { PasswordStrength } from './PasswordStrength'
 export { AdvancedSearch } from './AdvancedSearch'
 export { AccessibilityProvider } from './AccessibilityProvider'
+export { Onboarding } from './Onboarding'
 
 // Nouveaux composants de design system
 export { AnimatedBox } from './AnimatedBox'

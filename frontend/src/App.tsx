@@ -28,6 +28,32 @@ const PageLoader = () => <LoadingSpinner size="lg" text="Chargement..." />
 function App() {
   const location = useLocation()
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
+  const { isAuthenticated } = useAuthStore()
+  const [showOnboarding, setShowOnboarding] = useState(false)
+
+  // Vérifier si l'utilisateur a déjà vu l'onboarding
+  useEffect(() => {
+    if (isAuthenticated && !isAuthPage) {
+      const hasSeenOnboarding = localStorage.getItem('kairos-onboarding-completed')
+      if (!hasSeenOnboarding) {
+        // Attendre un peu pour que l'interface se charge
+        const timer = setTimeout(() => {
+          setShowOnboarding(true)
+        }, 500)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [isAuthenticated, isAuthPage])
+
+  const handleOnboardingComplete = () => {
+    localStorage.setItem('kairos-onboarding-completed', 'true')
+    setShowOnboarding(false)
+  }
+
+  const handleOnboardingSkip = () => {
+    localStorage.setItem('kairos-onboarding-completed', 'true')
+    setShowOnboarding(false)
+  }
 
   return (
     <Box minH="100vh" bg="gray.50" display="flex" flexDirection="column" position="relative">
@@ -74,6 +100,14 @@ function App() {
         </Suspense>
       </Box>
       {!isAuthPage && <Footer />}
+      
+      {/* Écran d'onboarding */}
+      {showOnboarding && (
+        <Onboarding
+          onComplete={handleOnboardingComplete}
+          onSkip={handleOnboardingSkip}
+        />
+      )}
     </Box>
   )
 }
