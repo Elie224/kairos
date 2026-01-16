@@ -149,23 +149,25 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             "/api/auth/me",  # Endpoint de vérification d'authentification - doit être accessible
             "/api/auth/login",  # Login doit être accessible
             "/api/auth/register",  # Register doit être accessible
+            "/api/auth/users/set-admin",  # Endpoint supprimé - exclure pour éviter les blocages
         ]
         
         # Exclure les endpoints de lecture (GET) courants utilisés par le dashboard
         # Ces endpoints sont moins critiques et peuvent être appelés fréquemment
         read_only_endpoints = [
-            "/api/progress/",
-            "/api/validations/",
-            "/api/modules/",
-            "/api/badges/",
-            "/api/recommendations/",
-            "/api/favorites/",
+            "/api/progress",
+            "/api/validations",
+            "/api/modules",
+            "/api/badges",
+            "/api/recommendations",
+            "/api/favorites",
         ]
         
         # Vérifier si c'est un endpoint exclu
         is_excluded = (
             request.url.path in excluded_paths or 
             request.url.path.startswith("/api/auth/users/debug/") or
+            request.url.path.startswith("/api/auth/users/set-admin") or  # Exclure même les variantes
             (request.method == "GET" and any(request.url.path.startswith(endpoint) for endpoint in read_only_endpoints))
         )
         
@@ -173,6 +175,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             # Débloquer l'IP si elle était bloquée pour cet endpoint spécifique
             ip = self._get_client_ip(request)
             if ip in self.blocked_ips:
+                logger.info(f"Déblocage automatique de l'IP {ip} pour l'accès à {request.url.path}")
                 del self.blocked_ips[ip]
             if ip in self.requests:
                 # Réinitialiser seulement partiellement pour les endpoints de lecture
