@@ -57,7 +57,7 @@ async def get_modules(
         # Filtrer les modules pour ne garder que ceux avec des sujets valides
         # Optimisation: validation Pydantic seulement si nécessaire (éviter la validation complète pour chaque module)
         valid_modules = []
-        valid_subjects = {"mathematics", "computer_science"}
+        valid_subjects = {"mathematics", "computer_science", "physics", "chemistry"}
         
         for module in (modules or []):
             try:

@@ -14,7 +14,7 @@ import {
   Icon,
   Tooltip,
   Skeleton,
-  SkeletonCircle,
+  SkeletonCircle as ChakraSkeletonCircle,
   Flex,
   Heading,
 } from '@chakra-ui/react'
@@ -96,10 +96,10 @@ export const BadgesDisplay = ({ limit = 8 }: { limit?: number }) => {
         {[...Array(limit)].map((_, i) => (
           <Card key={i}>
             <CardBody>
-              <VStack spacing={2}>
-                <SkeletonCircle size="16" />
-                <Skeleton height="20px" width="80%" />
-              </VStack>
+                      <VStack spacing={2}>
+                        <ChakraSkeletonCircle size="16" />
+                        <Skeleton height="20px" width="80%" />
+                      </VStack>
             </CardBody>
           </Card>
         ))}

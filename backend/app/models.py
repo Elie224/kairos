@@ -9,6 +9,8 @@ from enum import Enum
 class Subject(str, Enum):
     MATHEMATICS = "mathematics"
     COMPUTER_SCIENCE = "computer_science"
+    PHYSICS = "physics"
+    CHEMISTRY = "chemistry"
 
 class Difficulty(str, Enum):
     BEGINNER = "beginner"

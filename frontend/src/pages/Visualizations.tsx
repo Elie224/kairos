@@ -47,13 +47,28 @@ const Visualizations = () => {
   const { data: modules, isLoading } = useQuery<Module[]>(
     ['modules', selectedSubject],
     async () => {
-      const response = await api.get('/modules/', {
-        params: {
-          limit: 100,
-          ...(selectedSubject !== 'all' && { subject: selectedSubject }),
-        },
-      })
-      return response.data
+      // Pour physics et chemistry, ne pas filtrer côté API mais côté client
+      // car l'API peut ne pas encore supporter ces sujets dans tous les cas
+      const params: any = {
+        limit: 100,
+      }
+      
+      // Envoyer le filtre seulement pour mathematics et computer_science
+      if (selectedSubject !== 'all' && ['mathematics', 'computer_science'].includes(selectedSubject)) {
+        params.subject = selectedSubject
+      }
+      
+      const response = await api.get('/modules/', { params })
+      let filteredData = response.data || []
+      
+      // Filtrer côté client pour physics et chemistry si nécessaire
+      if (selectedSubject !== 'all' && ['physics', 'chemistry'].includes(selectedSubject)) {
+        filteredData = filteredData.filter((module: Module) => 
+          module.subject?.toLowerCase() === selectedSubject
+        )
+      }
+      
+      return filteredData
     },
     {
       enabled: !!user,
