@@ -120,6 +120,7 @@ const Login = () => {
                     placeholder="votre@email.com"
                     size="lg"
                     borderRadius="md"
+                    autoComplete="email"
                   />
                 </FormControl>
 
@@ -137,6 +138,7 @@ const Login = () => {
                     placeholder="••••••••"
                     size="lg"
                     borderRadius="md"
+                    autoComplete="current-password"
                   />
                 </FormControl>
 
