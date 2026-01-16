@@ -214,21 +214,21 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
             </Box>
 
             {/* Contenu de l'écran */}
-            <VStack spacing={6} px={8} pb={8} pt={4} align="stretch" minH="450px">
+            <VStack spacing={4} px={6} pb={6} pt={3} align="stretch" minH="380px">
               <AnimatedBox animation="fadeInUp" delay={0.2}>
-                <VStack spacing={6}>
+                <VStack spacing={4}>
                   {/* Icône avec emoji */}
-                  <VStack spacing={3}>
+                  <VStack spacing={2}>
                     {current.emoji && (
-                      <Text fontSize="6xl" lineHeight={1} mb={-2}>
+                      <Text fontSize="5xl" lineHeight={1} mb={-1}>
                         {current.emoji}
                       </Text>
                     )}
                     <Box
-                      p={5}
+                      p={4}
                       bgGradient={current.gradient}
-                      borderRadius="2xl"
-                      boxShadow="xl"
+                      borderRadius="xl"
+                      boxShadow="lg"
                       transform="rotate(-5deg)"
                       _hover={{
                         transform: 'rotate(0deg) scale(1.1)',
@@ -236,7 +236,7 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
                       transition="all 0.3s"
                       position="relative"
                     >
-                      <Icon as={current.icon} boxSize={10} color="white" />
+                      <Icon as={current.icon} boxSize={8} color="white" />
                       {/* Effet de brillance */}
                       <Box
                         position="absolute"
