@@ -24,7 +24,7 @@ import {
   Divider,
 } from '@chakra-ui/react'
 import { FiEye, FiBox, FiCpu, FiZap, FiPlay } from 'react-icons/fi'
-import { Simulation3D } from '../components/Simulation3D'
+import Simulation3D from '../components/Simulation3D'
 import { useQuery } from 'react-query'
 import api from '../services/api'
 import { useAuthStore } from '../store/authStore'
