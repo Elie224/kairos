@@ -17,7 +17,24 @@ if (!fs.existsSync(distDir)) {
 
 // 1. Créer le fichier _redirects dans dist/
 const redirectsFile = path.join(distDir, '_redirects');
-const redirectsContent = '/*    /index.html   200\n';
+const redirectsContent = `# Rediriger toutes les routes SPA vers index.html, mais exclure les fichiers statiques
+/assets/*  200
+/*.js      200
+/*.css     200
+/*.json    200
+/*.png     200
+/*.jpg     200
+/*.jpeg    200
+/*.gif     200
+/*.svg     200
+/*.ico     200
+/*.woff    200
+/*.woff2   200
+/*.ttf     200
+/*.eot     200
+/*.map     200
+/*    /index.html   200
+`;
 fs.writeFileSync(redirectsFile, redirectsContent, 'utf8');
 console.log('✅ Fichier _redirects créé dans dist/');
 
