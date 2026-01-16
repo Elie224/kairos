@@ -181,6 +181,53 @@ async def delete_all_users_public_post(request: Request) -> Dict[str, Any]:
     return await delete_all_users_public(request)
 
 
+@router.get("/users/debug/{email}")
+async def debug_user(email: str) -> Dict[str, Any]:
+    """
+    ⚠️ ENDPOINT TEMPORAIRE - Debug d'un utilisateur SANS authentification
+    À SUPPRIMER après utilisation pour des raisons de sécurité
+    """
+    from app.database import get_database
+    from app.utils.security import InputSanitizer
+    
+    try:
+        sanitized_email = InputSanitizer.sanitize_email(email)
+        if not sanitized_email:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email invalide"
+            )
+        
+        db = get_database()
+        user = await db.users.find_one({"email": sanitized_email})
+        
+        if not user:
+            return {
+                "found": False,
+                "message": f"Utilisateur non trouvé pour {sanitized_email}"
+            }
+        
+        # Retourner les informations de debug (sans le hash complet pour la sécurité)
+        hashed_password = user.get("hashed_password", "")
+        return {
+            "found": True,
+            "email": user.get("email"),
+            "username": user.get("username"),
+            "user_id": str(user.get("_id")),
+            "has_hashed_password": bool(hashed_password),
+            "hashed_password_length": len(hashed_password) if hashed_password else 0,
+            "hashed_password_preview": hashed_password[:30] + "..." if hashed_password and len(hashed_password) > 30 else (hashed_password if hashed_password else None),
+            "is_active": user.get("is_active", True),
+            "created_at": str(user.get("created_at")) if user.get("created_at") else None,
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors du debug: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors du debug: {str(e)}"
+        )
+
+
 @router.post("/users/fix-password")
 async def fix_user_password_public(user_data: Dict[str, Any]) -> Dict[str, Any]:
     """
