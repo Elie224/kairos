@@ -6,7 +6,7 @@ from typing import List
 from app.models import ModuleValidation, ModuleValidationResponse
 from app.services.validation_service import ValidationService
 from app.services.cached_validation_service import CachedValidationService
-# Authentification supprimée - toutes les routes sont publiques
+from app.utils.permissions import get_current_user
 from app.utils.security import InputSanitizer
 import logging
 
