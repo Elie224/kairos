@@ -83,14 +83,15 @@ export const useAuthStore = create<AuthState>()(
           const payload = {
             email: data.email.trim(),
             username: data.username.trim(),
-            first_name: data.first_name?.trim(),
-            last_name: data.last_name?.trim(),
-            date_of_birth: data.date_of_birth,
-            country: data.country?.trim(),
-            phone: data.phone?.trim(),
+            first_name: data.first_name?.trim() || '',
+            last_name: data.last_name?.trim() || '',
+            date_of_birth: data.date_of_birth || undefined,
+            country: data.country?.trim() || '',
+            phone: data.phone?.trim() || '',
             password: data.password,
           }
 
+          console.log('Tentative d\'inscription avec payload:', { ...payload, password: '***' })
           const response = await api.post('/auth/register', payload)
           const user = response.data
 
@@ -98,9 +99,16 @@ export const useAuthStore = create<AuthState>()(
             throw new Error('Réponse invalide du serveur')
           }
 
+          console.log('Inscription réussie:', user.id)
           set({ user, isAuthenticated: false, isLoading: false })
         } catch (error: any) {
           set({ isLoading: false })
+          console.error('Erreur lors de l\'inscription:', error)
+          // Améliorer le message d'erreur
+          if (error.response?.status === 400) {
+            const errorMessage = error.response?.data?.detail || 'Données invalides'
+            throw new Error(errorMessage)
+          }
           throw error
         }
       },

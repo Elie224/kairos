@@ -64,15 +64,17 @@ async def register(user_data: Dict[str, Any]) -> Dict[str, Any]:
     Inscription d'un nouvel utilisateur
     """
     try:
+        logger.info(f"Tentative d'inscription pour email: {user_data.get('email')}, username: {user_data.get('username')}")
         user = await AuthService.register_user(user_data)
+        logger.info(f"Inscription réussie pour user_id: {user.get('id')}")
         return user
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Erreur lors de l'inscription: {e}")
+        logger.error(f"Erreur lors de l'inscription: {e}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Erreur lors de l'inscription"
+            detail=f"Erreur lors de l'inscription: {str(e)}"
         )
 
 

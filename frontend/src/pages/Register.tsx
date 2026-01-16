@@ -92,10 +92,11 @@ const Register = () => {
       })
       navigate('/login', { state: { message: 'Inscription réussie ! Connectez-vous maintenant.' } })
     } catch (err: any) {
-      setError(
-        err.response?.data?.detail || 
+      console.error('Erreur lors de l\'inscription:', err)
+      const errorMessage = err.response?.data?.detail || 
+        err.message || 
         'Erreur lors de l\'inscription'
-      )
+      setError(errorMessage)
     }
   }
 
