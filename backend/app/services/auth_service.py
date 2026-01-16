@@ -165,14 +165,18 @@ class AuthService:
                 "updated_at": datetime.now(timezone.utc)
             }
             
+            logger.info(f"Appel de UserRepository.create avec user_dict contenant hashed_password: {bool(user_dict.get('hashed_password'))}")
             user = await UserRepository.create(user_dict)
+            logger.info(f"Utilisateur créé retourné par UserRepository.create: id={user.get('id')}, email={user.get('email')}, has_hashed_password={bool(user.get('hashed_password'))}")
             
-            # Retourner sans le mot de passe
-            user.pop("hashed_password", None)
-            user.pop("password_reset_token", None)
-            user.pop("email_verification_token", None)
+            # Retourner sans le mot de passe (mais seulement pour la réponse, pas pour la base de données)
+            response_user = user.copy()
+            response_user.pop("hashed_password", None)
+            response_user.pop("password_reset_token", None)
+            response_user.pop("email_verification_token", None)
             
-            return user
+            logger.info(f"Inscription terminée avec succès pour user_id: {user.get('id')}, email: {user.get('email')}")
+            return response_user
         except HTTPException:
             raise
         except Exception as e:

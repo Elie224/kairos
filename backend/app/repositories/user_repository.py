@@ -135,16 +135,33 @@ class UserRepository:
         try:
             logger.info(f"UserRepository.create: Création d'utilisateur avec email={user_data.get('email')}, username={user_data.get('username')}, has_hashed_password={bool(user_data.get('hashed_password'))}")
             db = get_database()
+            
+            # Vérifier que le hashed_password est présent avant l'insertion
+            if not user_data.get("hashed_password"):
+                logger.error(f"❌ ERREUR CRITIQUE: hashed_password manquant avant insertion pour email={user_data.get('email')}")
+                raise ValueError("hashed_password est requis pour créer un utilisateur")
+            
+            logger.info(f"Insertion dans MongoDB avec hashed_password de longueur: {len(user_data.get('hashed_password', ''))}")
             result = await db.users.insert_one(user_data)
             user_data["_id"] = result.inserted_id
-            logger.info(f"Utilisateur créé avec succès: _id={result.inserted_id}")
+            logger.info(f"✅ Utilisateur créé avec succès: _id={result.inserted_id}, email={user_data.get('email')}")
+            
             # Vérifier que le mot de passe a bien été sauvegardé
-            saved_user = await db.users.find_one({"_id": result.inserted_id}, {"hashed_password": 1})
+            saved_user = await db.users.find_one({"_id": result.inserted_id}, {"hashed_password": 1, "email": 1})
             if saved_user and saved_user.get("hashed_password"):
-                logger.info(f"✅ Mot de passe hashé confirmé dans la base de données")
+                logger.info(f"✅ Mot de passe hashé confirmé dans la base de données (longueur: {len(saved_user.get('hashed_password', ''))})")
             else:
                 logger.error(f"❌ ERREUR: Le mot de passe hashé n'a PAS été sauvegardé dans la base de données!")
-            return serialize_doc(user_data)
+                logger.error(f"Utilisateur sauvegardé: {saved_user}")
+            
+            # Vérifier que l'utilisateur peut être retrouvé par email
+            found_user = await db.users.find_one({"email": user_data.get("email")}, {"email": 1, "hashed_password": 1})
+            if found_user:
+                logger.info(f"✅ Utilisateur retrouvé par email après création: email={found_user.get('email')}, has_hash={bool(found_user.get('hashed_password'))}")
+            else:
+                logger.error(f"❌ ERREUR: Impossible de retrouver l'utilisateur par email après création!")
+            
+            return serialize_doc(user_data, exclude_fields=[])
         except Exception as e:
             logger.error(f"Erreur lors de la création de l'utilisateur: {e}", exc_info=True)
             raise
