@@ -3,7 +3,7 @@ Routeur pour l'authentification
 """
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
-from typing import Dict, Any
+from typing import Dict, Any, List
 from app.services.auth_service import AuthService
 from app.utils.permissions import get_current_user, require_admin
 from app.utils.security import InputSanitizer
@@ -124,6 +124,175 @@ async def update_current_user(
     updated_user.pop("email_verification_token", None)
     
     return updated_user
+
+
+@router.get("/users")
+async def get_all_users(
+    current_user: Dict[str, Any] = Depends(require_admin)
+) -> List[Dict[str, Any]]:
+    """
+    Récupère la liste de tous les utilisateurs (ADMIN ONLY)
+    """
+    from app.repositories.user_repository import UserRepository
+    from app.database import get_database
+    
+    try:
+        db = get_database()
+        # Récupérer tous les utilisateurs
+        users_cursor = db.users.find({})
+        users = await users_cursor.to_list(length=None)
+        
+        # Serializer les utilisateurs (exclure les mots de passe)
+        serialized_users = []
+        for user in users:
+            user_dict = {
+                "id": str(user.get("_id")),
+                "email": user.get("email"),
+                "username": user.get("username"),
+                "first_name": user.get("first_name"),
+                "last_name": user.get("last_name"),
+                "is_admin": user.get("is_admin", False),
+                "is_active": user.get("is_active", True),
+                "created_at": user.get("created_at").isoformat() if user.get("created_at") else None,
+            }
+            serialized_users.append(user_dict)
+        
+        return serialized_users
+    except Exception as e:
+        logger.error(f"Erreur lors de la récupération des utilisateurs: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors de la récupération des utilisateurs: {str(e)}"
+        )
+
+
+@router.get("/stats")
+async def get_stats(
+    current_user: Dict[str, Any] = Depends(require_admin)
+) -> Dict[str, Any]:
+    """
+    Récupère les statistiques de la plateforme (ADMIN ONLY)
+    """
+    from app.database import get_database
+    
+    try:
+        db = get_database()
+        
+        # Compter les utilisateurs
+        total_users = await db.users.count_documents({})
+        total_admins = await db.users.count_documents({"is_admin": True})
+        active_users = await db.users.count_documents({"is_active": True})
+        
+        # Compter les modules
+        total_modules = await db.modules.count_documents({})
+        
+        # Compter les progressions
+        total_progress = await db.progress.count_documents({})
+        
+        # Compter les messages de support
+        total_support_messages = await db.support_messages.count_documents({})
+        
+        # Modules par sujet
+        modules_by_subject = {}
+        modules_cursor = db.modules.find({}, {"subject": 1})
+        async for module in modules_cursor:
+            subject = module.get("subject", "unknown")
+            modules_by_subject[subject] = modules_by_subject.get(subject, 0) + 1
+        
+        # Modules par difficulté
+        modules_by_difficulty = {}
+        modules_cursor = db.modules.find({}, {"difficulty": 1})
+        async for module in modules_cursor:
+            difficulty = module.get("difficulty", "unknown")
+            modules_by_difficulty[difficulty] = modules_by_difficulty.get(difficulty, 0) + 1
+        
+        return {
+            "total_users": total_users,
+            "total_admins": total_admins,
+            "active_users": active_users,
+            "total_modules": total_modules,
+            "total_progress": total_progress,
+            "total_support_messages": total_support_messages,
+            "modules_by_subject": modules_by_subject,
+            "modules_by_difficulty": modules_by_difficulty,
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de la récupération des statistiques: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors de la récupération des statistiques: {str(e)}"
+        )
+
+
+@router.put("/users/{user_id}")
+async def update_user(
+    user_id: str,
+    user_data: Dict[str, Any],
+    current_user: Dict[str, Any] = Depends(require_admin)
+) -> Dict[str, Any]:
+    """
+    Met à jour un utilisateur (ADMIN ONLY)
+    Permet de promouvoir/rétrograder admin, activer/désactiver un compte
+    """
+    from app.repositories.user_repository import UserRepository
+    from app.utils.security import InputSanitizer
+    from datetime import datetime, timezone
+    
+    try:
+        # Sanitizer l'ID utilisateur
+        sanitized_user_id = InputSanitizer.sanitize_object_id(user_id)
+        if not sanitized_user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="ID utilisateur invalide"
+            )
+        
+        # Vérifier que l'utilisateur existe
+        user = await UserRepository.find_by_id(sanitized_user_id)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Utilisateur non trouvé"
+            )
+        
+        # Préparer les données de mise à jour
+        update_data = {}
+        
+        # Permettre la modification de is_admin et is_active uniquement
+        if "is_admin" in user_data:
+            update_data["is_admin"] = bool(user_data["is_admin"])
+        
+        if "is_active" in user_data:
+            update_data["is_active"] = bool(user_data["is_active"])
+        
+        # Mettre à jour la date de modification
+        update_data["updated_at"] = datetime.now(timezone.utc)
+        
+        # Mettre à jour l'utilisateur
+        updated_user = await UserRepository.update(sanitized_user_id, update_data)
+        
+        if not updated_user:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Erreur lors de la mise à jour de l'utilisateur"
+            )
+        
+        # Retourner sans le mot de passe
+        updated_user.pop("hashed_password", None)
+        updated_user.pop("password_reset_token", None)
+        updated_user.pop("email_verification_token", None)
+        
+        logger.info(f"Utilisateur {sanitized_user_id} mis à jour par admin {current_user.get('email')}")
+        
+        return updated_user
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Erreur lors de la mise à jour de l'utilisateur: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors de la mise à jour: {str(e)}"
+        )
 
 
 @router.delete("/users/all")
