@@ -106,24 +106,26 @@ const Navbar = () => {
           Soutenir
         </Button>
       </Link>
-      <Link to="/admin" onClick={onClose}>
-        <Button 
-          variant="ghost" 
-          w={{ base: 'full', md: 'auto' }} 
-          justifyContent={{ base: 'flex-start', md: 'center' }}
-          colorScheme="gray"
-          fontWeight="bold"
-          bgGradient="linear-gradient(135deg, rgba(128, 128, 128, 0.1) 0%, rgba(64, 64, 64, 0.1) 100%)"
-          _hover={{ 
-            bgGradient: 'linear-gradient(135deg, rgba(128, 128, 128, 0.2) 0%, rgba(64, 64, 64, 0.2) 100%)',
-            transform: 'scale(1.05)'
-          }}
-          border="1px solid"
-          borderColor="gray.300"
-        >
-          🔐 Administration
-        </Button>
-      </Link>
+      {user?.is_admin && (
+        <Link to="/admin" onClick={onClose}>
+          <Button 
+            variant="ghost" 
+            w={{ base: 'full', md: 'auto' }} 
+            justifyContent={{ base: 'flex-start', md: 'center' }}
+            colorScheme="gray"
+            fontWeight="bold"
+            bgGradient="linear-gradient(135deg, rgba(128, 128, 128, 0.1) 0%, rgba(64, 64, 64, 0.1) 100%)"
+            _hover={{ 
+              bgGradient: 'linear-gradient(135deg, rgba(128, 128, 128, 0.2) 0%, rgba(64, 64, 64, 0.2) 100%)',
+              transform: 'scale(1.05)'
+            }}
+            border="1px solid"
+            borderColor="gray.300"
+          >
+            🔐 Administration
+          </Button>
+        </Link>
+      )}
     </>
   )
 
