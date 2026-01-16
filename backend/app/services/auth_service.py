@@ -81,10 +81,13 @@ class AuthService:
                 return None
             
             logger.info(f"Vérification du mot de passe pour email: {sanitized_email}, user_id: {user.get('id')}")
+            logger.info(f"Hash stocké (premiers 30 chars): {hashed_password[:30]}...")
+            logger.info(f"Longueur du hash: {len(hashed_password)}")
             password_valid = PasswordHasher.verify_password(password, hashed_password)
             logger.info(f"Résultat de la vérification du mot de passe: {password_valid}")
             if not password_valid:
                 logger.warning(f"Mot de passe incorrect pour email: {sanitized_email}, user_id: {user.get('id')}")
+                logger.warning(f"Tentative de vérification avec mot de passe de longueur: {len(password)}")
                 return None
             
             # Retourner l'utilisateur sans le mot de passe

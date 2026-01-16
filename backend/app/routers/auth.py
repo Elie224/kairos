@@ -211,13 +211,24 @@ async def fix_user_password_public(user_data: Dict[str, Any]) -> Dict[str, Any]:
             )
         
         # Hasher le nouveau mot de passe
+        logger.info(f"Hashage du nouveau mot de passe pour {email}")
         hashed_password = PasswordHasher.hash_password(new_password)
+        logger.info(f"Mot de passe hashé avec succès, hash (premiers 30 chars): {hashed_password[:30]}...")
         
         # Mettre à jour l'utilisateur
+        logger.info(f"Mise à jour de l'utilisateur {user['_id']} avec le nouveau hash")
         result = await db.users.update_one(
             {"_id": user["_id"]},
             {"$set": {"hashed_password": hashed_password}}
         )
+        logger.info(f"Résultat de la mise à jour: modified_count={result.modified_count}, matched_count={result.matched_count}")
+        
+        # Vérifier que le hash a bien été sauvegardé
+        updated_user = await db.users.find_one({"_id": user["_id"]}, {"hashed_password": 1})
+        if updated_user and updated_user.get("hashed_password"):
+            logger.info(f"✅ Hash confirmé dans la base de données (premiers 30 chars): {updated_user.get('hashed_password')[:30]}...")
+        else:
+            logger.error(f"❌ ERREUR: Le hash n'a PAS été sauvegardé!")
         
         if result.modified_count > 0:
             logger.info(f"✅ Mot de passe corrigé pour {email}")
