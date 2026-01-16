@@ -38,31 +38,9 @@ export default defineConfig(({ mode }) => {
       // Vite gérera automatiquement le code splitting de manière sûre
       rollupOptions: {
         output: {
-          // Code splitting manuel optimisé pour réduire la taille des bundles
-          manualChunks: (id) => {
-            // Séparer les bibliothèques lourdes
-            if (id.includes('node_modules')) {
-              // React et ses dépendances DOIVENT être ensemble (pas de séparation)
-              if (id.includes('react/') || id.includes('react-dom/') || id.includes('scheduler/')) {
-                return 'vendor-react'
-              }
-              // React Router avec React
-              if (id.includes('react-router')) {
-                return 'vendor-react'
-              }
-              // Three.js et dépendances 3D dans un chunk séparé
-              if (id.includes('three') || id.includes('@react-three')) {
-                return 'vendor-3d'
-              }
-              // Chakra UI dans un chunk séparé
-              if (id.includes('@chakra-ui') || id.includes('@emotion')) {
-                return 'vendor-ui'
-              }
-              // Autres node_modules dans vendor
-              return 'vendor'
-            }
-            // Pas de chunking personnalisé pour le code source (Vite le gère bien)
-          },
+          // Désactiver le code splitting manuel pour éviter les erreurs React
+          // Vite gérera automatiquement le code splitting de manière sûre et optimale
+          manualChunks: undefined,
         },
         // Ignorer les avertissements non critiques
         onwarn(warning, warn) {
