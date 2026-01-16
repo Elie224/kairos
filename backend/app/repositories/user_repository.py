@@ -20,15 +20,20 @@ class UserRepository:
         try:
             # Sanitizer et valider l'email
             sanitized_email = InputSanitizer.sanitize_email(email)
+            logger.info(f"UserRepository.find_by_email: email original={email}, sanitized={sanitized_email}")
             if not sanitized_email:
+                logger.warning(f"Email invalide après sanitization dans find_by_email: {email}")
                 return None
             
             db = get_database()
             # Utiliser une requête sécurisée (pas d'opérateurs MongoDB dans l'input)
             user = await db.users.find_one({"email": sanitized_email})
+            logger.info(f"Résultat de la recherche: {'trouvé' if user else 'non trouvé'}")
+            if user:
+                logger.info(f"Utilisateur trouvé: id={user.get('_id')}, email={user.get('email')}, username={user.get('username')}")
             return serialize_doc(user) if user else None
         except Exception as e:
-            logger.error(f"Erreur lors de la recherche par email: {e}")
+            logger.error(f"Erreur lors de la recherche par email: {e}", exc_info=True)
             raise
     
     @staticmethod

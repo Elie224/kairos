@@ -51,16 +51,27 @@ class AuthService:
     async def authenticate_user(email: str, password: str) -> Optional[Dict[str, Any]]:
         """Authentifie un utilisateur avec email et mot de passe"""
         try:
+            logger.info(f"authenticate_user appelé avec email: {email}")
             # Sanitizer l'email
             sanitized_email = InputSanitizer.sanitize_email(email)
+            logger.info(f"Email après sanitization: {sanitized_email}")
             if not sanitized_email:
                 logger.warning(f"Email invalide après sanitization: {email}")
                 return None
             
             # Trouver l'utilisateur
+            logger.info(f"Recherche de l'utilisateur avec email: {sanitized_email}")
             user = await UserRepository.find_by_email(sanitized_email)
             if not user:
-                logger.warning(f"Utilisateur non trouvé pour email: {sanitized_email}")
+                logger.warning(f"Utilisateur non trouvé pour email: {sanitized_email} (email original: {email})")
+                # Essayer de trouver tous les utilisateurs pour debug
+                try:
+                    from app.database import get_database
+                    db = get_database()
+                    all_users = await db.users.find({}, {"email": 1, "username": 1}).to_list(length=10)
+                    logger.info(f"Utilisateurs dans la base de données: {[u.get('email') for u in all_users]}")
+                except Exception as e:
+                    logger.error(f"Erreur lors de la récupération des utilisateurs pour debug: {e}")
                 return None
             
             # Vérifier le mot de passe
