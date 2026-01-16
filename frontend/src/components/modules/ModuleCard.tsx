@@ -191,6 +191,6 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
       </CardBody>
     </Card>
   )
-})
-
-ModuleCard.displayName = 'ModuleCard')
+  })
+  
+ModuleCard.displayName = 'ModuleCard'
