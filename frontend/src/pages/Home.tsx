@@ -127,7 +127,7 @@ const Home = () => {
                 letterSpacing="tight"
                 maxW="900px"
               >
-                Apprenez l'Algèbre et le Machine Learning avec l'IA
+                Apprenez diverses matières avec l'IA
               </Heading>
             </AnimatedBox>
             
@@ -140,7 +140,7 @@ const Home = () => {
                 fontWeight="medium"
                 textShadow="0 2px 10px rgba(0, 0, 0, 0.2)"
               >
-                Maîtrisez les concepts complexes grâce à des explications personnalisées par IA et des visualisations interactives
+                Maîtrisez les concepts complexes de toutes les matières grâce à des explications personnalisées par IA et des visualisations interactives
               </Text>
             </AnimatedBox>
             
@@ -305,7 +305,7 @@ const Home = () => {
               maxW="700px"
               lineHeight="1.8"
             >
-              Explorez nos modules spécialisés en Algèbre et Machine Learning, conçus pour vous accompagner à chaque niveau
+                  Explorez nos modules spécialisés dans diverses matières, conçus pour vous accompagner à chaque niveau
             </Text>
           </VStack>
 
@@ -610,7 +610,7 @@ const Home = () => {
               {
                 step: '1',
                 title: 'Choisissez un module',
-                description: 'Sélectionnez un module d\'Algèbre ou de Machine Learning selon votre niveau et vos objectifs.',
+                    description: 'Sélectionnez un module dans la matière de votre choix selon votre niveau et vos objectifs.',
                 icon: FiBook,
                 color: 'blue',
               },
@@ -704,7 +704,7 @@ const Home = () => {
               fontWeight="medium"
               lineHeight="1.8"
             >
-              Rejoignez Kaïros et découvrez une nouvelle façon d'apprendre l'Algèbre et le Machine Learning avec l'IA
+                  Rejoignez Kaïros et découvrez une nouvelle façon d'apprendre diverses matières avec l'IA
             </Text>
             <HStack spacing={4} justify="center" flexWrap="wrap">
               <Link to="/register">
