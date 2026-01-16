@@ -24,6 +24,8 @@ import {
   Icon,
   Badge,
   Divider,
+  Skeleton,
+  SkeletonText,
 } from '@chakra-ui/react'
 import { FiAward, FiTarget, FiTrendingUp, FiStar } from 'react-icons/fi'
 import { FaTrophy } from 'react-icons/fa'
@@ -286,22 +288,85 @@ const Gamification = () => {
             <TabPanels>
               <TabPanel px={0}>
                 <VStack spacing={4} align="stretch">
-                  <Heading size="md">Vos Badges</Heading>
-                  <BadgesDisplay limit={12} />
+                  <HStack justify="space-between" align="center">
+                    <Heading size="md">Vos Badges</Heading>
+                    {badges && badges.length > 0 && (
+                      <Badge colorScheme="yellow" fontSize="sm" px={3} py={1}>
+                        {badges.length} badge{badges.length > 1 ? 's' : ''}
+                      </Badge>
+                    )}
+                  </HStack>
+                  {badgesLoading ? (
+                    <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
+                      {[...Array(8)].map((_, i) => (
+                        <Card key={i}>
+                          <CardBody>
+                            <VStack spacing={2}>
+                              <Skeleton height="64px" width="64px" borderRadius="full" />
+                              <Skeleton height="20px" width="80%" />
+                            </VStack>
+                          </CardBody>
+                        </Card>
+                      ))}
+                    </SimpleGrid>
+                  ) : (
+                    <BadgesDisplay limit={12} />
+                  )}
                 </VStack>
               </TabPanel>
 
               <TabPanel px={0}>
                 <VStack spacing={4} align="stretch">
-                  <Heading size="md">Vos Quêtes</Heading>
-                  <QuestsDisplay limit={10} />
+                  <HStack justify="space-between" align="center">
+                    <Heading size="md">Vos Quêtes</Heading>
+                    {quests && quests.length > 0 && (
+                      <Badge colorScheme="blue" fontSize="sm" px={3} py={1}>
+                        {activeQuests} active{activeQuests > 1 ? 's' : ''}
+                      </Badge>
+                    )}
+                  </HStack>
+                  {questsLoading ? (
+                    <VStack spacing={4} align="stretch">
+                      {[...Array(5)].map((_, i) => (
+                        <Card key={i}>
+                          <CardBody>
+                            <Skeleton height="100px" />
+                          </CardBody>
+                        </Card>
+                      ))}
+                    </VStack>
+                  ) : (
+                    <QuestsDisplay limit={10} />
+                  )}
                 </VStack>
               </TabPanel>
 
               <TabPanel px={0}>
                 <VStack spacing={4} align="stretch">
-                  <Heading size="md">Classement Général</Heading>
-                  <LeaderboardDisplay limit={20} />
+                  <HStack justify="space-between" align="center">
+                    <Heading size="md">Classement Général</Heading>
+                    {leaderboard && leaderboard.length > 0 && (
+                      <Badge colorScheme="purple" fontSize="sm" px={3} py={1}>
+                        {leaderboard.length} participant{leaderboard.length > 1 ? 's' : ''}
+                      </Badge>
+                    )}
+                  </HStack>
+                  {leaderboardLoading ? (
+                    <VStack spacing={2} align="stretch">
+                      {[...Array(10)].map((_, i) => (
+                        <Card key={i}>
+                          <CardBody>
+                            <HStack spacing={4}>
+                              <Skeleton height="40px" width="40px" borderRadius="full" />
+                              <SkeletonText flex={1} noOfLines={2} />
+                            </HStack>
+                          </CardBody>
+                        </Card>
+                      ))}
+                    </VStack>
+                  ) : (
+                    <LeaderboardDisplay limit={20} />
+                  )}
                 </VStack>
               </TabPanel>
             </TabPanels>
