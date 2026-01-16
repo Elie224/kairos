@@ -42,6 +42,14 @@ export default defineConfig(({ mode }) => {
           manualChunks: (id) => {
             // Séparer les bibliothèques lourdes
             if (id.includes('node_modules')) {
+              // React et ses dépendances DOIVENT être ensemble (pas de séparation)
+              if (id.includes('react/') || id.includes('react-dom/') || id.includes('scheduler/')) {
+                return 'vendor-react'
+              }
+              // React Router avec React
+              if (id.includes('react-router')) {
+                return 'vendor-react'
+              }
               // Three.js et dépendances 3D dans un chunk séparé
               if (id.includes('three') || id.includes('@react-three')) {
                 return 'vendor-3d'
@@ -49,10 +57,6 @@ export default defineConfig(({ mode }) => {
               // Chakra UI dans un chunk séparé
               if (id.includes('@chakra-ui') || id.includes('@emotion')) {
                 return 'vendor-ui'
-              }
-              // React et React Router dans un chunk
-              if (id.includes('react') || id.includes('react-router')) {
-                return 'vendor-react'
               }
               // Autres node_modules dans vendor
               return 'vendor'
