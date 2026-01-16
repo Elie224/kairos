@@ -325,7 +325,7 @@ const Register = () => {
                     </Alert>
                   )}
 
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3}>
                   <FormControl isRequired isInvalid={!!errors.email && touched.email}>
                     <FormLabel fontWeight="600" color="gray.700">
                       <HStack spacing={2}>
@@ -405,7 +405,7 @@ const Register = () => {
                   </FormControl>
                 </SimpleGrid>
 
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3}>
                   <FormControl isRequired isInvalid={!!errors.password && touched.password}>
                     <FormLabel fontWeight="600" color="gray.700">
                       <HStack spacing={2}>
@@ -512,7 +512,7 @@ const Register = () => {
                   </FormControl>
                 </SimpleGrid>
 
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3}>
                   <FormControl isInvalid={!!errors.first_name && touched.first_name}>
                     <FormLabel fontWeight="600" color="gray.700">
                       <HStack spacing={2}>
@@ -588,7 +588,7 @@ const Register = () => {
                   </FormControl>
                 </SimpleGrid>
 
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3}>
                   <FormControl isInvalid={!!errors.phone && touched.phone}>
                     <FormLabel fontWeight="600" color="gray.700">
                       <HStack spacing={2}>
