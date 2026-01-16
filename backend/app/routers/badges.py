@@ -23,6 +23,6 @@ async def get_badge_count(
     current_user: dict = Depends(get_current_user)
 ):
     """Compte le nombre de badges de l'utilisateur"""
-    count = await BadgeService.get_user_badge_count(str(current_user["id"]))
+    count = await BadgeService.get_badge_count(str(current_user["id"]))
     return {"count": count}
 
