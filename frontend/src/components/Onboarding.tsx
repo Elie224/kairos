@@ -185,7 +185,7 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
             />
 
             {/* Barre de progression améliorée */}
-            <Box px={6} pt={6} pb={4} bgGradient={`linear(to-r, ${current.color}.50, white, ${current.color}.50)`}>
+            <Box px={5} pt={4} pb={3} bgGradient={`linear(to-r, ${current.color}.50, white, ${current.color}.50)`}>
               <HStack spacing={2} justify="space-between" mb={3}>
                 <Badge
                   colorScheme={current.color}
@@ -280,14 +280,14 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
 
                   {/* Liste de fonctionnalités */}
                   {current.features && current.features.length > 0 && (
-                    <SimpleGrid columns={1} spacing={3} w="full" mt={2}>
+                    <SimpleGrid columns={1} spacing={2} w="full" mt={1}>
                       {current.features.map((feature, idx) => (
                         <HStack
                           key={idx}
-                          spacing={3}
-                          p={3}
+                          spacing={2}
+                          p={2}
                           bg={`${current.color}.50`}
-                          borderRadius="lg"
+                          borderRadius="md"
                           border="1px solid"
                           borderColor={`${current.color}.200`}
                           _hover={{
@@ -299,11 +299,11 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
                           <Icon
                             as={FiCheck}
                             color={`${current.color}.600`}
-                            boxSize={5}
+                            boxSize={4}
                             flexShrink={0}
                           />
                           <Text
-                            fontSize="sm"
+                            fontSize="xs"
                             color="gray.700"
                             fontWeight="medium"
                             flex={1}

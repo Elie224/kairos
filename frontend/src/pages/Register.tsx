@@ -260,11 +260,11 @@ const Register = () => {
           >
             <VStack spacing={6} align="stretch">
               {/* En-tête amélioré */}
-              <VStack spacing={4} align="center">
+              <VStack spacing={3} align="center">
                 <Box
-                  p={5}
+                  p={4}
                   bgGradient="linear-gradient(135deg, blue.500 0%, blue.600 100%)"
-                  borderRadius="2xl"
+                  borderRadius="xl"
                   boxShadow="lg"
                   transform="rotate(-5deg)"
                   _hover={{
@@ -272,7 +272,7 @@ const Register = () => {
                   }}
                   transition="all 0.3s"
                 >
-                  <Icon as={FiUserPlus} boxSize={10} color="white" />
+                  <Icon as={FiUserPlus} boxSize={8} color="white" />
                 </Box>
                 <VStack spacing={2}>
                   <Heading 

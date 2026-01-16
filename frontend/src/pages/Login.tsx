@@ -179,7 +179,7 @@ const Login = () => {
         <AnimatedBox animation="fadeInUp" delay={0.1}>
           <Box
             bg={bgColor}
-            p={{ base: 6, md: 8 }}
+            p={{ base: 5, md: 6 }}
             borderRadius="2xl"
             boxShadow="2xl"
             border="1px solid"
@@ -191,13 +191,13 @@ const Login = () => {
             }}
             transition="all 0.3s"
           >
-            <VStack spacing={6} align="stretch">
+            <VStack spacing={4} align="stretch">
               {/* En-tête amélioré */}
-              <VStack spacing={4} align="center">
+              <VStack spacing={3} align="center">
                 <Box
-                  p={5}
+                  p={4}
                   bgGradient="linear-gradient(135deg, blue.500 0%, blue.600 100%)"
-                  borderRadius="2xl"
+                  borderRadius="xl"
                   boxShadow="lg"
                   transform="rotate(-5deg)"
                   _hover={{
@@ -205,7 +205,7 @@ const Login = () => {
                   }}
                   transition="all 0.3s"
                 >
-                  <Icon as={FiLogIn} boxSize={10} color="white" />
+                  <Icon as={FiLogIn} boxSize={8} color="white" />
                 </Box>
                 <VStack spacing={2}>
                   <Heading 
