@@ -185,26 +185,26 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
             />
 
             {/* Barre de progression améliorée */}
-            <Box px={5} pt={4} pb={3} bgGradient={`linear(to-r, ${current.color}.50, white, ${current.color}.50)`}>
-              <HStack spacing={2} justify="space-between" mb={3}>
+            <Box px={4} pt={3} pb={2} bgGradient={`linear(to-r, ${current.color}.50, white, ${current.color}.50)`}>
+              <HStack spacing={2} justify="space-between" mb={2}>
                 <Badge
                   colorScheme={current.color}
-                  px={3}
-                  py={1}
+                  px={2}
+                  py={0.5}
                   borderRadius="full"
-                  fontSize="xs"
+                  fontSize="2xs"
                   fontWeight="bold"
                 >
-                  Étape {currentScreen + 1} sur {onboardingScreens.length}
+                  Étape {currentScreen + 1}/{onboardingScreens.length}
                 </Badge>
-                <Text fontSize="xs" color="gray.600" fontWeight="bold">
+                <Text fontSize="2xs" color="gray.600" fontWeight="bold">
                   {Math.round(progress)}%
                 </Text>
               </HStack>
               <Progress
                 value={progress}
                 colorScheme={current.color}
-                size="md"
+                size="sm"
                 borderRadius="full"
                 bg="gray.100"
                 boxShadow="sm"
@@ -214,21 +214,21 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
             </Box>
 
             {/* Contenu de l'écran */}
-            <VStack spacing={4} px={6} pb={6} pt={3} align="stretch" minH="380px">
+            <VStack spacing={3} px={5} pb={5} pt={2} align="stretch" minH="320px">
               <AnimatedBox animation="fadeInUp" delay={0.2}>
-                <VStack spacing={4}>
+                <VStack spacing={3}>
                   {/* Icône avec emoji */}
-                  <VStack spacing={2}>
+                  <VStack spacing={1}>
                     {current.emoji && (
-                      <Text fontSize="5xl" lineHeight={1} mb={-1}>
+                      <Text fontSize="4xl" lineHeight={1} mb={0}>
                         {current.emoji}
                       </Text>
                     )}
                     <Box
-                      p={4}
+                      p={3}
                       bgGradient={current.gradient}
-                      borderRadius="xl"
-                      boxShadow="lg"
+                      borderRadius="lg"
+                      boxShadow="md"
                       transform="rotate(-5deg)"
                       _hover={{
                         transform: 'rotate(0deg) scale(1.1)',
@@ -236,7 +236,7 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
                       transition="all 0.3s"
                       position="relative"
                     >
-                      <Icon as={current.icon} boxSize={8} color="white" />
+                      <Icon as={current.icon} boxSize={6} color="white" />
                       {/* Effet de brillance */}
                       <Box
                         position="absolute"
@@ -255,7 +255,7 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
 
                   {/* Titre */}
                   <Heading
-                    size={{ base: 'lg', md: 'xl' }}
+                    size={{ base: 'md', md: 'lg' }}
                     color="gray.900"
                     fontWeight="800"
                     textAlign="center"
@@ -270,8 +270,8 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
                   <Text
                     color="gray.600"
                     textAlign="center"
-                    fontSize={{ base: 'md', md: 'lg' }}
-                    lineHeight="tall"
+                    fontSize={{ base: 'sm', md: 'md' }}
+                    lineHeight="1.6"
                     px={2}
                     fontWeight="500"
                   >
@@ -340,7 +340,7 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
               </HStack>
 
               {/* Boutons de navigation */}
-              <HStack spacing={4} justify="space-between" mt={4}>
+              <HStack spacing={3} justify="space-between" mt={2}>
                 <Button
                   variant="ghost"
                   leftIcon={<FiArrowLeft />}
@@ -355,7 +355,8 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
                     transform: 'translateX(-2px)',
                   }}
                   transition="all 0.2s"
-                  size="md"
+                  size="sm"
+                  fontSize="sm"
                 >
                   Précédent
                 </Button>
@@ -376,9 +377,10 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
                   }}
                   transition="all 0.3s"
                   fontWeight="bold"
-                  px={8}
-                  size="lg"
+                  px={6}
+                  size="md"
                   boxShadow="md"
+                  fontSize="sm"
                 >
                   {isLast ? '🚀 Commencer' : 'Suivant'}
                 </Button>

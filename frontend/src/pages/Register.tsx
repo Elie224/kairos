@@ -312,7 +312,7 @@ const Register = () => {
 
               {/* Formulaire amélioré */}
               <form onSubmit={handleSubmit} noValidate>
-                <VStack spacing={5} align="stretch">
+                <VStack spacing={2.5} align="stretch">
                   {error && (
                     <Alert 
                       status="error" 

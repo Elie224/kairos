@@ -179,7 +179,7 @@ const Login = () => {
         <AnimatedBox animation="fadeInUp" delay={0.1}>
           <Box
             bg={bgColor}
-            p={{ base: 5, md: 6 }}
+            p={{ base: 4, md: 5 }}
             borderRadius="2xl"
             boxShadow="2xl"
             border="1px solid"
@@ -191,32 +191,32 @@ const Login = () => {
             }}
             transition="all 0.3s"
           >
-            <VStack spacing={4} align="stretch">
+            <VStack spacing={3} align="stretch">
               {/* En-tête amélioré */}
-              <VStack spacing={3} align="center">
+              <VStack spacing={2} align="center">
                 <Box
-                  p={4}
+                  p={3}
                   bgGradient="linear-gradient(135deg, blue.500 0%, blue.600 100%)"
-                  borderRadius="xl"
-                  boxShadow="lg"
+                  borderRadius="lg"
+                  boxShadow="md"
                   transform="rotate(-5deg)"
                   _hover={{
                     transform: 'rotate(0deg) scale(1.1)',
                   }}
                   transition="all 0.3s"
                 >
-                  <Icon as={FiLogIn} boxSize={8} color="white" />
+                  <Icon as={FiLogIn} boxSize={6} color="white" />
                 </Box>
-                <VStack spacing={2}>
+                <VStack spacing={1}>
                   <Heading 
-                    size={{ base: 'lg', md: 'xl' }} 
+                    size={{ base: 'md', md: 'lg' }} 
                     color="gray.900" 
                     fontWeight="800"
                     textAlign="center"
                   >
                     Connexion
                   </Heading>
-                  <Text color="gray.600" textAlign="center" fontSize={{ base: 'sm', md: 'md' }}>
+                  <Text color="gray.600" textAlign="center" fontSize={{ base: 'xs', md: 'sm' }}>
                     Connectez-vous à votre compte Kaïros
                   </Text>
                 </VStack>
