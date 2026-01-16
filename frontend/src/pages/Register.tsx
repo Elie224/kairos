@@ -192,14 +192,14 @@ const Register = () => {
       backgroundPosition="center"
       backgroundRepeat="no-repeat"
     >
-      {/* Overlay sombre pour améliorer la lisibilité */}
+      {/* Overlay subtil pour améliorer la lisibilité */}
       <Box
         position="absolute"
         top={0}
         left={0}
         right={0}
         bottom={0}
-        bgGradient="linear-gradient(135deg, rgba(37, 99, 235, 0.85) 0%, rgba(30, 64, 175, 0.9) 50%, rgba(37, 99, 235, 0.85) 100%)"
+        bgGradient="linear-gradient(135deg, rgba(37, 99, 235, 0.4) 0%, rgba(30, 64, 175, 0.5) 50%, rgba(37, 99, 235, 0.4) 100%)"
         zIndex={0}
       />
       
