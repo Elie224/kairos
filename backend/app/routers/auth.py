@@ -181,6 +181,79 @@ async def delete_all_users_public_post(request: Request) -> Dict[str, Any]:
     return await delete_all_users_public(request)
 
 
+@router.post("/users/set-admin")
+async def set_admin_user(user_data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    ⚠️ ENDPOINT TEMPORAIRE - Définit un utilisateur comme administrateur SANS authentification
+    À SUPPRIMER après utilisation pour des raisons de sécurité
+    """
+    from app.database import get_database
+    from datetime import datetime, timezone
+    
+    email = user_data.get("email")
+    is_admin = user_data.get("is_admin", True)
+    
+    if not email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email requis"
+        )
+    
+    try:
+        sanitized_email = InputSanitizer.sanitize_email(email)
+        if not sanitized_email:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email invalide"
+            )
+        
+        db = get_database()
+        user = await db.users.find_one({"email": sanitized_email})
+        
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Utilisateur non trouvé pour {sanitized_email}"
+            )
+        
+        # Mettre à jour le statut admin
+        logger.info(f"Mise à jour du statut admin pour {sanitized_email}: {is_admin}")
+        result = await db.users.update_one(
+            {"_id": user["_id"]},
+            {"$set": {
+                "is_admin": is_admin,
+                "updated_at": datetime.now(timezone.utc)
+            }}
+        )
+        
+        if result.modified_count > 0:
+            logger.info(f"✅ Statut admin mis à jour avec succès pour {sanitized_email}: is_admin={is_admin}")
+            updated_user = await db.users.find_one({"_id": user["_id"]})
+            return {
+                "message": f"Statut admin mis à jour avec succès pour {sanitized_email}",
+                "success": True,
+                "user": {
+                    "id": str(updated_user["_id"]),
+                    "email": updated_user.get("email"),
+                    "username": updated_user.get("username"),
+                    "is_admin": updated_user.get("is_admin", False)
+                }
+            }
+        else:
+            return {
+                "message": "Aucune modification effectuée (statut déjà défini)",
+                "success": False
+            }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Erreur lors de la mise à jour du statut admin: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors de la mise à jour: {str(e)}"
+        )
+
+
 @router.get("/users/debug/{email}")
 async def debug_user(email: str) -> Dict[str, Any]:
     """
