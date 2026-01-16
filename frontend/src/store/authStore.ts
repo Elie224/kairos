@@ -51,15 +51,18 @@ export const useAuthStore = create<AuthState>()(
       login: async (email: string, password: string) => {
         set({ isLoading: true })
         try {
+          console.log('Tentative de connexion pour email:', email)
           // OAuth2PasswordRequestForm attend application/x-www-form-urlencoded
           const params = new URLSearchParams()
           params.append('username', email)
           params.append('password', password)
 
+          console.log('Envoi de la requête de login avec params:', { username: email, password: '***' })
           const response = await api.post('/auth/login', params, {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           })
 
+          console.log('Réponse de login reçue:', { hasToken: !!response.data?.access_token, hasUser: !!response.data?.user })
           const { access_token, user } = response.data
           
           // Mettre à jour le header Authorization

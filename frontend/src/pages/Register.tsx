@@ -160,6 +160,7 @@ const Register = () => {
                       placeholder="votre@email.com"
                       size="lg"
                       borderRadius="md"
+                      autoComplete="email"
                     />
                   </FormControl>
 
@@ -198,6 +199,7 @@ const Register = () => {
                       placeholder="••••••••"
                       size="lg"
                       borderRadius="md"
+                      autoComplete="new-password"
                     />
                   </FormControl>
 
@@ -216,6 +218,7 @@ const Register = () => {
                       placeholder="••••••••"
                       size="lg"
                       borderRadius="md"
+                      autoComplete="new-password"
                     />
                   </FormControl>
                 </SimpleGrid>

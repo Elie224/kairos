@@ -66,12 +66,14 @@ class AuthService:
             # Vérifier le mot de passe
             hashed_password = user.get("hashed_password")
             if not hashed_password:
-                logger.warning(f"Utilisateur sans mot de passe hashé: {user.get('id')}")
+                logger.warning(f"Utilisateur sans mot de passe hashé: {user.get('id')}, email: {sanitized_email}")
                 return None
             
+            logger.info(f"Vérification du mot de passe pour email: {sanitized_email}, user_id: {user.get('id')}")
             password_valid = PasswordHasher.verify_password(password, hashed_password)
+            logger.info(f"Résultat de la vérification du mot de passe: {password_valid}")
             if not password_valid:
-                logger.warning(f"Mot de passe incorrect pour email: {sanitized_email}")
+                logger.warning(f"Mot de passe incorrect pour email: {sanitized_email}, user_id: {user.get('id')}")
                 return None
             
             # Retourner l'utilisateur sans le mot de passe
@@ -127,7 +129,9 @@ class AuthService:
                 )
             
             # Hasher le mot de passe
+            logger.info(f"Hashage du mot de passe pour email: {email}, username: {username}")
             hashed_password = PasswordHasher.hash_password(password)
+            logger.info(f"Mot de passe hashé avec succès pour email: {email}")
             
             # Créer l'utilisateur
             user_dict = {
