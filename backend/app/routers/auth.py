@@ -181,6 +181,65 @@ async def delete_all_users_public_post(request: Request) -> Dict[str, Any]:
     return await delete_all_users_public(request)
 
 
+@router.post("/users/fix-password")
+async def fix_user_password_public(user_data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    ⚠️ ENDPOINT TEMPORAIRE - Corrige le mot de passe d'un utilisateur SANS authentification
+    À SUPPRIMER après utilisation pour des raisons de sécurité
+    """
+    from app.database import get_database
+    from app.utils.security import PasswordHasher
+    from bson import ObjectId
+    
+    email = user_data.get("email")
+    new_password = user_data.get("password")
+    
+    if not email or not new_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email et mot de passe requis"
+        )
+    
+    try:
+        db = get_database()
+        user = await db.users.find_one({"email": email})
+        
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Utilisateur non trouvé"
+            )
+        
+        # Hasher le nouveau mot de passe
+        hashed_password = PasswordHasher.hash_password(new_password)
+        
+        # Mettre à jour l'utilisateur
+        result = await db.users.update_one(
+            {"_id": user["_id"]},
+            {"$set": {"hashed_password": hashed_password}}
+        )
+        
+        if result.modified_count > 0:
+            logger.info(f"✅ Mot de passe corrigé pour {email}")
+            return {
+                "message": f"Mot de passe corrigé avec succès pour {email}",
+                "success": True
+            }
+        else:
+            return {
+                "message": "Aucune modification effectuée",
+                "success": False
+            }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Erreur lors de la correction du mot de passe: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors de la correction: {str(e)}"
+        )
+
+
 @router.delete("/users/all/public")
 async def delete_all_users_public(request: Request) -> Dict[str, Any]:
     """
