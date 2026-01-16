@@ -12,8 +12,8 @@ interface CacheConfig {
 }
 
 const DEFAULT_CONFIG: CacheConfig = {
-  staleTime: 5 * 60 * 1000, // 5 minutes
-  cacheTime: 10 * 60 * 1000, // 10 minutes
+  staleTime: 10 * 60 * 1000, // 10 minutes - augmenté pour réduire les requêtes
+  cacheTime: 30 * 60 * 1000, // 30 minutes - augmenté pour garder en cache plus longtemps
   refetchOnMount: false,
   refetchOnWindowFocus: false,
   retry: 1,
