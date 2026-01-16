@@ -215,31 +215,36 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         
         # Vérifier si l'IP est bloquée
         if self._is_blocked(ip):
-            # Pour les utilisateurs authentifiés, réduire le temps de blocage
+            # Pour les utilisateurs authentifiés, réduire le temps de blocage ou débloquer
             if is_authenticated:
                 # Vérifier si le blocage peut être réduit
                 if ip in self.blocked_ips:
                     time_remaining = (self.blocked_ips[ip] - datetime.now()).total_seconds()
-                    if time_remaining > 60:  # Si plus d'1 minute restante
-                        # Réduire le blocage à 1 minute pour les utilisateurs authentifiés
-                        self.blocked_ips[ip] = datetime.now() + timedelta(minutes=1)
-                        logger.info(f"Blocage réduit pour utilisateur authentifié: {ip}")
+                    if time_remaining > 30:  # Si plus de 30 secondes restantes
+                        # Réduire le blocage à 30 secondes pour les utilisateurs authentifiés
+                        self.blocked_ips[ip] = datetime.now() + timedelta(seconds=30)
+                        logger.info(f"Blocage réduit pour utilisateur authentifié: {ip} (30 secondes)")
                         # Ne pas bloquer, laisser passer après réduction
                     else:
-                        # Bloquer normalement
-                        return StarletteResponse(
-                            content='{"detail": "IP temporairement bloquée. Veuillez réessayer dans quelques instants."}',
-                            status_code=429,
-                            media_type="application/json",
-                            headers={"Retry-After": "60"}
-                        )
+                        # Si moins de 30 secondes, débloquer complètement pour les utilisateurs authentifiés
+                        logger.info(f"Déblocage automatique pour utilisateur authentifié: {ip}")
+                        del self.blocked_ips[ip]
+                        # Laisser passer la requête
             else:
-                return StarletteResponse(
-                    content='{"detail": "IP temporairement bloquée. Veuillez réessayer plus tard."}',
-                    status_code=429,
-                    media_type="application/json",
-                    headers={"Retry-After": "120"}
-                )
+                # Pour les utilisateurs non authentifiés, vérifier si c'est un endpoint important
+                # Si oui, débloquer temporairement
+                important_paths = ["/api/progress", "/api/validations", "/api/modules"]
+                if any(request.url.path.startswith(path) for path in important_paths):
+                    logger.info(f"Déblocage temporaire pour endpoint important: {ip} -> {request.url.path}")
+                    del self.blocked_ips[ip]
+                    # Laisser passer
+                else:
+                    return StarletteResponse(
+                        content='{"detail": "IP temporairement bloquée. Veuillez réessayer plus tard."}',
+                        status_code=429,
+                        media_type="application/json",
+                        headers={"Retry-After": "120"}
+                    )
         
         # Vérifier le rate limit avec les limites ajustées pour les utilisateurs authentifiés
         allowed, message = self._check_rate_limit(ip, effective_requests_per_minute, effective_burst_size)
