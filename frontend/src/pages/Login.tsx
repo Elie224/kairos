@@ -21,12 +21,13 @@ import {
   IconButton,
   Divider,
 } from '@chakra-ui/react'
-import { FiLogIn, FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi'
+import { FiLogIn, FiMail, FiLock, FiEye, FiEyeOff, FiTarget } from 'react-icons/fi'
 import { useAuthStore } from '../store/authStore'
 import { useTranslation } from 'react-i18next'
 import { useNotification } from '../components/NotificationProvider'
 import { validateEmail } from '../utils/formValidation'
 import { AnimatedBox } from '../components/AnimatedBox'
+import { Onboarding } from '../components/Onboarding'
 
 const Login = () => {
   const { t } = useTranslation()
@@ -40,6 +41,7 @@ const Login = () => {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [touched, setTouched] = useState<Record<string, boolean>>({})
   const [error, setError] = useState('')
+  const [showOnboarding, setShowOnboarding] = useState(false)
 
   // Rediriger si déjà connecté
   useEffect(() => {
@@ -365,10 +367,39 @@ const Login = () => {
                   </Text>
                 </Link>
               </Text>
+
+              {/* Bouton pour voir l'introduction */}
+              <Divider borderColor="gray.200" />
+              
+              <Button
+                variant="outline"
+                colorScheme="blue"
+                size="md"
+                width="full"
+                onClick={() => setShowOnboarding(true)}
+                leftIcon={<Icon as={FiTarget} />}
+                _hover={{
+                  bg: 'blue.50',
+                  borderColor: 'blue.300',
+                  transform: 'translateY(-2px)',
+                }}
+                transition="all 0.2s"
+                data-touch-target="true"
+              >
+                Découvrir Kaïros
+              </Button>
             </VStack>
           </Box>
         </AnimatedBox>
       </Container>
+
+      {/* Écran d'onboarding */}
+      {showOnboarding && (
+        <Onboarding
+          onComplete={() => setShowOnboarding(false)}
+          onSkip={() => setShowOnboarding(false)}
+        />
+      )}
     </Box>
   )
 }

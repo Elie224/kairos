@@ -24,7 +24,7 @@ import {
   Select,
   Progress,
 } from '@chakra-ui/react'
-import { FiUserPlus, FiMail, FiLock, FiUser, FiPhone, FiMapPin, FiEye, FiEyeOff, FiCheck } from 'react-icons/fi'
+import { FiUserPlus, FiMail, FiLock, FiUser, FiPhone, FiMapPin, FiEye, FiEyeOff, FiCheck, FiTarget } from 'react-icons/fi'
 import { useAuthStore } from '../store/authStore'
 import { useTranslation } from 'react-i18next'
 import { useNotification } from '../components/NotificationProvider'
@@ -38,6 +38,7 @@ import {
 } from '../utils/formValidation'
 import { PasswordStrength } from '../components/PasswordStrength'
 import { AnimatedBox } from '../components/AnimatedBox'
+import { Onboarding } from '../components/Onboarding'
 import { countries } from '../constants/countries'
 
 const Register = () => {
@@ -61,6 +62,7 @@ const Register = () => {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [touched, setTouched] = useState<Record<string, boolean>>({})
   const [error, setError] = useState('')
+  const [showOnboarding, setShowOnboarding] = useState(false)
   
   // Indicateur de progression du formulaire
   const formProgress = () => {
