@@ -80,7 +80,9 @@ export const BadgesDisplay = ({ limit = 8 }: { limit?: number }) => {
     'user-badges',
     async () => {
       try {
-        const response = await api.get('/badges/')
+        const response = await api.get('/badges/', {
+          timeout: 8000, // Timeout de 8 secondes
+        })
         return response.data || []
       } catch (error) {
         console.error('Erreur lors de la récupération des badges:', error)

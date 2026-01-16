@@ -1,6 +1,7 @@
 /**
  * Composant de carte de module réutilisable - Design amélioré
  */
+import { memo } from 'react'
 import { Card, CardBody, VStack, HStack, Badge, Heading, Text, Button, Box, Icon } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -14,7 +15,7 @@ interface ModuleCardProps {
   subjectLabel: string
 }
 
-export const ModuleCard = ({ module, subjectColor, subjectLabel }: ModuleCardProps) => {
+export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCardProps) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
 
@@ -190,4 +191,4 @@ export const ModuleCard = ({ module, subjectColor, subjectLabel }: ModuleCardPro
       </CardBody>
     </Card>
   )
-}
+})

@@ -43,7 +43,9 @@ const Gamification = () => {
   const { data: badgeCount, isLoading: badgeCountLoading } = useQuery(
     'badge-count',
     async () => {
-      const response = await api.get('/badges/count')
+      const response = await api.get('/badges/count', {
+        timeout: 8000, // Timeout de 8 secondes
+      })
       return response.data?.count || 0
     },
     {
@@ -56,7 +58,9 @@ const Gamification = () => {
   const { data: badges, isLoading: badgesLoading } = useQuery(
     'all-badges',
     async () => {
-      const response = await api.get('/badges/')
+      const response = await api.get('/badges/', {
+        timeout: 8000, // Timeout de 8 secondes
+      })
       return response.data || []
     },
     {
@@ -70,6 +74,7 @@ const Gamification = () => {
     'user-quests',
     async () => {
       const response = await api.get('/gamification/quests', {
+        timeout: 8000, // Timeout de 8 secondes
         params: { limit: 10 },
       })
       return response.data || []
@@ -85,6 +90,7 @@ const Gamification = () => {
     ['leaderboard', 'points'],
     async () => {
       const response = await api.get('/gamification/leaderboard', {
+        timeout: 8000, // Timeout de 8 secondes
         params: {
           leaderboard_type: 'points',
           limit: 100,

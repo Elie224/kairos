@@ -45,7 +45,9 @@ const ModuleDetail = () => {
   const { data: module, isLoading } = useQuery<Module>(
     ['module', id],
     async () => {
-      const response = await api.get(`/modules/${id}`)
+      const response = await api.get(`/modules/${id}`, {
+        timeout: 10000, // Timeout de 10 secondes
+      })
       return response.data
     },
     { 
