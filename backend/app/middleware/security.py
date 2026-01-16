@@ -136,6 +136,12 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         # Ne pas limiter les endpoints de santé et l'endpoint de suppression des utilisateurs (temporaire)
         excluded_paths = ["/health", "/", "/api/health", "/api/auth/users/all/public"]
         if request.url.path in excluded_paths:
+            # Débloquer l'IP si elle était bloquée pour cet endpoint spécifique
+            ip = self._get_client_ip(request)
+            if ip in self.blocked_ips:
+                del self.blocked_ips[ip]
+            if ip in self.requests:
+                self.requests[ip] = []
             return await call_next(request)
         
         ip = self._get_client_ip(request)
