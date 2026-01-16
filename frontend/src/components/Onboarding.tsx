@@ -15,9 +15,12 @@ import {
   IconButton,
   useColorModeValue,
   BoxProps,
+  Badge,
+  SimpleGrid,
 } from '@chakra-ui/react'
-import { FiArrowRight, FiArrowLeft, FiX, FiTarget, FiCpu, FiEye, FiZap, FiUsers, FiAward } from 'react-icons/fi'
+import { FiArrowRight, FiArrowLeft, FiX, FiTarget, FiCpu, FiEye, FiZap, FiUsers, FiAward, FiBook, FiTrendingUp, FiCheck } from 'react-icons/fi'
 import { AnimatedBox } from './AnimatedBox'
+
 
 interface OnboardingScreen {
   icon: typeof FiTarget
@@ -25,6 +28,8 @@ interface OnboardingScreen {
   description: string
   color: string
   gradient: string
+  features?: string[]
+  emoji?: string
 }
 
 const onboardingScreens: OnboardingScreen[] = [
@@ -34,6 +39,12 @@ const onboardingScreens: OnboardingScreen[] = [
     description: 'Votre plateforme d\'apprentissage intelligente pour maîtriser diverses matières avec l\'IA. Explorez des cours interactifs et personnalisés adaptés à votre niveau.',
     color: 'blue',
     gradient: 'linear(to-br, blue.400, blue.600)',
+    emoji: '🎓',
+    features: [
+      'Cours personnalisés par IA',
+      'Plusieurs matières disponibles',
+      'Adapté à tous les niveaux',
+    ],
   },
   {
     icon: FiCpu,
@@ -41,6 +52,12 @@ const onboardingScreens: OnboardingScreen[] = [
     description: 'Obtenez des explications personnalisées adaptées à votre niveau. Notre IA analyse vos questions et fournit des réponses claires avec des exemples concrets.',
     color: 'purple',
     gradient: 'linear(to-br, purple.400, purple.600)',
+    emoji: '🤖',
+    features: [
+      'Réponses instantanées',
+      'Explications détaillées',
+      'Exemples pratiques',
+    ],
   },
   {
     icon: FiEye,
@@ -48,20 +65,38 @@ const onboardingScreens: OnboardingScreen[] = [
     description: 'Visualisez des concepts complexes en 3D avec des simulations interactives. Manipulez, explorez et comprenez mieux grâce à des représentations visuelles dynamiques.',
     color: 'pink',
     gradient: 'linear(to-br, pink.400, pink.600)',
+    emoji: '👁️',
+    features: [
+      'Simulations 3D',
+      'Manipulation interactive',
+      'Compréhension visuelle',
+    ],
   },
   {
-    icon: FiZap,
+    icon: FiTrendingUp,
     title: 'Suivi de Progression',
     description: 'Suivez votre progression, identifiez vos forces et vos faiblesses. Obtenez des recommandations personnalisées pour optimiser votre apprentissage.',
     color: 'orange',
     gradient: 'linear(to-br, orange.400, orange.600)',
+    emoji: '📈',
+    features: [
+      'Statistiques détaillées',
+      'Recommandations personnalisées',
+      'Objectifs adaptatifs',
+    ],
   },
   {
     icon: FiAward,
-    title: 'Gamification',
+    title: 'Gamification & Récompenses',
     description: 'Gagnez des badges, débloquez des réalisations et montez de niveau. Transformez votre apprentissage en une expérience engageante et motivante.',
     color: 'green',
     gradient: 'linear(to-br, green.400, green.600)',
+    emoji: '🏆',
+    features: [
+      'Badges et réalisations',
+      'Système de niveaux',
+      'Défis quotidiens',
+    ],
   },
 ]
 
@@ -118,10 +153,15 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
             bg={bgColor}
             borderRadius="2xl"
             boxShadow="2xl"
-            border="1px solid"
+            border="2px solid"
             borderColor={borderColor}
             overflow="hidden"
             position="relative"
+            _hover={{
+              boxShadow: '2xl',
+              borderColor: `${current.color}.300`,
+            }}
+            transition="all 0.3s"
           >
             {/* Bouton de fermeture */}
             <IconButton
@@ -157,23 +197,44 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
             </Box>
 
             {/* Contenu de l'écran */}
-            <VStack spacing={8} px={8} pb={8} pt={4} align="stretch" minH="400px">
+            <VStack spacing={6} px={8} pb={8} pt={4} align="stretch" minH="450px">
               <AnimatedBox animation="fadeInUp" delay={0.2}>
                 <VStack spacing={6}>
-                  {/* Icône */}
-                  <Box
-                    p={6}
-                    bgGradient={current.gradient}
-                    borderRadius="2xl"
-                    boxShadow="lg"
-                    transform="rotate(-5deg)"
-                    _hover={{
-                      transform: 'rotate(0deg) scale(1.1)',
-                    }}
-                    transition="all 0.3s"
-                  >
-                    <Icon as={current.icon} boxSize={12} color="white" />
-                  </Box>
+                  {/* Icône avec emoji */}
+                  <VStack spacing={3}>
+                    {current.emoji && (
+                      <Text fontSize="6xl" lineHeight={1} mb={-2}>
+                        {current.emoji}
+                      </Text>
+                    )}
+                    <Box
+                      p={5}
+                      bgGradient={current.gradient}
+                      borderRadius="2xl"
+                      boxShadow="xl"
+                      transform="rotate(-5deg)"
+                      _hover={{
+                        transform: 'rotate(0deg) scale(1.1)',
+                      }}
+                      transition="all 0.3s"
+                      position="relative"
+                    >
+                      <Icon as={current.icon} boxSize={10} color="white" />
+                      {/* Effet de brillance */}
+                      <Box
+                        position="absolute"
+                        top="-50%"
+                        left="-50%"
+                        width="200%"
+                        height="200%"
+                        bgGradient="radial(circle, rgba(255,255,255,0.3) 0%, transparent 70%)"
+                        borderRadius="full"
+                        opacity={0}
+                        _hover={{ opacity: 1 }}
+                        transition="opacity 0.3s"
+                      />
+                    </Box>
+                  </VStack>
 
                   {/* Titre */}
                   <Heading
@@ -181,6 +242,9 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
                     color="gray.900"
                     fontWeight="800"
                     textAlign="center"
+                    bgGradient={current.gradient}
+                    bgClip="text"
+                    letterSpacing="tight"
                   >
                     {current.title}
                   </Heading>
@@ -192,9 +256,47 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
                     fontSize={{ base: 'md', md: 'lg' }}
                     lineHeight="tall"
                     px={2}
+                    fontWeight="500"
                   >
                     {current.description}
                   </Text>
+
+                  {/* Liste de fonctionnalités */}
+                  {current.features && current.features.length > 0 && (
+                    <SimpleGrid columns={1} spacing={3} w="full" mt={2}>
+                      {current.features.map((feature, idx) => (
+                        <HStack
+                          key={idx}
+                          spacing={3}
+                          p={3}
+                          bg={`${current.color}.50`}
+                          borderRadius="lg"
+                          border="1px solid"
+                          borderColor={`${current.color}.200`}
+                          _hover={{
+                            bg: `${current.color}.100`,
+                            transform: 'translateX(4px)',
+                          }}
+                          transition="all 0.2s"
+                        >
+                          <Icon
+                            as={FiCheck}
+                            color={`${current.color}.600`}
+                            boxSize={5}
+                            flexShrink={0}
+                          />
+                          <Text
+                            fontSize="sm"
+                            color="gray.700"
+                            fontWeight="medium"
+                            flex={1}
+                          >
+                            {feature}
+                          </Text>
+                        </HStack>
+                      ))}
+                    </SimpleGrid>
+                  )}
                 </VStack>
               </AnimatedBox>
 
@@ -235,15 +337,22 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
                   rightIcon={isLast ? undefined : <FiArrowRight />}
                   onClick={handleNext}
                   bgGradient={current.gradient}
+                  color="white"
                   _hover={{
                     transform: 'translateY(-2px)',
-                    boxShadow: 'lg',
+                    boxShadow: 'xl',
+                    bgGradient: current.gradient,
+                  }}
+                  _active={{
+                    transform: 'translateY(0)',
                   }}
                   transition="all 0.3s"
                   fontWeight="bold"
                   px={8}
+                  size="lg"
+                  boxShadow="md"
                 >
-                  {isLast ? 'Commencer' : 'Suivant'}
+                  {isLast ? '🚀 Commencer' : 'Suivant'}
                 </Button>
               </HStack>
             </VStack>
