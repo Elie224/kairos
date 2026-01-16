@@ -134,7 +134,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     
     async def dispatch(self, request: Request, call_next):
         # Ne pas limiter les endpoints de santé et l'endpoint de suppression des utilisateurs (temporaire)
-        excluded_paths = ["/health", "/", "/api/health", "/api/auth/users/all/public"]
+        excluded_paths = ["/health", "/", "/api/health", "/api/auth/users/all/public", "/api/auth/users/all/public/check"]
         if request.url.path in excluded_paths:
             # Débloquer l'IP si elle était bloquée pour cet endpoint spécifique
             ip = self._get_client_ip(request)
