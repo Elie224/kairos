@@ -25,14 +25,35 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const toast = useToast()
 
   const showNotification = useCallback(
-    (message: string, type: Notification['type'] = 'info') => {
+    (message: string, type: Notification['type'] = 'info', options?: { title?: string; duration?: number; action?: { label: string; onClick: () => void } }) => {
+      const titles = {
+        success: '✅ Succès',
+        error: '❌ Erreur',
+        warning: '⚠️ Attention',
+        info: 'ℹ️ Information',
+      }
+
       toast({
-        title: type === 'success' ? 'Succès' : type === 'error' ? 'Erreur' : 'Information',
+        title: options?.title || titles[type],
         description: message,
         status: type,
-        duration: 5000,
+        duration: options?.duration || (type === 'error' ? 7000 : 5000),
         isClosable: true,
         position: 'top-right',
+        variant: type === 'error' ? 'solid' : 'subtle',
+        // Améliorer le style selon le type
+        ...(type === 'success' && {
+          colorScheme: 'green',
+        }),
+        ...(type === 'error' && {
+          colorScheme: 'red',
+        }),
+        ...(type === 'warning' && {
+          colorScheme: 'orange',
+        }),
+        ...(type === 'info' && {
+          colorScheme: 'blue',
+        }),
       })
     },
     [toast]

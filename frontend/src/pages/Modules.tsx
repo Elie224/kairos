@@ -21,6 +21,7 @@ import { FiArrowLeft, FiBook } from 'react-icons/fi'
 import { ModuleFilters } from '../types/module'
 import { useModules } from '../hooks/useModules'
 import { FilterBar } from '../components/modules/FilterBar'
+import { AdvancedSearch } from '../components/AdvancedSearch'
 import { ModuleGrid } from '../components/modules/ModuleGrid'
 import { SubjectsGrid } from '../components/modules/SubjectsGrid'
 import { ModuleCardSkeleton } from '../components/SkeletonLoader'
@@ -130,6 +131,16 @@ const Modules = () => {
               <Divider mt={4} borderColor="blue.100" />
             </Box>
           )}
+
+          {/* Barre de recherche avancée - toujours visible */}
+          <Box>
+            <AdvancedSearch
+              onSearch={(query) => handleFilterChange({ searchQuery: query })}
+              placeholder="Rechercher des modules..."
+              showSuggestions={true}
+              showRecentSearches={true}
+            />
+          </Box>
 
           {/* Barre de filtres - seulement si une matière est sélectionnée */}
           {selectedSubject && (

@@ -1,15 +1,39 @@
 /**
  * Page d'accueil - Design moderne et professionnel amélioré
  */
-import { Box, Container, Heading, Text, Button, VStack, HStack, SimpleGrid, Badge, Icon, Flex, Card, CardBody, Image, Divider } from '@chakra-ui/react'
+import { Box, Container, Heading, Text, Button, VStack, HStack, SimpleGrid, Badge, Icon, Flex, Card, CardBody, Image, Divider, Skeleton, SkeletonText } from '@chakra-ui/react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { FiTarget, FiCpu, FiEye, FiZap, FiUsers, FiAward, FiArrowRight, FiPlay, FiBook, FiCheck, FiTrendingUp, FiClock } from 'react-icons/fi'
 import { AnimatedBox } from '../components/AnimatedBox'
+import { useQuery } from 'react-query'
+import api from '../services/api'
+import { useAuthStore } from '../store/authStore'
 
 const Home = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { isAuthenticated } = useAuthStore()
+
+  // Charger les statistiques dynamiques
+  const { data: stats, isLoading: statsLoading } = useQuery(
+    'home-stats',
+    async () => {
+      try {
+        const response = await api.get('/auth/stats')
+        return response.data
+      } catch {
+        // Si l'utilisateur n'est pas admin, retourner des stats par défaut
+        return null
+      }
+    },
+    {
+      staleTime: 5 * 60 * 1000,
+      cacheTime: 10 * 60 * 1000,
+      enabled: isAuthenticated,
+      retry: false,
+    }
+  )
 
   const handleExploreModules = () => {
     navigate('/modules')
@@ -180,7 +204,7 @@ const Home = () => {
               </VStack>
             </AnimatedBox>
 
-            {/* Statistiques rapides */}
+            {/* Statistiques rapides - Dynamiques si disponibles */}
             <AnimatedBox animation="fadeInUp" delay={0.5}>
               <SimpleGrid 
                 columns={{ base: 3, md: 3 }} 
@@ -189,31 +213,56 @@ const Home = () => {
                 maxW="700px"
                 mt={8}
               >
-                {[
-                  { icon: FiUsers, value: '100%', label: 'Gratuit' },
-                  { icon: FiCpu, value: 'IA', label: 'Tutorat Intelligent' },
-                  { icon: FiTrendingUp, value: '24/7', label: 'Disponible' },
-                ].map((stat, idx) => (
-                  <Box
-                    key={idx}
-                    p={4}
-                    borderRadius="xl"
-                    bg="whiteAlpha.15"
-                    backdropFilter="blur(20px)"
-                    border="1px solid rgba(255, 255, 255, 0.2)"
-                    textAlign="center"
-                    _hover={{
-                      bg: 'whiteAlpha.25',
-                      transform: 'translateY(-4px)',
-                      borderColor: 'rgba(255, 255, 255, 0.4)',
-                    }}
-                    transition="all 0.3s ease"
-                  >
-                    <Icon as={stat.icon} boxSize={6} mb={2} color="white" />
-                    <Text fontSize="xl" fontWeight="bold" mb={1} color="white">{stat.value}</Text>
-                    <Text fontSize="xs" color="whiteAlpha.90" fontWeight="medium">{stat.label}</Text>
-                  </Box>
-                ))}
+                {statsLoading ? (
+                  // Skeleton pendant le chargement
+                  Array.from({ length: 3 }).map((_, idx) => (
+                    <Skeleton
+                      key={idx}
+                      height="100px"
+                      borderRadius="xl"
+                      startColor="whiteAlpha.200"
+                      endColor="whiteAlpha.100"
+                    />
+                  ))
+                ) : (
+                  [
+                    { 
+                      icon: FiUsers, 
+                      value: stats?.total_users ? `${stats.total_users}+` : '100%', 
+                      label: stats?.total_users ? 'Utilisateurs' : 'Gratuit' 
+                    },
+                    { 
+                      icon: FiBook, 
+                      value: stats?.total_modules ? `${stats.total_modules}+` : 'IA', 
+                      label: stats?.total_modules ? 'Modules' : 'Tutorat Intelligent' 
+                    },
+                    { 
+                      icon: FiTrendingUp, 
+                      value: stats?.active_users ? `${stats.active_users}+` : '24/7', 
+                      label: stats?.active_users ? 'Actifs' : 'Disponible' 
+                    },
+                  ].map((stat, idx) => (
+                    <Box
+                      key={idx}
+                      p={4}
+                      borderRadius="xl"
+                      bg="whiteAlpha.15"
+                      backdropFilter="blur(20px)"
+                      border="1px solid rgba(255, 255, 255, 0.2)"
+                      textAlign="center"
+                      _hover={{
+                        bg: 'whiteAlpha.25',
+                        transform: 'translateY(-4px)',
+                        borderColor: 'rgba(255, 255, 255, 0.4)',
+                      }}
+                      transition="all 0.3s ease"
+                    >
+                      <Icon as={stat.icon} boxSize={6} mb={2} color="white" />
+                      <Text fontSize="xl" fontWeight="bold" mb={1} color="white">{stat.value}</Text>
+                      <Text fontSize="xs" color="whiteAlpha.90" fontWeight="medium">{stat.label}</Text>
+                    </Box>
+                  ))
+                )}
               </SimpleGrid>
             </AnimatedBox>
           </VStack>

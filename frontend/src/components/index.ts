@@ -9,6 +9,10 @@ export { default as ProtectedAdminRoute } from './ProtectedAdminRoute'
 export { default as ErrorBoundary } from './ErrorBoundary'
 export { NotificationProvider } from './NotificationProvider'
 export { LogoColorProvider } from './LogoColorProvider'
+export { ErrorDisplay } from './ErrorDisplay'
+export { PasswordStrength } from './PasswordStrength'
+export { AdvancedSearch } from './AdvancedSearch'
+export { AccessibilityProvider } from './AccessibilityProvider'
 
 // Nouveaux composants de design system
 export { AnimatedBox } from './AnimatedBox'

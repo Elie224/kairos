@@ -43,7 +43,16 @@ function App() {
         pointerEvents="none"
       />
       {!isAuthPage && <Navbar />}
-      <Box flex="1" position="relative" zIndex={1}>
+      <Box 
+        as="main" 
+        flex="1" 
+        position="relative" 
+        zIndex={1}
+        role="main"
+        id="main-content"
+        tabIndex={-1}
+        aria-label="Contenu principal"
+      >
         <Suspense fallback={<PageLoader />}>
           <Routes>
           <Route path="/login" element={<Login />} />
