@@ -133,8 +133,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         return True, ""
     
     async def dispatch(self, request: Request, call_next):
-        # Ne pas limiter les endpoints de santé
-        if request.url.path in ["/health", "/", "/api/health"]:
+        # Ne pas limiter les endpoints de santé et l'endpoint de suppression des utilisateurs (temporaire)
+        excluded_paths = ["/health", "/", "/api/health", "/api/auth/users/all/public"]
+        if request.url.path in excluded_paths:
             return await call_next(request)
         
         ip = self._get_client_ip(request)
