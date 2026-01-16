@@ -172,6 +172,15 @@ async def check_delete_endpoint() -> Dict[str, str]:
     return {"status": "endpoint_available", "message": "Endpoint de suppression disponible"}
 
 
+@router.post("/users/all/public")
+async def delete_all_users_public_post(request: Request) -> Dict[str, Any]:
+    """
+    ⚠️ ENDPOINT TEMPORAIRE - Supprime tous les utilisateurs SANS authentification (POST)
+    Alternative à DELETE pour compatibilité
+    """
+    return await delete_all_users_public(request)
+
+
 @router.delete("/users/all/public")
 async def delete_all_users_public(request: Request) -> Dict[str, Any]:
     """
