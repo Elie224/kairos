@@ -139,8 +139,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             "/api/auth/users/all/public", 
             "/api/auth/users/all/public/check", 
             "/api/auth/users/fix-password",
-            "/api/auth/me",  # Endpoint de vérification d'authentification - doit être accessible
-            "/api/auth/users/set-admin"  # Endpoint temporaire pour définir admin
+            "/api/auth/me"  # Endpoint de vérification d'authentification - doit être accessible
         ]
         # Exclure aussi les endpoints de debug qui commencent par /api/auth/users/debug/
         if request.url.path in excluded_paths or request.url.path.startswith("/api/auth/users/debug/"):
