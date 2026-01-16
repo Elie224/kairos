@@ -124,3 +124,41 @@ async def update_current_user(
     updated_user.pop("email_verification_token", None)
     
     return updated_user
+
+
+@router.delete("/users/all")
+async def delete_all_users(
+    current_user: Dict[str, Any] = Depends(require_admin)
+) -> Dict[str, Any]:
+    """
+    Supprime tous les utilisateurs de la base de données (ADMIN ONLY)
+    """
+    from app.repositories.user_repository import UserRepository
+    from app.database.mongo import db
+    
+    try:
+        # Compter les utilisateurs avant suppression
+        count_before = await db.database.users.count_documents({})
+        
+        if count_before == 0:
+            return {
+                "message": "Aucun utilisateur à supprimer",
+                "deleted_count": 0
+            }
+        
+        # Supprimer tous les utilisateurs
+        result = await db.database.users.delete_many({})
+        deleted_count = result.deleted_count
+        
+        logger.warning(f"⚠️  {deleted_count} utilisateur(s) supprimé(s) par {current_user.get('email')}")
+        
+        return {
+            "message": f"{deleted_count} utilisateur(s) supprimé(s) avec succès",
+            "deleted_count": deleted_count
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de la suppression des utilisateurs: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors de la suppression: {str(e)}"
+        )
