@@ -75,7 +75,7 @@ const Exam = ({ examId, moduleId }: ExamProps) => {
     const loadExam = async () => {
       try {
         const response = await api.get(`/exams/module/${moduleId}`, {
-          timeout: 120000, // 2 minutes pour la génération d'examens (peut être long pour les mathématiques)
+          timeout: 1000, // Timeout de 1 seconde
         })
         setExam(response.data)
       } catch (error: any) {

@@ -23,7 +23,7 @@ const ExamDetail = () => {
       setLoadingPrerequisites(true)
       try {
         const response = await api.get(`/exams/module/${moduleId}/prerequisites`, {
-          timeout: 60000, // 60 secondes pour la vérification des prérequis (peut être long)
+          timeout: 1000, // Timeout de 1 seconde
         })
         setPrerequisites(response.data)
       } catch (error) {
@@ -40,7 +40,7 @@ const ExamDetail = () => {
     async () => {
       if (!moduleId) return null
       const response = await api.get(`/exams/module/${moduleId}`, {
-        timeout: 120000, // 2 minutes pour la génération d'examens (peut être long pour les mathématiques)
+        timeout: 1000, // Timeout de 1 seconde
       })
       return response.data
     },

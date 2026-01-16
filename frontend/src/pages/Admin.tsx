@@ -179,7 +179,7 @@ const Admin = () => {
     try {
       setIsLoadingModules(true)
       const response = await api.get('/modules/', {
-        timeout: 60000, // 60 secondes pour le chargement des modules (peut être long avec validation)
+        timeout: 1000, // Timeout de 1 seconde
       })
       setModules(response.data)
     } catch (error: any) {
@@ -459,7 +459,7 @@ const Admin = () => {
 
       if (editingModule) {
         await api.put(`/modules/${editingModule.id}`, payload, {
-          timeout: 30000, // 30 secondes pour la modification du module
+          timeout: 1000, // Timeout de 1 seconde
         })
         toast({
           title: 'Succès',
@@ -526,7 +526,7 @@ const Admin = () => {
       
       // Timeout de 5 minutes pour la génération de contenu (peut prendre du temps avec OpenAI + MongoDB)
       const response = await api.post(`/modules/${moduleId}/generate-content`, {}, {
-        timeout: 300000 // 5 minutes
+        timeout: 1000 // Timeout de 1 seconde
       })
       const result = response.data
       
