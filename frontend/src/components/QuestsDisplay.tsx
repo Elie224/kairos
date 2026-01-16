@@ -44,18 +44,24 @@ interface Quest {
 export const QuestsDisplay = ({ limit = 5 }: { limit?: number }) => {
   const { user } = useAuthStore()
 
-  const { data: quests, isLoading } = useQuery<Quest[]>(
+  const { data: quests, isLoading, refetch } = useQuery<Quest[]>(
     'user-quests',
     async () => {
-      const response = await api.get('/gamification/quests', {
-        params: { limit },
-      })
-      return response.data
+      try {
+        const response = await api.get('/gamification/quests', {
+          params: { limit },
+        })
+        return response.data || []
+      } catch (error) {
+        console.error('Erreur lors de la récupération des quêtes:', error)
+        return []
+      }
     },
     {
       enabled: !!user,
       staleTime: 2 * 60 * 1000,
       cacheTime: 5 * 60 * 1000,
+      retry: 1,
     }
   )
 

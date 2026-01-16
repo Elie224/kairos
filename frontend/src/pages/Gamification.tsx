@@ -42,25 +42,95 @@ const Gamification = () => {
     'badge-count',
     async () => {
       const response = await api.get('/badges/count')
-      return response.data
+      return response.data?.count || 0
     },
     {
       enabled: !!user,
       staleTime: 5 * 60 * 1000,
+      retry: 1,
     }
   )
 
-  const { data: badges } = useQuery(
+  const { data: badges, isLoading: badgesLoading } = useQuery(
     'all-badges',
     async () => {
       const response = await api.get('/badges/')
-      return response.data
+      return response.data || []
     },
     {
       enabled: !!user,
       staleTime: 5 * 60 * 1000,
+      retry: 1,
     }
   )
+
+  const { data: quests, isLoading: questsLoading } = useQuery(
+    'user-quests',
+    async () => {
+      const response = await api.get('/gamification/quests', {
+        params: { limit: 10 },
+      })
+      return response.data || []
+    },
+    {
+      enabled: !!user,
+      staleTime: 2 * 60 * 1000,
+      retry: 1,
+    }
+  )
+
+  const { data: leaderboard, isLoading: leaderboardLoading } = useQuery(
+    ['leaderboard', 'points'],
+    async () => {
+      const response = await api.get('/gamification/leaderboard', {
+        params: {
+          leaderboard_type: 'points',
+          limit: 100,
+        },
+      })
+      return response.data || []
+    },
+    {
+      enabled: !!user,
+      staleTime: 2 * 60 * 1000,
+      retry: 1,
+    }
+  )
+
+  // Calculer les points totaux basés sur les badges
+  const totalPoints = badges
+    ? badges.reduce((sum: number, badge: any) => {
+        // Points par type de badge
+        const pointsMap: Record<string, number> = {
+          first_module: 10,
+          perfect_score: 25,
+          streak_days: 15,
+          subject_master: 50,
+          speed_learner: 20,
+          dedicated_learner: 100,
+          quiz_master: 30,
+        }
+        return sum + (pointsMap[badge.badge_type] || 10)
+      }, 0)
+    : 0
+
+  // Trouver le rang de l'utilisateur
+  const userRank = leaderboard
+    ? leaderboard.findIndex((entry: any) => entry.user_id === user?.id) + 1
+    : null
+
+  // Compter les quêtes actives
+  const activeQuests = quests
+    ? quests.filter((quest: any) => {
+        const progress = quest.requirements
+          ? quest.requirements.reduce((sum: number, req: any) => {
+              const progress = req.current / req.target
+              return sum + Math.min(progress, 1)
+            }, 0) / quest.requirements.length
+          : 0
+        return progress < 1
+      }).length
+    : 0
 
   return (
     <Box minH="calc(100vh - 80px)" py={{ base: 6, md: 8 }} px={{ base: 4, md: 0 }} bg="gray.50">
@@ -81,18 +151,25 @@ const Gamification = () => {
 
           {/* Statistiques rapides */}
           <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
-            <Card bgGradient="linear(to-br, yellow.400, yellow.600)" color="white">
+            <Card 
+              bgGradient="linear(to-br, yellow.400, yellow.600)" 
+              color="white"
+              _hover={{ transform: 'translateY(-4px)', boxShadow: 'xl' }}
+              transition="all 0.3s"
+            >
               <CardBody>
                 <Stat>
-                  <StatLabel color="whiteAlpha.900">Badges</StatLabel>
-                  <StatNumber>
+                  <StatLabel color="whiteAlpha.900" fontSize="sm" fontWeight="600">
+                    Badges
+                  </StatLabel>
+                  <StatNumber fontSize="3xl" fontWeight="bold">
                     {badgeCountLoading ? (
-                      <StatCardSkeleton />
+                      <Skeleton height="40px" width="60px" />
                     ) : (
                       badgeCount || 0
                     )}
                   </StatNumber>
-                  <StatHelpText color="whiteAlpha.800">
+                  <StatHelpText color="whiteAlpha.800" fontSize="xs">
                     <Icon as={FiStar} mr={1} />
                     Obtenus
                   </StatHelpText>
@@ -100,12 +177,25 @@ const Gamification = () => {
               </CardBody>
             </Card>
 
-            <Card bgGradient="linear(to-br, blue.400, blue.600)" color="white">
+            <Card 
+              bgGradient="linear(to-br, blue.400, blue.600)" 
+              color="white"
+              _hover={{ transform: 'translateY(-4px)', boxShadow: 'xl' }}
+              transition="all 0.3s"
+            >
               <CardBody>
                 <Stat>
-                  <StatLabel color="whiteAlpha.900">Quêtes</StatLabel>
-                  <StatNumber>5</StatNumber>
-                  <StatHelpText color="whiteAlpha.800">
+                  <StatLabel color="whiteAlpha.900" fontSize="sm" fontWeight="600">
+                    Quêtes
+                  </StatLabel>
+                  <StatNumber fontSize="3xl" fontWeight="bold">
+                    {questsLoading ? (
+                      <Skeleton height="40px" width="60px" />
+                    ) : (
+                      activeQuests
+                    )}
+                  </StatNumber>
+                  <StatHelpText color="whiteAlpha.800" fontSize="xs">
                     <Icon as={FiTarget} mr={1} />
                     Actives
                   </StatHelpText>
@@ -113,19 +203,25 @@ const Gamification = () => {
               </CardBody>
             </Card>
 
-            <Card bgGradient="linear(to-br, green.400, green.600)" color="white">
+            <Card 
+              bgGradient="linear(to-br, green.400, green.600)" 
+              color="white"
+              _hover={{ transform: 'translateY(-4px)', boxShadow: 'xl' }}
+              transition="all 0.3s"
+            >
               <CardBody>
                 <Stat>
-                  <StatLabel color="whiteAlpha.900">Points</StatLabel>
-                  <StatNumber>
-                    {badges
-                      ? badges.reduce((sum: number, badge: any) => {
-                          // Calculer les points basés sur les badges
-                          return sum + (badge.rewards?.points || 10)
-                        }, 0)
-                      : 0}
+                  <StatLabel color="whiteAlpha.900" fontSize="sm" fontWeight="600">
+                    Points
+                  </StatLabel>
+                  <StatNumber fontSize="3xl" fontWeight="bold">
+                    {badgesLoading ? (
+                      <Skeleton height="40px" width="80px" />
+                    ) : (
+                      totalPoints.toLocaleString('fr-FR')
+                    )}
                   </StatNumber>
-                  <StatHelpText color="whiteAlpha.800">
+                  <StatHelpText color="whiteAlpha.800" fontSize="xs">
                     <Icon as={FiTrendingUp} mr={1} />
                     Totaux
                   </StatHelpText>
@@ -133,12 +229,27 @@ const Gamification = () => {
               </CardBody>
             </Card>
 
-            <Card bgGradient="linear(to-br, purple.400, purple.600)" color="white">
+            <Card 
+              bgGradient="linear(to-br, purple.400, purple.600)" 
+              color="white"
+              _hover={{ transform: 'translateY(-4px)', boxShadow: 'xl' }}
+              transition="all 0.3s"
+            >
               <CardBody>
                 <Stat>
-                  <StatLabel color="whiteAlpha.900">Classement</StatLabel>
-                  <StatNumber>#--</StatNumber>
-                  <StatHelpText color="whiteAlpha.800">
+                  <StatLabel color="whiteAlpha.900" fontSize="sm" fontWeight="600">
+                    Classement
+                  </StatLabel>
+                  <StatNumber fontSize="3xl" fontWeight="bold">
+                    {leaderboardLoading ? (
+                      <Skeleton height="40px" width="60px" />
+                    ) : userRank ? (
+                      `#${userRank}`
+                    ) : (
+                      '--'
+                    )}
+                  </StatNumber>
+                  <StatHelpText color="whiteAlpha.800" fontSize="xs">
                     <Icon as={FaTrophy} mr={1} />
                     Position
                   </StatHelpText>

@@ -44,18 +44,24 @@ export const LeaderboardDisplay = ({ limit = 10 }: { limit?: number }) => {
   const { data: leaderboard, isLoading } = useQuery<LeaderboardEntry[]>(
     ['leaderboard', leaderboardType],
     async () => {
-      const response = await api.get('/gamification/leaderboard', {
-        params: {
-          leaderboard_type: leaderboardType,
-          limit,
-        },
-      })
-      return response.data
+      try {
+        const response = await api.get('/gamification/leaderboard', {
+          params: {
+            leaderboard_type: leaderboardType,
+            limit,
+          },
+        })
+        return response.data || []
+      } catch (error) {
+        console.error('Erreur lors de la récupération du classement:', error)
+        return []
+      }
     },
     {
       enabled: !!user,
       staleTime: 2 * 60 * 1000,
       cacheTime: 5 * 60 * 1000,
+      retry: 1,
     }
   )
 

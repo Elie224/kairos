@@ -76,16 +76,22 @@ const badgeConfig: Record<string, { icon: typeof FiAward; color: string; label: 
 export const BadgesDisplay = ({ limit = 8 }: { limit?: number }) => {
   const { user } = useAuthStore()
 
-  const { data: badges, isLoading } = useQuery<BadgeData[]>(
+  const { data: badges, isLoading, refetch } = useQuery<BadgeData[]>(
     'user-badges',
     async () => {
-      const response = await api.get('/badges/')
-      return response.data
+      try {
+        const response = await api.get('/badges/')
+        return response.data || []
+      } catch (error) {
+        console.error('Erreur lors de la récupération des badges:', error)
+        return []
+      }
     },
     {
       enabled: !!user,
       staleTime: 5 * 60 * 1000,
       cacheTime: 10 * 60 * 1000,
+      retry: 1,
     }
   )
 
