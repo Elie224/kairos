@@ -27,11 +27,13 @@ class UserRepository:
             
             db = get_database()
             # Utiliser une requête sécurisée (pas d'opérateurs MongoDB dans l'input)
+            # IMPORTANT: Ne pas exclure hashed_password car il est nécessaire pour l'authentification
             user = await db.users.find_one({"email": sanitized_email})
             logger.info(f"Résultat de la recherche: {'trouvé' if user else 'non trouvé'}")
             if user:
-                logger.info(f"Utilisateur trouvé: id={user.get('_id')}, email={user.get('email')}, username={user.get('username')}")
-            return serialize_doc(user) if user else None
+                logger.info(f"Utilisateur trouvé: id={user.get('_id')}, email={user.get('email')}, username={user.get('username')}, has_hashed_password={bool(user.get('hashed_password'))}")
+            # Utiliser serialize_doc avec exclude_fields=[] pour garder hashed_password pour l'authentification
+            return serialize_doc(user, exclude_fields=[]) if user else None
         except Exception as e:
             logger.error(f"Erreur lors de la recherche par email: {e}", exc_info=True)
             raise

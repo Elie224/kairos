@@ -76,8 +76,10 @@ class AuthService:
             
             # Vérifier le mot de passe
             hashed_password = user.get("hashed_password")
+            logger.info(f"Récupération du hash: hashed_password présent={bool(hashed_password)}, type={type(hashed_password) if hashed_password else None}")
             if not hashed_password:
                 logger.warning(f"Utilisateur sans mot de passe hashé: {user.get('id')}, email: {sanitized_email}")
+                logger.warning(f"Clés disponibles dans user: {list(user.keys())}")
                 return None
             
             logger.info(f"Vérification du mot de passe pour email: {sanitized_email}, user_id: {user.get('id')}")
