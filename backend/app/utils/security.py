@@ -257,17 +257,22 @@ class PasswordHasher:
     def verify_password(plain_password: str, hashed_password: str) -> bool:
         """Vérifie un mot de passe"""
         try:
+            logger.debug(f"Vérification du mot de passe (longueur: {len(plain_password)}), hash (premiers 20 chars): {hashed_password[:20]}...")
             password_bytes = plain_password.encode('utf-8')
             
             # Pré-hash avec SHA256 en hex (même logique que hash_password)
             sha256_hash_bytes = hashlib.sha256(password_bytes).digest()
             sha256_hash_hex = sha256_hash_bytes.hex()
+            logger.debug(f"Pré-hash SHA256 (premiers 16 chars): {sha256_hash_hex[:16]}...")
             
             # Essayer d'abord avec le pré-hash SHA256 hex (nouvelle méthode avec bcrypt direct)
             try:
-                if bcrypt.checkpw(sha256_hash_hex.encode('utf-8'), hashed_password.encode('utf-8')):
+                result = bcrypt.checkpw(sha256_hash_hex.encode('utf-8'), hashed_password.encode('utf-8'))
+                logger.debug(f"Résultat de bcrypt.checkpw avec pré-hash SHA256: {result}")
+                if result:
                     return True
-            except:
+            except Exception as e:
+                logger.warning(f"Erreur lors de la vérification avec pré-hash SHA256: {e}")
                 pass
             
             # Essayer avec le mot de passe direct (compatibilité avec anciens mots de passe via passlib)
