@@ -24,6 +24,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useNotification } from '../components/NotificationProvider'
+import { useAuthStore } from '../store/authStore'
 import api from '../services/api'
 import { countries } from '../constants/countries'
 import { useQuery, useQueryClient } from 'react-query'
@@ -36,18 +37,17 @@ const Settings = () => {
   const bgColor = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
 
-  // Récupérer les informations complètes de l'utilisateur (désactivé car auth supprimée)
+  const { user } = useAuthStore()
+  
+  // Récupérer les informations complètes de l'utilisateur
   const { data: userData } = useQuery(
     'user-profile',
     async () => {
-      // Retourner des données par défaut car auth supprimée
-      return {
-        username: 'Utilisateur',
-        email: 'user@example.com',
-        first_name: 'Utilisateur',
-        last_name: 'Anonyme'
-      }
+      const response = await api.get('/auth/me')
+      return response.data
     },
+    {
+      enabled: !!user,
     {
       enabled: false, // Désactivé car auth supprimée
       refetchOnWindowFocus: false,

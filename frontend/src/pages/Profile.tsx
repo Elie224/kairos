@@ -17,8 +17,8 @@ import {
 } from '@chakra-ui/react'
 import { FiUser, FiMail, FiPhone, FiCalendar, FiMapPin, FiEdit } from 'react-icons/fi'
 import { useTranslation } from 'react-i18next'
-// Auth supprimée - useAuthStore n'existe plus
 import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../store/authStore'
 import api from '../services/api'
 import { Button } from '@chakra-ui/react'
 import { LazyImage } from '../components/LazyImage'
@@ -31,20 +31,17 @@ const Profile = () => {
   const bgColor = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
 
-  // Récupérer les informations complètes de l'utilisateur (désactivé car auth supprimée)
+  const { user } = useAuthStore()
+  
+  // Récupérer les informations complètes de l'utilisateur
   const { data: userData, isLoading } = useQuery(
     'user-profile',
     async () => {
-      // Retourner des données par défaut car auth supprimée
-      return {
-        username: 'Utilisateur',
-        email: 'user@example.com',
-        first_name: 'Utilisateur',
-        last_name: 'Anonyme'
-      }
+      const response = await api.get('/auth/me')
+      return response.data
     },
     {
-      enabled: false, // Désactivé car auth supprimée
+      enabled: !!user,
       refetchOnWindowFocus: false,
       refetchOnMount: false,
       staleTime: 5 * 60 * 1000, // 5 minutes
@@ -52,7 +49,7 @@ const Profile = () => {
     }
   )
 
-  const displayUser = userData || {
+  const displayUser = userData || user || {
     username: 'Utilisateur',
     email: 'user@example.com',
     first_name: 'Utilisateur',
