@@ -28,8 +28,8 @@ const api = axios.create({
   timeout: 1000, // Timeout de 1 seconde par défaut
 })
 
-// Timeout pour les uploads de fichiers (5 minutes pour supporter jusqu'à 100MB)
-const FILE_UPLOAD_TIMEOUT = 5 * 60 * 1000 // 5 minutes
+// Timeout pour les uploads de fichiers (1 seconde comme demandé)
+const FILE_UPLOAD_TIMEOUT = 1000 // 1 seconde
 
 // Initialiser l'authentification depuis le localStorage
 const initializeAuth = () => {
