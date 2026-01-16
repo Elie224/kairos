@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import {
   Box,
@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next'
 const Register = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { register, isLoading } = useAuthStore()
+  const { register, isLoading, isAuthenticated } = useAuthStore()
   
   const [formData, setFormData] = useState({
     email: '',
@@ -40,6 +40,13 @@ const Register = () => {
 
   const bgColor = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
+
+  // Rediriger si déjà connecté
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [isAuthenticated, navigate])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({

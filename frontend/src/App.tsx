@@ -42,16 +42,16 @@ function App() {
       <Box flex="1" position="relative" zIndex={1}>
         <Suspense fallback={<PageLoader />}>
           <Routes>
-          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/modules" element={<Modules />} />
-          <Route path="/modules/:id" element={<ModuleDetail />} />
+          <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path="/modules" element={<ProtectedRoute><Modules /></ProtectedRoute>} />
+          <Route path="/modules/:id" element={<ProtectedRoute><ModuleDetail /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-          <Route path="/support" element={<Support />} />
-          <Route path="/feedback" element={<Feedback />} />
+          <Route path="/support" element={<ProtectedRoute><Support /></ProtectedRoute>} />
+          <Route path="/feedback" element={<ProtectedRoute><Feedback /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/exams" element={<ProtectedRoute><Exams /></ProtectedRoute>} />
           {/* Redirection des anciennes routes /exams/:subject vers /exams */}
