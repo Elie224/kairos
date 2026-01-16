@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Dict, Any
 from app.services.auth_service import AuthService
-from app.utils.permissions import get_current_user
+from app.utils.permissions import get_current_user, require_admin
 from app.utils.security import InputSanitizer
 from datetime import timedelta
 import logging
