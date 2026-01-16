@@ -68,12 +68,12 @@ api.interceptors.request.use(
         config.timeout = FILE_UPLOAD_TIMEOUT
       }
     }
-    // Pour les requêtes de login avec URLSearchParams, préserver le Content-Type
-    // si explicitement défini dans les headers de la requête
-    if (config.data instanceof URLSearchParams || typeof config.data === 'string') {
-      // Si Content-Type est déjà défini dans les headers de la requête, le conserver
-      if (config.headers && config.headers['Content-Type']) {
-        // Le Content-Type est déjà correct, ne rien faire
+    // Pour les requêtes avec URLSearchParams (comme login), préserver le Content-Type
+    if (config.data instanceof URLSearchParams) {
+      // Le Content-Type application/x-www-form-urlencoded sera défini dans les headers
+      // Ne pas le supprimer
+      if (config.headers && !config.headers['Content-Type']) {
+        config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
       }
     }
     return config
