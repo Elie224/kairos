@@ -122,25 +122,50 @@ export function trapFocus(element: HTMLElement | null) {
  * Annonce une modification à un lecteur d'écran
  */
 export function announceToScreenReader(message: string, priority: 'polite' | 'assertive' = 'polite') {
-  const announcement = document.createElement('div')
-  announcement.setAttribute('role', 'status')
-  announcement.setAttribute('aria-live', priority)
-  announcement.setAttribute('aria-atomic', 'true')
-  announcement.className = 'sr-only'
-  announcement.style.cssText = `
-    position: absolute;
-    left: -10000px;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-  `
-  announcement.textContent = message
+  // Vérifier que nous sommes dans un environnement navigateur
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return
+  }
 
-  document.body.appendChild(announcement)
+  // Attendre que document.body soit disponible
+  if (!document.body) {
+    // Si document.body n'est pas encore disponible, attendre un peu
+    setTimeout(() => announceToScreenReader(message, priority), 100)
+    return
+  }
 
-  setTimeout(() => {
-    document.body.removeChild(announcement)
-  }, 1000)
+  try {
+    const announcement = document.createElement('div')
+    announcement.setAttribute('role', 'status')
+    announcement.setAttribute('aria-live', priority)
+    announcement.setAttribute('aria-atomic', 'true')
+    announcement.className = 'sr-only'
+    announcement.style.cssText = `
+      position: absolute;
+      left: -10000px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    `
+    announcement.textContent = message
+
+    document.body.appendChild(announcement)
+
+    setTimeout(() => {
+      try {
+        if (document.body && document.body.contains(announcement)) {
+          document.body.removeChild(announcement)
+        }
+      } catch (error) {
+        // Ignorer les erreurs de nettoyage
+      }
+    }, 1000)
+  } catch (error) {
+    // Ignorer les erreurs silencieusement en production
+    if (import.meta.env.DEV) {
+      console.warn('Erreur lors de l\'annonce au lecteur d\'écran:', error)
+    }
+  }
 }
 
 /**

@@ -14,8 +14,12 @@ export const AccessibilityProvider = ({ children }: AccessibilityProviderProps) 
 
   // Annoncer les changements de page aux lecteurs d'écran
   useEffect(() => {
-    const pageTitle = document.title || 'Kaïros'
-    announceToScreenReader(`Page chargée: ${pageTitle}`, 'polite')
+    // Attendre que le DOM soit prêt
+    const timeout = setTimeout(() => {
+      const pageTitle = document.title || 'Kaïros'
+      announceToScreenReader(`Page chargée: ${pageTitle}`, 'polite')
+    }, 100)
+    return () => clearTimeout(timeout)
   }, [location.pathname])
 
   // Appliquer les préférences de mouvement réduit

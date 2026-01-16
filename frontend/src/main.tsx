@@ -37,28 +37,35 @@ const queryClient = new QueryClient({
   },
 })
 
+// Wrapper pour AccessibilityProvider qui nécessite BrowserRouter
+const AppWithAccessibility = () => {
+  return (
+    <BrowserRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
+      <AccessibilityProvider>
+        <App />
+      </AccessibilityProvider>
+    </BrowserRouter>
+  )
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-        <ErrorBoundary>
-          <ChakraProvider theme={theme}>
-            <QueryClientProvider client={queryClient}>
-              <AccessibilityProvider>
-                <NotificationProvider>
-                  <LogoColorProvider>
-                    <BrowserRouter
-                      future={{
-                        v7_startTransition: true,
-                        v7_relativeSplatPath: true,
-                      }}
-                    >
-                      <App />
-                    </BrowserRouter>
-                  </LogoColorProvider>
-                </NotificationProvider>
-              </AccessibilityProvider>
-            </QueryClientProvider>
-          </ChakraProvider>
-        </ErrorBoundary>
+    <ErrorBoundary>
+      <ChakraProvider theme={theme}>
+        <QueryClientProvider client={queryClient}>
+          <NotificationProvider>
+            <LogoColorProvider>
+              <AppWithAccessibility />
+            </LogoColorProvider>
+          </NotificationProvider>
+        </QueryClientProvider>
+      </ChakraProvider>
+    </ErrorBoundary>
   </React.StrictMode>,
 )
 

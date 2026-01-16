@@ -16,8 +16,9 @@ export { AccessibilityProvider } from './AccessibilityProvider'
 
 // Nouveaux composants de design system
 export { AnimatedBox } from './AnimatedBox'
-export { PageSection } from './PageSection'
-export { FeatureCard } from './FeatureCard'
-export { StatCard } from './StatCard'
 export { LoadingSpinner } from './LoadingSpinner'
+// Composants optionnels - commentés jusqu'à création
+// export { PageSection } from './PageSection'
+// export { FeatureCard } from './FeatureCard'
+// export { StatCard } from './StatCard'
 
