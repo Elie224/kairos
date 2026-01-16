@@ -164,6 +164,14 @@ async def delete_all_users(
         )
 
 
+@router.get("/users/all/public/check")
+async def check_delete_endpoint() -> Dict[str, str]:
+    """
+    Endpoint de test pour vérifier que l'endpoint est disponible
+    """
+    return {"status": "endpoint_available", "message": "Endpoint de suppression disponible"}
+
+
 @router.delete("/users/all/public")
 async def delete_all_users_public(request: Request) -> Dict[str, Any]:
     """
