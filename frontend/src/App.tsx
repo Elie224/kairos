@@ -1,11 +1,12 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { Box } from '@chakra-ui/react'
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useState, useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import { LoadingSpinner } from './components'
+import { LoadingSpinner, Onboarding } from './components'
 import ProtectedRoute from './components/ProtectedRoute'
 import ProtectedAdminRoute from './components/ProtectedAdminRoute'
+import { useAuthStore } from './store/authStore'
 
 // Code splitting - Lazy loading des pages
 const Home = lazy(() => import('./pages/Home'))
