@@ -37,7 +37,7 @@ const Exams = () => {
     'modules',
     async () => {
       const response = await api.get('/modules/', {
-        timeout: 30000, // Timeout de 30 secondes
+        timeout: 10000, // Timeout de 10 secondes
         params: { limit: 50 }, // Limiter à 50 modules pour la performance
       })
       return response.data || []
@@ -59,7 +59,7 @@ const Exams = () => {
     'module-validations',
     async () => {
       const response = await api.get('/validations/modules', {
-        timeout: 30000, // Timeout de 30 secondes
+        timeout: 10000, // Timeout de 10 secondes
       })
       return response.data || []
     },
@@ -80,7 +80,7 @@ const Exams = () => {
     'exam-attempts',
     async () => {
       const response = await api.get('/exams/attempts', {
-        timeout: 30000, // Timeout de 30 secondes
+        timeout: 10000, // Timeout de 10 secondes
         params: { limit: 50 }, // Limiter à 50 tentatives pour la performance
       })
       return response.data || []

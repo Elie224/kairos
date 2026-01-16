@@ -6,13 +6,19 @@ import api from '../services/api'
 import { Module, ModuleFilters, GroupedModules } from '../types/module'
 import { SUBJECT_ORDER } from '../constants/modules'
 import { useMemo } from 'react'
+import { useDebounce } from './useDebounce'
 
 export const useModules = (filters: Partial<ModuleFilters> = {}) => {
+  // Debounce la recherche pour éviter trop de requêtes
+  const debouncedSearchQuery = useDebounce(filters.searchQuery || '', 300)
   // Requête pour tous les modules (pour le groupement) - seulement si pas de filtre
   const { data: allModules } = useQuery<Module[]>(
     ['modules', 'all'],
     async () => {
-      const response = await api.get('/modules/')
+      const response = await api.get('/modules/', {
+        timeout: 10000, // Timeout de 10 secondes
+        params: { limit: 100 }, // Limiter les résultats
+      })
       return response.data
     },
     {
@@ -26,11 +32,15 @@ export const useModules = (filters: Partial<ModuleFilters> = {}) => {
 
   // Requête pour les modules filtrés
   const { data: modules, isLoading, error } = useQuery<Module[]>(
-    ['modules', filters.subject || 'all'],
+    ['modules', filters.subject || 'all', debouncedSearchQuery],
     async () => {
       const params = new URLSearchParams()
       if (filters.subject) params.append('subject', filters.subject)
-      const response = await api.get(`/modules/?${params.toString()}`)
+      if (debouncedSearchQuery) params.append('search', debouncedSearchQuery)
+      const response = await api.get(`/modules/?${params.toString()}`, {
+        timeout: 10000, // Timeout de 10 secondes
+        params: { limit: 100 }, // Limiter les résultats
+      })
       return response.data
     },
     {
@@ -38,6 +48,8 @@ export const useModules = (filters: Partial<ModuleFilters> = {}) => {
       cacheTime: 10 * 60 * 1000, // 10 minutes
       refetchOnMount: false,
       refetchOnWindowFocus: false,
+      retry: 1,
+      enabled: !filters.searchQuery || debouncedSearchQuery.length >= 2, // Attendre au moins 2 caractères
     }
   )
 
@@ -47,11 +59,15 @@ export const useModules = (filters: Partial<ModuleFilters> = {}) => {
   const filteredModules = useMemo(() => {
     if (!modules) return []
     
+    // Si la recherche est faite côté serveur, retourner directement les modules
+    // Sinon, filtrer côté client (seulement si nécessaire)
     let filtered = [...modules]
     
-    // Filtrage par recherche textuelle
-    if (filters.searchQuery) {
-      const query = filters.searchQuery.toLowerCase()
+    // Filtrage côté client seulement si la recherche n'a pas été faite côté serveur
+    // (pour les recherches très rapides ou pour les cas où le serveur ne supporte pas la recherche)
+    if (debouncedSearchQuery && debouncedSearchQuery.length >= 2) {
+      // Le serveur devrait déjà avoir filtré, mais on peut faire un filtrage supplémentaire côté client
+      const query = debouncedSearchQuery.toLowerCase()
       filtered = filtered.filter(
         (module) =>
           module.title.toLowerCase().includes(query) ||
@@ -60,7 +76,7 @@ export const useModules = (filters: Partial<ModuleFilters> = {}) => {
     }
     
     return filtered
-  }, [modules, filters.searchQuery])
+  }, [modules, debouncedSearchQuery])
 
   const groupedModules = useMemo<GroupedModules>(() => {
     const modulesToGroup = modulesForGrouping || []
