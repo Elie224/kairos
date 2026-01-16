@@ -577,6 +577,50 @@ const Settings = () => {
               </form>
             </CardBody>
           </Card>
+
+          {/* Section Préférences */}
+          <Card bg={bgColor} border="1px solid" borderColor={borderColor} borderRadius="2xl" boxShadow="lg">
+            <CardBody p={{ base: 6, md: 8 }}>
+              <VStack spacing={6} align="stretch">
+                <Heading size="md" color="gray.700">
+                  Préférences
+                </Heading>
+                
+                <Divider borderColor="gray.200" />
+                
+                {/* Réinitialiser l'onboarding */}
+                <Box>
+                  <VStack spacing={3} align="stretch">
+                    <HStack justify="space-between" align="start">
+                      <VStack align="start" spacing={1} flex={1}>
+                        <Text fontWeight="semibold" color="gray.700">
+                          Réinitialiser l'introduction
+                        </Text>
+                        <Text fontSize="sm" color="gray.600">
+                          Réafficher les écrans d'introduction lors de votre prochaine connexion
+                        </Text>
+                      </VStack>
+                      <Button
+                        variant="outline"
+                        colorScheme="blue"
+                        size="sm"
+                        onClick={() => {
+                          localStorage.removeItem('kairos-onboarding-completed')
+                          showNotification('L\'introduction sera réaffichée lors de votre prochaine connexion', 'success')
+                        }}
+                        _hover={{
+                          bg: 'blue.50',
+                          borderColor: 'blue.300',
+                        }}
+                      >
+                        Réinitialiser
+                      </Button>
+                    </HStack>
+                  </VStack>
+                </Box>
+              </VStack>
+            </CardBody>
+          </Card>
         </VStack>
       </Container>
     </Box>
