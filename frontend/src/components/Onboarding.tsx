@@ -163,7 +163,7 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
             }}
             transition="all 0.3s"
           >
-            {/* Bouton de fermeture */}
+            {/* Bouton de fermeture amélioré */}
             <IconButton
               aria-label="Passer l'introduction"
               icon={<FiX />}
@@ -172,27 +172,44 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
               right={4}
               zIndex={10}
               variant="ghost"
-              size="sm"
+              size="md"
               onClick={handleSkip}
-              _hover={{ bg: 'gray.100' }}
+              borderRadius="full"
+              _hover={{
+                bg: 'red.50',
+                color: 'red.500',
+                transform: 'rotate(90deg)',
+              }}
+              transition="all 0.3s"
+              data-touch-target="true"
             />
 
-            {/* Barre de progression */}
-            <Box px={6} pt={6} pb={4}>
-              <HStack spacing={2} justify="space-between" mb={2}>
-                <Text fontSize="xs" color="gray.600" fontWeight="medium">
-                  {currentScreen + 1} / {onboardingScreens.length}
-                </Text>
-                <Text fontSize="xs" color="gray.600" fontWeight="medium">
+            {/* Barre de progression améliorée */}
+            <Box px={6} pt={6} pb={4} bgGradient={`linear(to-r, ${current.color}.50, white, ${current.color}.50)`}>
+              <HStack spacing={2} justify="space-between" mb={3}>
+                <Badge
+                  colorScheme={current.color}
+                  px={3}
+                  py={1}
+                  borderRadius="full"
+                  fontSize="xs"
+                  fontWeight="bold"
+                >
+                  Étape {currentScreen + 1} sur {onboardingScreens.length}
+                </Badge>
+                <Text fontSize="xs" color="gray.600" fontWeight="bold">
                   {Math.round(progress)}%
                 </Text>
               </HStack>
               <Progress
                 value={progress}
                 colorScheme={current.color}
-                size="sm"
+                size="md"
                 borderRadius="full"
                 bg="gray.100"
+                boxShadow="sm"
+                hasStripe
+                isAnimated
               />
             </Box>
 
@@ -300,19 +317,24 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
                 </VStack>
               </AnimatedBox>
 
-              {/* Indicateurs de pages */}
-              <HStack spacing={2} justify="center" mt="auto">
+              {/* Indicateurs de pages améliorés */}
+              <HStack spacing={3} justify="center" mt="auto" mb={2}>
                 {onboardingScreens.map((_, index) => (
                   <Box
                     key={index}
-                    w={2}
+                    as="button"
+                    onClick={() => setCurrentScreen(index)}
+                    w={index === currentScreen ? 8 : 2}
                     h={2}
                     borderRadius="full"
                     bg={index === currentScreen ? `${current.color}.500` : 'gray.300'}
                     transition="all 0.3s"
                     _hover={{
                       bg: index === currentScreen ? `${current.color}.600` : 'gray.400',
+                      w: index === currentScreen ? 8 : 3,
                     }}
+                    cursor="pointer"
+                    aria-label={`Aller à l'écran ${index + 1}`}
                   />
                 ))}
               </HStack>
@@ -328,6 +350,12 @@ export const Onboarding = ({ onComplete, onSkip }: OnboardingProps) => {
                     opacity: 0.4,
                     cursor: 'not-allowed',
                   }}
+                  _hover={{
+                    bg: 'gray.100',
+                    transform: 'translateX(-2px)',
+                  }}
+                  transition="all 0.2s"
+                  size="md"
                 >
                   Précédent
                 </Button>
