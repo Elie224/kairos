@@ -14,6 +14,9 @@ export { PasswordStrength } from './PasswordStrength'
 export { AdvancedSearch } from './AdvancedSearch'
 export { AccessibilityProvider } from './AccessibilityProvider'
 export { Onboarding } from './Onboarding'
+export { BadgesDisplay } from './BadgesDisplay'
+export { QuestsDisplay } from './QuestsDisplay'
+export { LeaderboardDisplay } from './LeaderboardDisplay'
 
 // Nouveaux composants de design system
 export { AnimatedBox } from './AnimatedBox'

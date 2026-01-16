@@ -22,6 +22,8 @@ const Feedback = lazy(() => import('./pages/Feedback'))
 const Admin = lazy(() => import('./pages/Admin'))
 const Exams = lazy(() => import('./pages/Exams'))
 const ExamDetail = lazy(() => import('./pages/ExamDetail'))
+const Gamification = lazy(() => import('./pages/Gamification'))
+const Visualizations = lazy(() => import('./pages/Visualizations'))
 
 // Composant de chargement
 const PageLoader = () => <LoadingSpinner size="lg" text="Chargement..." />

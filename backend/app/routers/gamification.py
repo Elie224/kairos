@@ -6,7 +6,7 @@ from typing import List, Optional
 from app.models.gamification import Quest, UserQuest, LeaderboardEntry, Challenge
 from app.models import Subject, Difficulty
 from app.services.gamification_service import GamificationService
-# Authentification supprimée - toutes les routes sont publiques
+from app.utils.permissions import get_current_user
 import logging
 
 logger = logging.getLogger(__name__)
@@ -17,12 +17,13 @@ router = APIRouter()
 @router.get("/quests", response_model=List[Quest])
 async def get_personalized_quests(
     limit: int = Query(5, ge=1, le=20),
+    current_user: dict = Depends(get_current_user),
 ):
     """
     Récupère les quêtes personnalisées pour l'utilisateur
     """
     try:
-        user_id = "anonymous"  # Auth supprimée
+        user_id = str(current_user["id"])
         
         quests = await GamificationService.generate_personalized_quests(
             user_id=user_id,
@@ -41,12 +42,13 @@ async def get_personalized_quests(
 async def update_quest_progress(
     quest_id: str,
     progress_data: dict,
+    current_user: dict = Depends(get_current_user),
 ):
     """
     Met à jour la progression d'une quête
     """
     try:
-        user_id = "anonymous"  # Auth supprimée
+        user_id = str(current_user["id"])
         
         user_quest = await GamificationService.update_quest_progress(
             user_id=user_id,
@@ -93,12 +95,13 @@ async def create_challenge(
     target: dict,
     difficulty: Difficulty,
     deadline_days: int = Query(7, ge=1, le=30),
+    current_user: dict = Depends(get_current_user),
 ):
     """
     Crée un défi personnalisé
     """
     try:
-        user_id = "anonymous"  # Auth supprimée
+        user_id = str(current_user["id"])
         
         challenge = await GamificationService.create_personalized_challenge(
             user_id=user_id,
