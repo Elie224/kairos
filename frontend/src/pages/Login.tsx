@@ -112,7 +112,6 @@ const Login = () => {
   return (
     <Box
       minH="100vh"
-      bgGradient="linear-gradient(180deg, blue.50 0%, white 100%)"
       display="flex"
       alignItems="center"
       justifyContent="center"
@@ -120,7 +119,22 @@ const Login = () => {
       px={4}
       position="relative"
       overflow="hidden"
+      backgroundImage="url('/background.jfif')"
+      backgroundSize="cover"
+      backgroundPosition="center"
+      backgroundRepeat="no-repeat"
     >
+      {/* Overlay sombre pour améliorer la lisibilité */}
+      <Box
+        position="absolute"
+        top={0}
+        left={0}
+        right={0}
+        bottom={0}
+        bgGradient="linear-gradient(135deg, rgba(37, 99, 235, 0.85) 0%, rgba(30, 64, 175, 0.9) 50%, rgba(37, 99, 235, 0.85) 100%)"
+        zIndex={0}
+      />
+      
       {/* Effets de fond animés */}
       <Box
         position="absolute"
@@ -128,10 +142,11 @@ const Login = () => {
         right="-20%"
         width="500px"
         height="500px"
-        bgGradient="radial(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%)"
+        bgGradient="radial(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%)"
         borderRadius="full"
         filter="blur(60px)"
-        zIndex={0}
+        zIndex={1}
+        animation="pulse 4s ease-in-out infinite"
       />
       <Box
         position="absolute"
@@ -139,13 +154,26 @@ const Login = () => {
         left="-20%"
         width="400px"
         height="400px"
-        bgGradient="radial(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%)"
+        bgGradient="radial(circle, rgba(255, 255, 255, 0.12) 0%, transparent 70%)"
         borderRadius="full"
         filter="blur(60px)"
-        zIndex={0}
+        zIndex={1}
+        animation="pulse 5s ease-in-out infinite"
+      />
+      <Box
+        position="absolute"
+        top="20%"
+        right="10%"
+        width="300px"
+        height="300px"
+        bgGradient="radial(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%)"
+        borderRadius="full"
+        filter="blur(60px)"
+        zIndex={1}
+        animation="pulse 6s ease-in-out infinite"
       />
 
-      <Container maxW="md" position="relative" zIndex={1}>
+      <Container maxW="md" position="relative" zIndex={2}>
         <AnimatedBox animation="fadeInUp" delay={0.1}>
           <Box
             bg={bgColor}
