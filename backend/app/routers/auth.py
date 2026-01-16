@@ -90,3 +90,31 @@ async def logout(
     Déconnexion (côté serveur, le token reste valide jusqu'à expiration)
     """
     return {"message": "Déconnexion réussie"}
+
+
+@router.put("/me")
+async def update_current_user(
+    user_data: Dict[str, Any],
+    current_user: Dict[str, Any] = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """
+    Met à jour les informations de l'utilisateur connecté
+    """
+    from app.repositories.user_repository import UserRepository
+    from app.utils.security import PasswordHasher
+    
+    user_id = str(current_user["id"])
+    
+    # Si un nouveau mot de passe est fourni, le hasher
+    if "password" in user_data and user_data["password"]:
+        user_data["hashed_password"] = PasswordHasher.hash_password(user_data.pop("password"))
+    
+    # Mettre à jour l'utilisateur
+    updated_user = await UserRepository.update(user_id, user_data)
+    
+    # Retourner sans le mot de passe
+    updated_user.pop("hashed_password", None)
+    updated_user.pop("password_reset_token", None)
+    updated_user.pop("email_verification_token", None)
+    
+    return updated_user
