@@ -58,7 +58,7 @@ export const useProgressTracker = ({ moduleId, enabled = true }: UseProgressTrac
     // Sauvegarder la progression toutes les 30 secondes avec debounce
     intervalRef.current = setInterval(() => {
       debouncedSave()
-    }, 30000)
+    }, 1000) // Sauvegarde toutes les 1 seconde (au lieu de 30s)
 
     return () => {
       if (intervalRef.current) {

@@ -30,7 +30,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false, // Ne pas refetch au focus de la fenêtre
       refetchOnReconnect: false, // Ne pas refetch à la reconnexion
       retry: 1, // Réessayer seulement 1 fois en cas d'erreur
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Backoff exponentiel
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 1000), // Backoff exponentiel limité à 1s
     },
     mutations: {
       retry: 1,

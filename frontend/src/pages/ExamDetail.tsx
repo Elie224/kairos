@@ -124,7 +124,7 @@ const ExamDetail = () => {
     try {
       const response = await api.get(`/exams/module/${moduleId}/pdf`, {
         responseType: 'blob',
-        timeout: 120000, // 2 minutes pour la génération/chargement du PDF
+        timeout: 1000, // Timeout de 1 seconde
       })
       
       const blob = new Blob([response.data], { type: 'application/pdf' })
