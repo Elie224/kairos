@@ -162,3 +162,40 @@ async def delete_all_users(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erreur lors de la suppression: {str(e)}"
         )
+
+
+@router.delete("/users/all/public")
+async def delete_all_users_public() -> Dict[str, Any]:
+    """
+    ⚠️ ENDPOINT TEMPORAIRE - Supprime tous les utilisateurs SANS authentification
+    À SUPPRIMER après utilisation pour des raisons de sécurité
+    """
+    from app.database.mongo import db
+    
+    try:
+        # Compter les utilisateurs avant suppression
+        count_before = await db.database.users.count_documents({})
+        
+        if count_before == 0:
+            return {
+                "message": "Aucun utilisateur à supprimer",
+                "deleted_count": 0
+            }
+        
+        # Supprimer tous les utilisateurs
+        result = await db.database.users.delete_many({})
+        deleted_count = result.deleted_count
+        
+        logger.warning(f"⚠️  {deleted_count} utilisateur(s) supprimé(s) via endpoint public")
+        
+        return {
+            "message": f"{deleted_count} utilisateur(s) supprimé(s) avec succès",
+            "deleted_count": deleted_count,
+            "warning": "Cet endpoint doit être supprimé après utilisation"
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de la suppression des utilisateurs: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors de la suppression: {str(e)}"
+        )
