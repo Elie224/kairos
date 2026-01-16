@@ -50,6 +50,8 @@ const AppWithAccessibility = () => {
         v7_startTransition: true,
         v7_relativeSplatPath: true,
       }}
+      // Restaurer le scroll lors de la navigation
+      window={window}
     >
       <AccessibilityProvider>
         <App />

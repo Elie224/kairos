@@ -25,14 +25,29 @@ const ExamDetail = lazy(() => import('./pages/ExamDetail'))
 const Gamification = lazy(() => import('./pages/Gamification'))
 const Visualizations = lazy(() => import('./pages/Visualizations'))
 
-// Composant de chargement
-const PageLoader = () => <LoadingSpinner size="lg" text="Chargement..." />
+// Composant de chargement optimisé pour la navigation
+const PageLoader = () => (
+  <Box 
+    minH="100vh" 
+    display="flex" 
+    alignItems="center" 
+    justifyContent="center"
+    bg="gray.50"
+  >
+    <LoadingSpinner size="lg" text="Chargement..." />
+  </Box>
+)
 
 function App() {
   const location = useLocation()
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
   const { isAuthenticated } = useAuthStore()
   const [showOnboarding, setShowOnboarding] = useState(false)
+
+  // Restaurer le scroll en haut de page lors de la navigation
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [location.pathname])
 
   // Vérifier si l'utilisateur a déjà vu l'onboarding
   useEffect(() => {
@@ -81,9 +96,10 @@ function App() {
         id="main-content"
         tabIndex={-1}
         aria-label="Contenu principal"
+        key={location.pathname}
       >
         <Suspense fallback={<PageLoader />}>
-          <Routes>
+          <Routes location={location} key={location.pathname}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
