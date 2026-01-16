@@ -1,7 +1,7 @@
 """
 Routeur pour l'authentification
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Dict, Any
 from app.services.auth_service import AuthService
