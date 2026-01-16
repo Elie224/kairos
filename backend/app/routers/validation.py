@@ -19,10 +19,10 @@ router = APIRouter()
 async def get_my_validations(
 ):
     """
-    Récupère toutes les validations de module de l'utilisateur
+    Récupère toutes les validations de module de l'utilisateur (route publique)
     """
     # Utiliser le service avec cache
-        validations = await CachedValidationService.get_user_validations("anonymous")  # Auth supprimée
+    validations = await CachedValidationService.get_user_validations("anonymous")  # Auth supprimée
     return validations
 
 
@@ -39,10 +39,10 @@ async def get_module_validation(
         raise HTTPException(status_code=400, detail="ID de module invalide")
 
     # Utiliser le service avec cache
-        validation = await CachedValidationService.get_module_validation(
-            user_id="anonymous",  # Auth supprimée
-            module_id=sanitized_module_id
-        )
+    validation = await CachedValidationService.get_module_validation(
+        user_id="anonymous",  # Auth supprimée
+        module_id=sanitized_module_id
+    )
 
     if validation:
         return ModuleValidationResponse(

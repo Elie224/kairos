@@ -22,19 +22,13 @@ router = APIRouter()
 
 @router.post("/diagnostic", response_model=AdaptiveDiagnostic, status_code=status.HTTP_201_CREATED)
 async def run_diagnostic(
-    diagnostic_answers: Dict[str, Any],
-    current_user: dict = Depends()
+    diagnostic_answers: Dict[str, Any]
 ):
     """
-    Exécute un diagnostic initial pour déterminer le niveau et le profil de l'apprenant
+    Exécute un diagnostic initial pour déterminer le niveau et le profil de l'apprenant (route publique)
     """
     try:
         user_id = "anonymous"  # Auth supprimée
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
         
         diagnostic = await AdaptiveLearningService.run_initial_diagnostic(
             user_id=user_id,
@@ -51,17 +45,12 @@ async def run_diagnostic(
 
 
 @router.get("/profile", response_model=LearningProfile)
-async def get_profile(current_user: dict = Depends()):
+async def get_profile():
     """
-    Récupère le profil d'apprentissage de l' (route publique) connecté
+    Récupère le profil d'apprentissage (route publique)
     """
     try:
         user_id = "anonymous"  # Auth supprimée
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
         
         profile = await AdaptiveLearningService.get_learning_profile(user_id)
         if not profile:
@@ -84,19 +73,13 @@ async def get_profile(current_user: dict = Depends()):
 @router.post("/adapt-difficulty/{module_id}", response_model=DifficultyAdjustment)
 async def adapt_difficulty(
     module_id: str,
-    performance_data: Dict[str, Any],
-    current_user: dict = Depends()
+    performance_data: Dict[str, Any]
 ):
     """
-    Adapte la difficulté d'un module basé sur les performances de l'utilisateur
+    Adapte la difficulté d'un module basé sur les performances (route publique)
     """
     try:
         user_id = "anonymous"  # Auth supprimée
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
         
         adjustment = await AdaptiveLearningService.adapt_difficulty(
             user_id=user_id,
@@ -120,19 +103,13 @@ async def adapt_difficulty(
 
 @router.post("/adaptive-content", response_model=AdaptiveContentResponse)
 async def get_adaptive_content(
-    request: AdaptiveContentRequest,
-    current_user: dict = Depends()
+    request: AdaptiveContentRequest
 ):
     """
-    Génère du contenu adapté selon le profil de l'utilisateur
+    Génère du contenu adapté selon le profil (route publique)
     """
     try:
         user_id = "anonymous"  # Auth supprimée
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
         
         # S'assurer que le user_id correspond
         request.user_id = user_id
@@ -154,19 +131,13 @@ async def get_adaptive_content(
 
 @router.get("/recommendations", response_model=List[AdaptiveRecommendation])
 async def get_recommendations(
-    limit: int = 5,
-    current_user: dict = Depends()
+    limit: int = 5
 ):
     """
-    Génère des recommandations adaptatives pour l'utilisateur
+    Génère des recommandations adaptatives (route publique)
     """
     try:
         user_id = "anonymous"  # Auth supprimée
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
         
         recommendations = await AdaptiveLearningService.get_recommendations(
             user_id=user_id,

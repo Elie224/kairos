@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react'
 import { FiUser, FiMail, FiPhone, FiCalendar, FiMapPin, FiEdit } from 'react-icons/fi'
 import { useTranslation } from 'react-i18next'
-import { useAuthStore } from '../store/authStore'
+// Auth supprimée - useAuthStore n'existe plus
 import { useNavigate } from 'react-router-dom'
 import api from '../services/api'
 import { Button } from '@chakra-ui/react'
