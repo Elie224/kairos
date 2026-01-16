@@ -58,16 +58,17 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 class RateLimitMiddleware(BaseHTTPMiddleware):
     """Middleware pour limiter le taux de requêtes (rate limiting)"""
     
-    def __init__(self, app, requests_per_minute: int = 60, burst_size: int = 10):
+    def __init__(self, app, requests_per_minute: int = 120, burst_size: int = 20):
         super().__init__(app)
         # En développement, être plus permissif pour localhost
         import os
         is_dev = os.getenv("ENVIRONMENT", "development").lower() == "development"
+        # Augmenter les limites pour éviter de bloquer les utilisateurs légitimes
         self.requests_per_minute = requests_per_minute * (3 if is_dev else 1)  # 3x plus permissif en dev
         self.burst_size = burst_size * (5 if is_dev else 1)  # 5x plus permissif en dev
         self.requests: Dict[str, List[float]] = defaultdict(list)
         self.blocked_ips: Dict[str, datetime] = {}
-        self.block_duration = timedelta(minutes=1 if is_dev else 5)  # Blocage plus court en dev
+        self.block_duration = timedelta(minutes=1 if is_dev else 2)  # Blocage plus court (2 min au lieu de 5)
     
     def _get_client_ip(self, request: Request) -> str:
         """Extrait l'IP réelle du client"""
@@ -95,8 +96,14 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 del self.blocked_ips[ip]
         return False
     
-    def _check_rate_limit(self, ip: str) -> tuple[bool, str]:
+    def _check_rate_limit(self, ip: str, requests_per_minute: int = None, burst_size: int = None) -> tuple[bool, str]:
         """Vérifie si la requête dépasse la limite"""
+        # Utiliser les limites par défaut si non spécifiées
+        if requests_per_minute is None:
+            requests_per_minute = self.requests_per_minute
+        if burst_size is None:
+            burst_size = self.burst_size
+            
         now = time.time()
         minute_ago = now - 60
         
@@ -105,24 +112,24 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         
         # Vérifier le burst (nombre de requêtes simultanées)
         recent_requests = [req_time for req_time in self.requests[ip] if req_time > now - 1]
-        if len(recent_requests) > self.burst_size:
+        if len(recent_requests) > burst_size:
             # En développement, être plus tolérant pour localhost
             import os
             is_dev = os.getenv("ENVIRONMENT", "development").lower() == "development"
             if is_dev and ip in ["127.0.0.1", "localhost", "::1"]:
                 # En dev, permettre jusqu'à 2x le burst_size pour localhost
-                if len(recent_requests) > self.burst_size * 2:
-                    logger.warning(f"IP {ip} bloquée pour burst excessif (dev mode, limite: {self.burst_size * 2})")
+                if len(recent_requests) > burst_size * 2:
+                    logger.warning(f"IP {ip} bloquée pour burst excessif (dev mode, limite: {burst_size * 2})")
                     self.blocked_ips[ip] = datetime.now() + timedelta(seconds=30)  # Blocage très court en dev
                     return False, "Trop de requêtes simultanées. Veuillez patienter."
             else:
                 # Bloquer l'IP temporairement
                 self.blocked_ips[ip] = datetime.now() + self.block_duration
-                logger.warning(f"IP {ip} bloquée pour burst excessif")
+                logger.warning(f"IP {ip} bloquée pour burst excessif (limite: {burst_size})")
                 return False, "Trop de requêtes simultanées. Veuillez patienter."
         
         # Vérifier le taux par minute
-        if len(self.requests[ip]) >= self.requests_per_minute:
+        if len(self.requests[ip]) >= requests_per_minute:
             # Bloquer l'IP temporairement
             self.blocked_ips[ip] = datetime.now() + self.block_duration
             logger.warning(f"IP {ip} bloquée pour dépassement de limite")
@@ -139,16 +146,42 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             "/api/auth/users/all/public", 
             "/api/auth/users/all/public/check", 
             "/api/auth/users/fix-password",
-            "/api/auth/me"  # Endpoint de vérification d'authentification - doit être accessible
+            "/api/auth/me",  # Endpoint de vérification d'authentification - doit être accessible
+            "/api/auth/login",  # Login doit être accessible
+            "/api/auth/register",  # Register doit être accessible
         ]
-        # Exclure aussi les endpoints de debug qui commencent par /api/auth/users/debug/
-        if request.url.path in excluded_paths or request.url.path.startswith("/api/auth/users/debug/"):
+        
+        # Exclure les endpoints de lecture (GET) courants utilisés par le dashboard
+        # Ces endpoints sont moins critiques et peuvent être appelés fréquemment
+        read_only_endpoints = [
+            "/api/progress/",
+            "/api/validations/",
+            "/api/modules/",
+            "/api/badges/",
+            "/api/recommendations/",
+            "/api/favorites/",
+        ]
+        
+        # Vérifier si c'est un endpoint exclu
+        is_excluded = (
+            request.url.path in excluded_paths or 
+            request.url.path.startswith("/api/auth/users/debug/") or
+            (request.method == "GET" and any(request.url.path.startswith(endpoint) for endpoint in read_only_endpoints))
+        )
+        
+        if is_excluded:
             # Débloquer l'IP si elle était bloquée pour cet endpoint spécifique
             ip = self._get_client_ip(request)
             if ip in self.blocked_ips:
                 del self.blocked_ips[ip]
             if ip in self.requests:
-                self.requests[ip] = []
+                # Réinitialiser seulement partiellement pour les endpoints de lecture
+                if request.method == "GET" and any(request.url.path.startswith(endpoint) for endpoint in read_only_endpoints):
+                    # Garder seulement les 5 dernières requêtes pour éviter l'accumulation
+                    self.requests[ip] = self.requests[ip][-5:]
+                else:
+                    # Réinitialiser complètement pour les autres endpoints exclus
+                    self.requests[ip] = []
             return await call_next(request)
         
         ip = self._get_client_ip(request)
@@ -164,23 +197,56 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 # Garder seulement les 10 dernières requêtes pour éviter l'accumulation
                 self.requests[ip] = self.requests[ip][-10:]
         
+        # Vérifier si la requête est authentifiée (présence d'un token Bearer)
+        is_authenticated = False
+        auth_header = request.headers.get("Authorization", "")
+        if auth_header.startswith("Bearer "):
+            is_authenticated = True
+            # Pour les requêtes authentifiées, augmenter les limites
+            # En production, on peut être plus permissif pour les utilisateurs authentifiés
+            effective_requests_per_minute = self.requests_per_minute * 2  # 2x plus de marge pour les utilisateurs authentifiés
+            effective_burst_size = self.burst_size * 2
+        else:
+            effective_requests_per_minute = self.requests_per_minute
+            effective_burst_size = self.burst_size
+        
         # Vérifier si l'IP est bloquée
         if self._is_blocked(ip):
-            return StarletteResponse(
-                content='{"detail": "IP temporairement bloquée. Veuillez réessayer plus tard."}',
-                status_code=429,
-                media_type="application/json",
-                headers={"Retry-After": "300"}
-            )
+            # Pour les utilisateurs authentifiés, réduire le temps de blocage
+            if is_authenticated:
+                # Vérifier si le blocage peut être réduit
+                if ip in self.blocked_ips:
+                    time_remaining = (self.blocked_ips[ip] - datetime.now()).total_seconds()
+                    if time_remaining > 60:  # Si plus d'1 minute restante
+                        # Réduire le blocage à 1 minute pour les utilisateurs authentifiés
+                        self.blocked_ips[ip] = datetime.now() + timedelta(minutes=1)
+                        logger.info(f"Blocage réduit pour utilisateur authentifié: {ip}")
+                        # Ne pas bloquer, laisser passer après réduction
+                    else:
+                        # Bloquer normalement
+                        return StarletteResponse(
+                            content='{"detail": "IP temporairement bloquée. Veuillez réessayer dans quelques instants."}',
+                            status_code=429,
+                            media_type="application/json",
+                            headers={"Retry-After": "60"}
+                        )
+            else:
+                return StarletteResponse(
+                    content='{"detail": "IP temporairement bloquée. Veuillez réessayer plus tard."}',
+                    status_code=429,
+                    media_type="application/json",
+                    headers={"Retry-After": "120"}
+                )
         
-        # Vérifier le rate limit
-        allowed, message = self._check_rate_limit(ip)
+        # Vérifier le rate limit avec les limites ajustées pour les utilisateurs authentifiés
+        allowed, message = self._check_rate_limit(ip, effective_requests_per_minute, effective_burst_size)
         if not allowed:
+            retry_after = "30" if is_authenticated else "60"
             return StarletteResponse(
                 content=f'{{"detail": "{message}"}}',
                 status_code=429,
                 media_type="application/json",
-                headers={"Retry-After": "60"}
+                headers={"Retry-After": retry_after}
             )
         
         response = await call_next(request)
