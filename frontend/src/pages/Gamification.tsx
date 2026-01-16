@@ -25,7 +25,8 @@ import {
   Badge,
   Divider,
 } from '@chakra-ui/react'
-import { FiAward, FiTarget, FiTrophy, FiTrendingUp, FiStar } from 'react-icons/fi'
+import { FiAward, FiTarget, FiTrendingUp, FiStar } from 'react-icons/fi'
+import { FaTrophy } from 'react-icons/fa'
 import { BadgesDisplay } from '../components/BadgesDisplay'
 import { QuestsDisplay } from '../components/QuestsDisplay'
 import { LeaderboardDisplay } from '../components/LeaderboardDisplay'
@@ -138,7 +139,7 @@ const Gamification = () => {
                   <StatLabel color="whiteAlpha.900">Classement</StatLabel>
                   <StatNumber>#--</StatNumber>
                   <StatHelpText color="whiteAlpha.800">
-                    <Icon as={FiTrophy} mr={1} />
+                    <Icon as={FaTrophy} mr={1} />
                     Position
                   </StatHelpText>
                 </Stat>
@@ -165,7 +166,7 @@ const Gamification = () => {
               </Tab>
               <Tab>
                 <HStack spacing={2}>
-                  <Icon as={FiTrophy} />
+                  <Icon as={FaTrophy} />
                   <Text>Classement</Text>
                 </HStack>
               </Tab>

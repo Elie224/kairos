@@ -24,7 +24,8 @@ import {
   Heading,
   Select,
 } from '@chakra-ui/react'
-import { FiTrophy, FiMedal, FiAward, FiTrendingUp } from 'react-icons/fi'
+import { FiAward, FiTrendingUp, FiStar } from 'react-icons/fi'
+import { FaTrophy, FaMedal } from 'react-icons/fa'
 import api from '../services/api'
 import { useAuthStore } from '../store/authStore'
 
@@ -59,9 +60,9 @@ export const LeaderboardDisplay = ({ limit = 10 }: { limit?: number }) => {
   )
 
   const getRankIcon = (rank: number) => {
-    if (rank === 1) return <Icon as={FiTrophy} color="yellow.500" boxSize={6} />
-    if (rank === 2) return <Icon as={FiMedal} color="gray.400" boxSize={6} />
-    if (rank === 3) return <Icon as={FiMedal} color="orange.500" boxSize={6} />
+    if (rank === 1) return <Icon as={FaTrophy} color="yellow.500" boxSize={6} />
+    if (rank === 2) return <Icon as={FaMedal} color="gray.400" boxSize={6} />
+    if (rank === 3) return <Icon as={FaMedal} color="orange.500" boxSize={6} />
     return <Text fontWeight="bold" fontSize="lg">
       {rank}
     </Text>
@@ -94,7 +95,7 @@ export const LeaderboardDisplay = ({ limit = 10 }: { limit?: number }) => {
   if (!leaderboard || leaderboard.length === 0) {
     return (
       <Box textAlign="center" py={8}>
-        <Icon as={FiTrophy} boxSize={12} color="gray.300" mb={4} />
+        <Icon as={FaTrophy} boxSize={12} color="gray.300" mb={4} />
         <Text color="gray.600" fontSize="lg">
           Aucun classement disponible
         </Text>
@@ -107,7 +108,10 @@ export const LeaderboardDisplay = ({ limit = 10 }: { limit?: number }) => {
   return (
     <VStack spacing={4} align="stretch">
       <Flex justify="space-between" align="center">
-        <Heading size="md">Classement</Heading>
+        <HStack spacing={2}>
+          <Icon as={FaTrophy} color="yellow.500" />
+          <Heading size="md">Classement</Heading>
+        </HStack>
         <Select
           value={leaderboardType}
           onChange={(e) => setLeaderboardType(e.target.value as any)}
