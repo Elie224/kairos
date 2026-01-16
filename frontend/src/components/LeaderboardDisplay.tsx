@@ -82,7 +82,11 @@ export const LeaderboardDisplay = ({ limit = 10 }: { limit?: number }) => {
           <Card key={i}>
             <CardBody>
               <HStack spacing={4}>
-                <SkeletonCircle size="10" />
+                <Skeleton
+                  height="40px"
+                  width="40px"
+                  borderRadius="full"
+                />
                 <SkeletonText flex={1} noOfLines={2} />
               </HStack>
             </CardBody>
