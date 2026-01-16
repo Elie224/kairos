@@ -4,7 +4,6 @@ Routeur pour le suivi de progression - Refactorisé avec services
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from typing import List, Optional
 from app.models import Progress, ProgressCreate
-# Authentification supprimée - toutes les routes sont publiques
 from app.services.progress_service import ProgressService
 from app.services.cached_progress_service import CachedProgressService
 from app.utils.security import InputSanitizer
