@@ -54,19 +54,24 @@ class AuthService:
             # Sanitizer l'email
             sanitized_email = InputSanitizer.sanitize_email(email)
             if not sanitized_email:
+                logger.warning(f"Email invalide après sanitization: {email}")
                 return None
             
             # Trouver l'utilisateur
             user = await UserRepository.find_by_email(sanitized_email)
             if not user:
+                logger.warning(f"Utilisateur non trouvé pour email: {sanitized_email}")
                 return None
             
             # Vérifier le mot de passe
             hashed_password = user.get("hashed_password")
             if not hashed_password:
+                logger.warning(f"Utilisateur sans mot de passe hashé: {user.get('id')}")
                 return None
             
-            if not PasswordHasher.verify_password(password, hashed_password):
+            password_valid = PasswordHasher.verify_password(password, hashed_password)
+            if not password_valid:
+                logger.warning(f"Mot de passe incorrect pour email: {sanitized_email}")
                 return None
             
             # Retourner l'utilisateur sans le mot de passe

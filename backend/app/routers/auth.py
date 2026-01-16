@@ -23,14 +23,18 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()) -> Dict[str, A
     try:
         # OAuth2PasswordRequestForm utilise 'username' mais on accepte email
         email = form_data.username
+        logger.info(f"Tentative de connexion pour email: {email}")
         
         user = await AuthService.authenticate_user(email, form_data.password)
         if not user:
+            logger.warning(f"Échec de l'authentification pour email: {email}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Email ou mot de passe incorrect",
                 headers={"WWW-Authenticate": "Bearer"},
             )
+        
+        logger.info(f"Authentification réussie pour user_id: {user.get('id')}")
         
         # Créer le token
         access_token_expires = timedelta(hours=24)
