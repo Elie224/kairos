@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { Box } from '@chakra-ui/react'
 import { lazy, Suspense } from 'react'
 import Navbar from './components/Navbar'
@@ -25,6 +25,9 @@ const ExamDetail = lazy(() => import('./pages/ExamDetail'))
 const PageLoader = () => <LoadingSpinner size="lg" text="Chargement..." />
 
 function App() {
+  const location = useLocation()
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
+
   return (
     <Box minH="100vh" bg="gray.50" display="flex" flexDirection="column" position="relative">
       {/* Effet de gradient en arrière-plan */}
@@ -38,7 +41,7 @@ function App() {
         zIndex={0}
         pointerEvents="none"
       />
-      <Navbar />
+      {!isAuthPage && <Navbar />}
       <Box flex="1" position="relative" zIndex={1}>
         <Suspense fallback={<PageLoader />}>
           <Routes>
@@ -60,7 +63,7 @@ function App() {
           </Routes>
         </Suspense>
       </Box>
-      <Footer />
+      {!isAuthPage && <Footer />}
     </Box>
   )
 }
