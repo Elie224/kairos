@@ -4,7 +4,7 @@ Routeur pour Learning Analytics avancé
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Dict, Any
 from app.services.learning_analytics_service import LearningAnalyticsService
-from app.utils.permissions import get_current_user
+# Authentification supprimée - toutes les routes sont publiques
 import logging
 
 logger = logging.getLogger(__name__)
@@ -14,18 +14,12 @@ router = APIRouter()
 
 @router.get("/dropout-risk", response_model=Dict[str, Any])
 async def get_dropout_risk(
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Détecte le risque de décrochage pour l'utilisateur connecté
     """
     try:
-        user_id = current_user.get("id")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
+        user_id = "anonymous"  # Auth supprimée
         
         risk_analysis = await LearningAnalyticsService.detect_dropout_risk(user_id)
         return risk_analysis
@@ -40,18 +34,12 @@ async def get_dropout_risk(
 @router.get("/success-prediction/{module_id}", response_model=Dict[str, Any])
 async def predict_success(
     module_id: str,
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Prédit la probabilité de réussite pour un module
     """
     try:
-        user_id = current_user.get("id")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
+        user_id = "anonymous"  # Auth supprimée
         
         prediction = await LearningAnalyticsService.predict_success(user_id, module_id)
         return prediction
@@ -65,18 +53,12 @@ async def predict_success(
 
 @router.get("/difficulty-heatmap", response_model=Dict[str, Any])
 async def get_difficulty_heatmap(
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Génère une heatmap des difficultés par notion
     """
     try:
-        user_id = current_user.get("id")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
+        user_id = "anonymous"  # Auth supprimée
         
         heatmap = await LearningAnalyticsService.generate_difficulty_heatmap(user_id)
         return heatmap

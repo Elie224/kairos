@@ -6,7 +6,7 @@ from typing import List
 from app.models import ModuleValidation, ModuleValidationResponse
 from app.services.validation_service import ValidationService
 from app.services.cached_validation_service import CachedValidationService
-from app.utils.permissions import get_current_user
+# Authentification supprimée - toutes les routes sont publiques
 from app.utils.security import InputSanitizer
 import logging
 
@@ -17,20 +17,18 @@ router = APIRouter()
 
 @router.get("/", response_model=List[ModuleValidation])
 async def get_my_validations(
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Récupère toutes les validations de module de l'utilisateur
     """
     # Utiliser le service avec cache
-    validations = await CachedValidationService.get_user_validations(current_user["id"])
+        validations = await CachedValidationService.get_user_validations("anonymous")  # Auth supprimée
     return validations
 
 
 @router.get("/module/{module_id}", response_model=ModuleValidationResponse)
 async def get_module_validation(
     module_id: str,
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Vérifie si un module est validé pour l'utilisateur
@@ -41,10 +39,10 @@ async def get_module_validation(
         raise HTTPException(status_code=400, detail="ID de module invalide")
 
     # Utiliser le service avec cache
-    validation = await CachedValidationService.get_module_validation(
-        user_id=current_user["id"],
-        module_id=sanitized_module_id
-    )
+        validation = await CachedValidationService.get_module_validation(
+            user_id="anonymous",  # Auth supprimée
+            module_id=sanitized_module_id
+        )
 
     if validation:
         return ModuleValidationResponse(
@@ -62,19 +60,12 @@ async def get_module_validation(
 
 @router.get("/modules", response_model=List[str])
 async def get_validated_modules(
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Récupère la liste des modules validés par l'utilisateur
     """
     try:
-        if not current_user or not current_user.get("id"):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
-        
-        user_id = current_user["id"]
+        user_id = "anonymous"  # Auth supprimée
         # Utiliser le service avec cache
         modules = await CachedValidationService.get_validated_modules(user_id)
         return modules or []
@@ -91,7 +82,6 @@ async def get_validated_modules(
 @router.get("/check/{module_id}")
 async def check_module_validation(
     module_id: str,
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Vérifie si un module est validé (retourne un booléen)
@@ -102,7 +92,7 @@ async def check_module_validation(
         raise HTTPException(status_code=400, detail="ID de module invalide")
 
     is_validated = await ValidationService.is_module_validated(
-        user_id=current_user["id"],
+        user_id="anonymous",  # Auth supprimée
         module_id=sanitized_module_id
     )
     return {

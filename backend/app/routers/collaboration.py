@@ -4,7 +4,7 @@ Routeur pour la collaboration intelligente
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List, Dict, Any
 from app.services.collaboration_service import CollaborationService
-from app.utils.permissions import get_current_user
+# Authentification supprimée - toutes les routes sont publiques
 import logging
 
 logger = logging.getLogger(__name__)
@@ -17,22 +17,12 @@ async def create_smart_group(
     user_ids: List[str],
     module_id: str,
     group_size: int = 4,
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Crée un groupe intelligent avec répartition automatique des rôles
     """
     try:
-        current_user_id = current_user.get("id")
-        if not current_user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
-        
-        # S'assurer que l'utilisateur actuel est dans le groupe
-        if current_user_id not in user_ids:
-            user_ids.append(current_user_id)
+        # Auth supprimée - pas de vérification d'utilisateur
         
         group = await CollaborationService.create_smart_group(
             user_ids=user_ids,
@@ -52,7 +42,6 @@ async def create_smart_group(
 async def get_group_feedback(
     group_id: str,
     work_submitted: Dict[str, Any],
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Génère un feedback collectif pour le groupe

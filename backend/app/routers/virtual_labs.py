@@ -4,7 +4,7 @@ Routeur pour les laboratoires virtuels interactifs
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import Dict, Any
 from app.services.lab_simulation_service import LabSimulationService
-from app.utils.permissions import get_current_user
+# Authentification supprimée - toutes les routes sont publiques
 import logging
 
 logger = logging.getLogger(__name__)
@@ -16,7 +16,6 @@ router = APIRouter()
 async def get_simulation_config(
     module_id: str,
     simulation_type: str = Query("physics", pattern="^(physics|chemistry)$"),
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Récupère la configuration de simulation pour un module
@@ -45,7 +44,6 @@ async def calculate_simulation(
     module_id: str,
     parameters: Dict[str, Any],
     simulation_type: str = Query("physics", pattern="^(physics|chemistry)$"),
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Calcule les résultats d'une simulation avec paramètres donnés

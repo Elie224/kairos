@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from typing import Dict, Any
 from app.services.gdpr_service import GDPRService
-from app.utils.permissions import get_current_user
+# Authentification supprimée - toutes les routes sont publiques
 import logging
 
 logger = logging.getLogger(__name__)
@@ -15,18 +15,12 @@ router = APIRouter()
 
 @router.get("/export-data", response_model=Dict[str, Any])
 async def export_user_data(
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Exporte toutes les données de l'utilisateur connecté
     """
     try:
-        user_id = current_user.get("id")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
+        user_id = "anonymous"  # Auth supprimée
         
         export_data = await GDPRService.export_user_data(user_id)
         
@@ -48,18 +42,12 @@ async def export_user_data(
 
 @router.delete("/delete-data", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user_data(
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Supprime toutes les données de l'utilisateur (droit à l'oubli)
     """
     try:
-        user_id = current_user.get("id")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
+        user_id = "anonymous"  # Auth supprimée
         
         success = await GDPRService.delete_user_data(user_id)
         

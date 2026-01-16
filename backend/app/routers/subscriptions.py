@@ -7,7 +7,7 @@ from typing import Dict, Any, Optional
 from app.models.subscription import SubscriptionPlan, PlanLimits, Subscription
 from app.services.subscription_service import SubscriptionService
 from app.services.payment_service import PaymentService
-from app.utils.permissions import get_current_user
+# Authentification supprimée - toutes les routes sont publiques
 import logging
 
 logger = logging.getLogger(__name__)
@@ -33,18 +33,12 @@ async def get_plan_limits(plan: SubscriptionPlan):
 
 @router.get("/my-plan", response_model=Dict[str, Any])
 async def get_my_plan(
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Récupère le plan actuel de l'utilisateur
     """
     try:
-        user_id = current_user.get("id")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
+        user_id = "anonymous"  # Auth supprimée
         
         plan = await SubscriptionService.get_user_plan(user_id)
         limits = SubscriptionService.get_plan_limits(plan)
@@ -71,18 +65,12 @@ async def create_checkout_session(
     plan: SubscriptionPlan,
     success_url: str,
     cancel_url: str,
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Crée une session de checkout Stripe pour un abonnement
     """
     try:
-        user_id = current_user.get("id")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
+        user_id = "anonymous"  # Auth supprimée
         
         if plan == SubscriptionPlan.FREE:
             raise HTTPException(
@@ -144,18 +132,12 @@ async def stripe_webhook(
 
 @router.post("/cancel", response_model=Dict[str, Any])
 async def cancel_subscription(
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Annule l'abonnement de l'utilisateur
     """
     try:
-        user_id = current_user.get("id")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
+        user_id = "anonymous"  # Auth supprimée
         
         success = await PaymentService.cancel_subscription(user_id)
         
@@ -179,18 +161,12 @@ async def cancel_subscription(
 
 @router.get("/check-ai-limit", response_model=Dict[str, Any])
 async def check_ai_limit(
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Vérifie les limites IA de l'utilisateur
     """
     try:
-        user_id = current_user.get("id")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
+        user_id = "anonymous"  # Auth supprimée
         
         limits = await SubscriptionService.check_ai_limit(user_id)
         return limits
@@ -205,18 +181,12 @@ async def check_ai_limit(
 @router.get("/check-feature/{feature}", response_model=Dict[str, bool])
 async def check_feature_access(
     feature: str,
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Vérifie si l'utilisateur peut accéder à une fonctionnalité
     """
     try:
-        user_id = current_user.get("id")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
+        user_id = "anonymous"  # Auth supprimée
         
         can_access = await SubscriptionService.can_access_feature(user_id, feature)
         return {"can_access": can_access}

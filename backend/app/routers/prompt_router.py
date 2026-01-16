@@ -4,7 +4,7 @@ Routeur pour les statistiques et configuration du Prompt Router
 from fastapi import APIRouter, Depends
 from typing import Dict, Any, Optional
 from app.services.prompt_router_service import PromptRouterService
-from app.utils.permissions import get_current_user
+# Authentification supprimée - toutes les routes sont publiques
 
 router = APIRouter()
 
@@ -21,7 +21,6 @@ async def get_router_stats(current_user: dict = Depends(get_current_user)):
 async def classify_message(
     message: str,
     context: Optional[str] = None,
-    current_user: dict = Depends(get_current_user)
 ) -> Dict[str, Any]:
     """
     Classifie un message pour tester le système

@@ -4,7 +4,7 @@ Routeur pour le mode "Apprendre par l'erreur"
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Dict, Any
 from app.services.error_analysis_service import ErrorAnalysisService
-from app.utils.permissions import get_current_user
+# Authentification supprimée - toutes les routes sont publiques
 import logging
 
 logger = logging.getLogger(__name__)
@@ -18,18 +18,12 @@ async def analyze_error(
     correct_answer: str,
     question: str,
     module_id: str = None,
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Analyse une erreur et génère une explication ciblée
     """
     try:
-        user_id = current_user.get("id")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
+        user_id = "anonymous"  # Auth supprimée
         
         # Récupérer le contexte du module si fourni
         module_context = None

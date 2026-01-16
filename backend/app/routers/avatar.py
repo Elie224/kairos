@@ -4,7 +4,7 @@ Routeur pour l'Avatar IA Enseignant
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import Dict, Any
 from app.services.avatar_service import AvatarService
-from app.utils.permissions import get_current_user
+# Authentification supprimée - toutes les routes sont publiques
 import logging
 
 logger = logging.getLogger(__name__)
@@ -16,7 +16,6 @@ router = APIRouter()
 async def generate_explanation_script(
     content: str,
     explanation_type: str = Query("step_by_step", pattern="^(visual|textual|step_by_step)$"),
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Génère un script d'explication pour l'avatar
@@ -39,7 +38,6 @@ async def generate_explanation_script(
 async def get_speech_config(
     text: str,
     language: str = Query("fr", pattern="^(fr|en)$"),
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Récupère la configuration pour la synthèse vocale

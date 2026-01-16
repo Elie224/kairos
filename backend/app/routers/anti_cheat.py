@@ -4,7 +4,7 @@ Routeur pour la détection de triche et plagiat
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Dict, Any, List
 from app.services.cheating_detector import CheatingDetector
-from app.utils.permissions import get_current_user, require_admin
+# Authentification supprimée - toutes les routes sont publiques
 import logging
 
 logger = logging.getLogger(__name__)
@@ -17,18 +17,12 @@ async def check_plagiarism(
     user_answer: str,
     question: str,
     other_answers: List[str],
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Vérifie la similarité avec d'autres réponses (détection plagiat)
     """
     try:
-        user_id = current_user.get("id")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
+        user_id = "anonymous"  # Auth supprimée
         
         plagiarism_check = await CheatingDetector.detect_plagiarism(
             user_answer=user_answer,
@@ -50,18 +44,12 @@ async def analyze_behavior(
     answer_times: List[float],
     scores: List[float],
     average_time: float,
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Analyse les anomalies comportementales
     """
     try:
-        user_id = current_user.get("id")
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Utilisateur non authentifié"
-            )
+        user_id = "anonymous"  # Auth supprimée
         
         analysis = await CheatingDetector.analyze_behavior_anomalies(
             user_id=user_id,
@@ -81,7 +69,6 @@ async def analyze_behavior(
 
 @router.get("/suspicious-users", response_model=List[Dict[str, Any]])
 async def get_suspicious_users(
-    admin_user: dict = Depends(require_admin)
 ):
     """
     Récupère la liste des utilisateurs suspects (admin seulement)

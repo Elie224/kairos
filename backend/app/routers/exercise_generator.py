@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import List, Dict, Any
 from app.models import Difficulty
 from app.services.exercise_generator_service import ExerciseGeneratorService
-from app.utils.permissions import get_current_user
+# Authentification supprimée - toutes les routes sont publiques
 import logging
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,6 @@ async def generate_td_exercises(
     module_id: str,
     num_exercises: int = Query(5, ge=1, le=20),
     difficulty: Difficulty = Query(None),
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Génère automatiquement des exercices de TD pour un module
@@ -47,7 +46,6 @@ async def generate_td_exercises(
 async def generate_tp_steps(
     module_id: str,
     num_steps: int = Query(5, ge=1, le=15),
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Génère automatiquement des étapes de TP pour un module
@@ -75,7 +73,6 @@ async def generate_tp_steps(
 async def generate_solution(
     exercise: Dict[str, Any],
     exercise_type: str = Query("td", pattern="^(td|tp)$"),
-    current_user: dict = Depends(get_current_user)
 ):
     """
     Génère une solution détaillée pour un exercice

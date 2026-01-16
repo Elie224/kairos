@@ -10,7 +10,7 @@ from app.models import (
 )
 from app.services.exam_service import ExamService
 # PDFService supprimé - fonctionnalité PDF désactivée pour l'instant
-from app.utils.permissions import get_current_user, require_admin
+# Authentification supprimée - toutes les routes sont publiques
 from app.utils.security import InputSanitizer
 import logging
 from datetime import datetime, timezone
@@ -109,11 +109,10 @@ async def start_exam(
 
 @router.post("/submit", response_model=ExamAttemptResponse)
 async def submit_exam(
-    submission: ExamSubmission,
-    current_user: dict = Depends(get_current_user)
+    submission: ExamSubmission
 ):
     """
-    Soumet les réponses d'un examen et calcule le score
+    Soumet les réponses d'un examen et calcule le score (route publique)
     """
     # Valider l'ID de l'examen
     sanitized_exam_id = InputSanitizer.sanitize_object_id(submission.exam_id)
@@ -123,7 +122,7 @@ async def submit_exam(
     submission.exam_id = sanitized_exam_id
 
     result = await ExamService.submit_exam(
-        user_id=current_user["id"],
+        user_id="anonymous",  # Auth supprimée
         submission=submission
     )
     return ExamAttemptResponse(**result)

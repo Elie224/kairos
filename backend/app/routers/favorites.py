@@ -4,7 +4,7 @@ Routeur pour les favoris
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 from app.models import Favorite, FavoriteCreate
-from app.utils.permissions import get_current_user
+# Authentification supprimée - toutes les routes sont publiques
 from app.repositories.favorite_repository import FavoriteRepository
 from app.repositories.module_repository import ModuleRepository
 
@@ -14,7 +14,6 @@ router = APIRouter()
 @router.post("/", response_model=Favorite, status_code=201)
 async def add_favorite(
     favorite_data: FavoriteCreate,
-    current_user: dict = Depends(get_current_user)
 ):
     """Ajoute un module aux favoris"""
     from app.utils.security import InputSanitizer
@@ -29,13 +28,12 @@ async def add_favorite(
     if not module:
         raise HTTPException(status_code=404, detail="Module non trouvé")
     
-    return await FavoriteRepository.create(current_user["id"], sanitized_module_id)
+    return await FavoriteRepository.create("anonymous", sanitized_module_id)  # Auth supprimée
 
 
 @router.delete("/{module_id}")
 async def remove_favorite(
     module_id: str,
-    current_user: dict = Depends(get_current_user)
 ):
     """Retire un module des favoris"""
     from app.utils.security import InputSanitizer
@@ -45,7 +43,7 @@ async def remove_favorite(
     if not sanitized_id:
         raise HTTPException(status_code=400, detail="ID de module invalide")
     
-    success = await FavoriteRepository.delete(current_user["id"], sanitized_id)
+    success = await FavoriteRepository.delete("anonymous", sanitized_id)  # Auth supprimée
     if not success:
         raise HTTPException(status_code=404, detail="Favori non trouvé")
     return {"message": "Favori supprimé"}
@@ -54,13 +52,12 @@ async def remove_favorite(
 @router.get("/", response_model=List[Favorite])
 async def get_favorites(current_user: dict = Depends(get_current_user)):
     """Récupère tous les favoris de l'utilisateur"""
-    return await FavoriteRepository.find_by_user(current_user["id"])
+    return await FavoriteRepository.find_by_user("anonymous")  # Auth supprimée
 
 
 @router.get("/{module_id}/check")
 async def check_favorite(
     module_id: str,
-    current_user: dict = Depends(get_current_user)
 ):
     """Vérifie si un module est en favoris"""
     from app.utils.security import InputSanitizer
@@ -70,6 +67,6 @@ async def check_favorite(
     if not sanitized_id:
         raise HTTPException(status_code=400, detail="ID de module invalide")
     
-    is_favorite = await FavoriteRepository.is_favorite(current_user["id"], sanitized_id)
+    is_favorite = await FavoriteRepository.is_favorite("anonymous", sanitized_id)  # Auth supprimée
     return {"is_favorite": is_favorite}
 
