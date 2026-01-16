@@ -142,7 +142,7 @@ class AuthService:
             # Hasher le mot de passe
             logger.info(f"Hashage du mot de passe pour email: {email}, username: {username}")
             hashed_password = PasswordHasher.hash_password(password)
-            logger.info(f"Mot de passe hashé avec succès pour email: {email}")
+            logger.info(f"Mot de passe hashé avec succès pour email: {email}, hash (premiers 20 chars): {hashed_password[:20]}...")
             
             # Créer l'utilisateur
             user_dict = {

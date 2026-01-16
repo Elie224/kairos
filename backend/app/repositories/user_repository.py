@@ -131,12 +131,20 @@ class UserRepository:
     async def create(user_data: Dict[str, Any]) -> Dict[str, Any]:
         """Crée un nouvel utilisateur"""
         try:
+            logger.info(f"UserRepository.create: Création d'utilisateur avec email={user_data.get('email')}, username={user_data.get('username')}, has_hashed_password={bool(user_data.get('hashed_password'))}")
             db = get_database()
             result = await db.users.insert_one(user_data)
             user_data["_id"] = result.inserted_id
+            logger.info(f"Utilisateur créé avec succès: _id={result.inserted_id}")
+            # Vérifier que le mot de passe a bien été sauvegardé
+            saved_user = await db.users.find_one({"_id": result.inserted_id}, {"hashed_password": 1})
+            if saved_user and saved_user.get("hashed_password"):
+                logger.info(f"✅ Mot de passe hashé confirmé dans la base de données")
+            else:
+                logger.error(f"❌ ERREUR: Le mot de passe hashé n'a PAS été sauvegardé dans la base de données!")
             return serialize_doc(user_data)
         except Exception as e:
-            logger.error(f"Erreur lors de la création de l'utilisateur: {e}")
+            logger.error(f"Erreur lors de la création de l'utilisateur: {e}", exc_info=True)
             raise
     
     @staticmethod
