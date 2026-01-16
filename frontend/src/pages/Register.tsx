@@ -710,10 +710,39 @@ const Register = () => {
                 </Text>
               </Link>
             </Text>
+
+            {/* Bouton pour voir l'introduction */}
+            <Divider borderColor="gray.200" />
+            
+            <Button
+              variant="outline"
+              colorScheme="blue"
+              size="md"
+              width="full"
+              onClick={() => setShowOnboarding(true)}
+              leftIcon={<Icon as={FiTarget} />}
+              _hover={{
+                bg: 'blue.50',
+                borderColor: 'blue.300',
+                transform: 'translateY(-2px)',
+              }}
+              transition="all 0.2s"
+              data-touch-target="true"
+            >
+              Découvrir Kaïros
+            </Button>
           </VStack>
         </Box>
         </AnimatedBox>
       </Container>
+
+      {/* Écran d'onboarding */}
+      {showOnboarding && (
+        <Onboarding
+          onComplete={() => setShowOnboarding(false)}
+          onSkip={() => setShowOnboarding(false)}
+        />
+      )}
     </Box>
   )
 }
