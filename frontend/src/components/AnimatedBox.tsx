@@ -18,16 +18,31 @@ export const AnimatedBox = ({
   children, 
   ...props 
 }: AnimatedBoxProps) => {
-  const animationClass = `animate-${animation.replace(/([A-Z])/g, '-$1').toLowerCase()}`
+  // Mapper les noms d'animations aux keyframes CSS
+  const animationMap: Record<string, string> = {
+    fadeIn: 'fadeIn',
+    fadeInUp: 'slideInTop',
+    fadeInDown: 'slideInBottom',
+    slideInRight: 'slideInRight',
+    slideInLeft: 'slideInLeft',
+    scaleIn: 'scaleIn',
+    scaleUp: 'scaleIn',
+  }
+  
+  const animationName = animationMap[animation] || 'fadeIn'
+  
+  // Utiliser les propriétés d'animation CSS séparées pour une meilleure compatibilité
+  const animationStyle: CSSProperties = {
+    animationName: animationName,
+    animationDuration: `${duration}s`,
+    animationDelay: `${delay}s`,
+    animationFillMode: 'both',
+    animationTimingFunction: 'ease-out',
+  }
   
   return (
     <Box
-      className={animationClass}
-      style={{
-        animationDelay: `${delay}s`,
-        animationDuration: `${duration}s`,
-        animationFillMode: 'both',
-      }}
+      style={animationStyle}
       {...props}
     >
       {children}

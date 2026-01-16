@@ -10,6 +10,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import { LogoColorProvider } from './components/LogoColorProvider'
 import { AccessibilityProvider } from './components/AccessibilityProvider'
 import { useAuthStore } from './store/authStore'
+import { cacheConfigs } from './services/cacheService'
 import './i18n/config'
 import './styles/animations.css'
 import './styles/mobile.css'
@@ -18,14 +19,12 @@ import './styles/mobile-enhancements.css'
 // Vérifier l'authentification au démarrage
 useAuthStore.getState().checkAuth()
 
-import { cacheConfigs } from './services/cacheService'
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       ...cacheConfigs.default,
       // Optimisations supplémentaires
-      keepPreviousData: true, // Garder les données précédentes pendant le chargement
+      keepPreviousData: true, // Garder les données précédentes pendant le chargement (react-query v3)
       structuralSharing: true, // Partage structurel pour éviter les re-renders inutiles
     },
     mutations: {

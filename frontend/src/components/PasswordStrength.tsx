@@ -10,7 +10,9 @@ interface PasswordStrengthProps {
 
 export const PasswordStrength = ({ password }: PasswordStrengthProps) => {
   const strength = useMemo(() => {
-    if (!password) return { score: 0, label: '', color: 'gray' }
+    if (!password || password.length === 0) {
+      return { score: 0, label: '', color: 'gray' }
+    }
 
     let score = 0
     const checks = {
@@ -39,7 +41,9 @@ export const PasswordStrength = ({ password }: PasswordStrengthProps) => {
     return strengthLevels[Math.min(score, 5)]
   }, [password])
 
-  if (!password) return null
+  if (!password || typeof password !== 'string' || password.length === 0) {
+    return null
+  }
 
   return (
     <VStack spacing={2} align="stretch" mt={2}>
