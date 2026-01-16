@@ -70,7 +70,7 @@ async def get_user_progress(
 
 
 @router.post("/", response_model=Progress, status_code=201)
-async def create_progress(progress_data: ProgressCreate, current_user: dict = Depends(get_current_user)):
+async def create_progress(progress_data: ProgressCreate):
     """Crée ou met à jour une entrée de progression"""
     # Valider le module_id
     sanitized_module_id = InputSanitizer.sanitize_object_id(progress_data.module_id)

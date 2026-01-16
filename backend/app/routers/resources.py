@@ -59,7 +59,6 @@ def is_allowed_file(filename: str, resource_type: str) -> bool:
 @router.get("/module/{module_id}", response_model=List[Resource])
 async def get_module_resources(
     module_id: str,
-    current_user: dict = Depends(get_current_user)
 ):
     """Récupère toutes les ressources d'un module"""
     sanitized_module_id = InputSanitizer.sanitize_object_id(module_id)
