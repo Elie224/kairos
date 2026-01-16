@@ -99,6 +99,8 @@ function App() {
           {/* Redirection des anciennes routes /exams/:subject vers /exams */}
           <Route path="/exams/:subject" element={<Navigate to="/exams" replace />} />
           <Route path="/modules/:moduleId/exam" element={<ProtectedRoute><ExamDetail /></ProtectedRoute>} />
+          <Route path="/gamification" element={<ProtectedRoute><Gamification /></ProtectedRoute>} />
+          <Route path="/visualizations" element={<ProtectedRoute><Visualizations /></ProtectedRoute>} />
           </Routes>
         </Suspense>
       </Box>
