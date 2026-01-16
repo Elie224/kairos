@@ -46,7 +46,7 @@ const ModuleDetail = () => {
     ['module', id],
     async () => {
       const response = await api.get(`/modules/${id}`, {
-        timeout: 10000, // Timeout de 10 secondes
+        timeout: 1000, // Timeout de 1 seconde
       })
       return response.data
     },

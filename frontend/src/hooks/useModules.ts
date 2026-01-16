@@ -16,7 +16,7 @@ export const useModules = (filters: Partial<ModuleFilters> = {}) => {
     ['modules', 'all'],
     async () => {
       const response = await api.get('/modules/', {
-        timeout: 10000, // Timeout de 10 secondes
+        timeout: 1000, // Timeout de 1 seconde
         params: { limit: 100 }, // Limiter les résultats
       })
       return response.data
@@ -38,7 +38,7 @@ export const useModules = (filters: Partial<ModuleFilters> = {}) => {
       if (filters.subject) params.append('subject', filters.subject)
       if (debouncedSearchQuery) params.append('search', debouncedSearchQuery)
       const response = await api.get(`/modules/?${params.toString()}`, {
-        timeout: 10000, // Timeout de 10 secondes
+        timeout: 1000, // Timeout de 1 seconde
         params: { limit: 100 }, // Limiter les résultats
       })
       return response.data

@@ -21,7 +21,7 @@ const Home = () => {
     async () => {
           try {
             const response = await api.get('/auth/stats', {
-              timeout: 8000, // Timeout rapide pour les stats
+              timeout: 1000, // Timeout de 1 seconde
             })
             return response.data
           } catch {

@@ -44,7 +44,7 @@ const Gamification = () => {
     'badge-count',
     async () => {
       const response = await api.get('/badges/count', {
-        timeout: 8000, // Timeout de 8 secondes
+        timeout: 1000, // Timeout de 1 seconde
       })
       return response.data?.count || 0
     },
@@ -59,7 +59,7 @@ const Gamification = () => {
     'all-badges',
     async () => {
       const response = await api.get('/badges/', {
-        timeout: 8000, // Timeout de 8 secondes
+        timeout: 1000, // Timeout de 1 seconde
       })
       return response.data || []
     },
@@ -74,7 +74,7 @@ const Gamification = () => {
     'user-quests',
     async () => {
       const response = await api.get('/gamification/quests', {
-        timeout: 8000, // Timeout de 8 secondes
+        timeout: 1000, // Timeout de 1 seconde
         params: { limit: 10 },
       })
       return response.data || []
@@ -90,7 +90,7 @@ const Gamification = () => {
     ['leaderboard', 'points'],
     async () => {
       const response = await api.get('/gamification/leaderboard', {
-        timeout: 8000, // Timeout de 8 secondes
+        timeout: 1000, // Timeout de 1 seconde
         params: {
           leaderboard_type: 'points',
           limit: 100,

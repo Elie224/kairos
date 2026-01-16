@@ -81,7 +81,7 @@ export const BadgesDisplay = ({ limit = 8 }: { limit?: number }) => {
     async () => {
       try {
         const response = await api.get('/badges/', {
-          timeout: 8000, // Timeout de 8 secondes
+          timeout: 1000, // Timeout de 1 seconde
         })
         return response.data || []
       } catch (error) {

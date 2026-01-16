@@ -81,7 +81,7 @@ export const AdvancedSearch = ({
       
       try {
         const response = await api.get('/modules/', {
-          timeout: 8000, // Timeout de 8 secondes pour les suggestions
+          timeout: 1000, // Timeout de 1 seconde
           params: {
             search: debouncedQuery,
             limit: 10, // Limiter à 10 suggestions
