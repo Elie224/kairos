@@ -52,7 +52,12 @@ const Profile = () => {
     }
   )
 
-  const displayUser = userData || user
+  const displayUser = userData || {
+    username: 'Utilisateur',
+    email: 'user@example.com',
+    first_name: 'Utilisateur',
+    last_name: 'Anonyme'
+  }
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Non renseigné'
