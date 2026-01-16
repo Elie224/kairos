@@ -60,6 +60,7 @@ export const useAuthStore = create<AuthState>()(
           console.log('Envoi de la requête de login avec params:', { username: email, password: '***' })
           const response = await api.post('/auth/login', params, {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            timeout: 10000, // 10 secondes pour login (peut être lent sur serveur hébergé)
           })
 
           console.log('Réponse de login reçue:', { hasToken: !!response.data?.access_token, hasUser: !!response.data?.user })
@@ -95,7 +96,9 @@ export const useAuthStore = create<AuthState>()(
           }
 
           console.log('Tentative d\'inscription avec payload:', { ...payload, password: '***' })
-          const response = await api.post('/auth/register', payload)
+          const response = await api.post('/auth/register', payload, {
+            timeout: 10000, // 10 secondes pour register (peut être lent sur serveur hébergé)
+          })
           const user = response.data
 
           if (!user || !user.id) {
@@ -150,7 +153,9 @@ export const useAuthStore = create<AuthState>()(
 
         try {
           api.defaults.headers.common['Authorization'] = `Bearer ${token}`
-          const response = await api.get('/auth/me')
+          const response = await api.get('/auth/me', {
+            timeout: 10000, // 10 secondes pour vérifier l'auth (peut être lent sur serveur hébergé)
+          })
           set({
             user: response.data,
             isAuthenticated: true,
