@@ -106,6 +106,30 @@ const Navbar = () => {
           Soutenir
         </Button>
       </Link>
+      <Link to="/gamification" onClick={onClose}>
+        <Button 
+          variant="ghost" 
+          w={{ base: 'full', md: 'auto' }} 
+          justifyContent={{ base: 'flex-start', md: 'center' }} 
+          px={{ base: 4, md: 2 }}
+          minH="44px"
+          fontSize={{ base: 'md', md: 'sm' }}
+        >
+          🏆 Récompenses
+        </Button>
+      </Link>
+      <Link to="/visualizations" onClick={onClose}>
+        <Button 
+          variant="ghost" 
+          w={{ base: 'full', md: 'auto' }} 
+          justifyContent={{ base: 'flex-start', md: 'center' }} 
+          px={{ base: 4, md: 2 }}
+          minH="44px"
+          fontSize={{ base: 'md', md: 'sm' }}
+        >
+          👁️ Visualisations
+        </Button>
+      </Link>
       {user?.is_admin && (
         <Link to="/admin" onClick={onClose}>
           <Button 
