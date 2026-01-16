@@ -7,7 +7,7 @@ from app.models.user_history import (
     HistoryQuery, HistoryStats, SimilarQuestionRequest, SimilarQuestionResponse
 )
 from app.services.user_history_service import UserHistoryService
-# Authentification supprimée - toutes les routes sont publiques
+from app.utils.permissions import get_current_user
 from app.models.user_history import Subject
 
 router = APIRouter()
@@ -19,11 +19,12 @@ async def get_history(
     module_id: Optional[str] = Query(None),
     limit: int = Query(50, ge=1, le=100),
     offset: int = Query(0, ge=0),
+    current_user: dict = Depends(get_current_user)
 ):
     """
-    Récupère l'historique (route publique)
+    Récupère l'historique de l'utilisateur connecté
     """
-    user_id = "anonymous"  # Auth supprimée
+    user_id = str(current_user["id"])
     history = await UserHistoryService.get_user_history(
         user_id=user_id,
         subject=subject,
@@ -35,11 +36,13 @@ async def get_history(
 
 
 @router.get("/stats", response_model=dict)
-async def get_history_stats():
+async def get_history_stats(
+    current_user: dict = Depends(get_current_user)
+):
     """
-    Récupère les statistiques de l'historique (route publique)
+    Récupère les statistiques de l'historique de l'utilisateur connecté
     """
-    user_id = "anonymous"  # Auth supprimée
+    user_id = str(current_user["id"])
     stats = await UserHistoryService.get_stats(user_id)
     return stats
 
@@ -47,23 +50,26 @@ async def get_history_stats():
 @router.post("/similar", response_model=SimilarQuestionResponse)
 async def find_similar_questions(
     request: SimilarQuestionRequest,
+    current_user: dict = Depends(get_current_user)
 ):
     """
-    Trouve des questions similaires dans l'historique (route publique)
+    Trouve des questions similaires dans l'historique de l'utilisateur connecté
     """
     if not request.user_id:
-        request.user_id = "anonymous"  # Auth supprimée
+        request.user_id = str(current_user["id"])
     
     result = await UserHistoryService.find_similar_questions(request)
     return result
 
 
 @router.delete("/history", response_model=dict)
-async def delete_history():
+async def delete_history(
+    current_user: dict = Depends(get_current_user)
+):
     """
-    Supprime tout l'historique (route publique)
+    Supprime tout l'historique de l'utilisateur connecté
     """
-    user_id = "anonymous"  # Auth supprimée
+    user_id = str(current_user["id"])
     result = await UserHistoryService.delete_user_history(user_id)
     return result
 

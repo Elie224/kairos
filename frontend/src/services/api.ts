@@ -31,7 +31,22 @@ const api = axios.create({
 // Timeout pour les uploads de fichiers (5 minutes pour supporter jusqu'à 100MB)
 const FILE_UPLOAD_TIMEOUT = 5 * 60 * 1000 // 5 minutes
 
-// Authentification supprimée - toutes les routes sont publiques
+// Initialiser l'authentification depuis le localStorage
+const initializeAuth = () => {
+  const authData = localStorage.getItem('kairos-auth')
+  if (authData) {
+    try {
+      const parsed = JSON.parse(authData)
+      if (parsed.state?.token) {
+        api.defaults.headers.common['Authorization'] = `Bearer ${parsed.state.token}`
+      }
+    } catch (e) {
+      // Ignorer les erreurs de parsing
+    }
+  }
+}
+
+initializeAuth()
 
 // Intercepteur pour gérer les requêtes et supprimer Content-Type pour FormData
 api.interceptors.request.use(
@@ -74,8 +89,18 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as any
     
-    // Gérer les erreurs 401 (non autorisé) - ignoré car auth supprimée
+    // Gérer les erreurs 401 (non autorisé)
     if (error.response?.status === 401) {
+      // Supprimer le token invalide
+      delete api.defaults.headers.common['Authorization']
+      localStorage.removeItem('kairos-auth')
+      
+      // Rediriger vers login si on n'y est pas déjà
+      if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
+        if (typeof window !== 'undefined' && window.history) {
+          window.location.href = '/login'
+        }
+      }
       return Promise.reject(error)
     }
     

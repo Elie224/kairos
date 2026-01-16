@@ -10,7 +10,7 @@ from app.models import (
 )
 from app.services.exam_service import ExamService
 # PDFService supprimé - fonctionnalité PDF désactivée pour l'instant
-# Authentification supprimée - toutes les routes sont publiques
+from app.utils.permissions import get_current_user
 from app.utils.security import InputSanitizer
 import logging
 from datetime import datetime, timezone
@@ -22,17 +22,19 @@ router = APIRouter()
 
 @router.get("/module/{module_id}/prerequisites")
 async def check_exam_prerequisites(
-    module_id: str
+    module_id: str,
+    current_user: dict = Depends(get_current_user)
 ):
     """
-    Vérifie si l'étudiant peut passer l'examen (route publique)
+    Vérifie si l'étudiant peut passer l'examen
     """
     # Valider l'ID du module
     sanitized_module_id = InputSanitizer.sanitize_object_id(module_id)
     if not sanitized_module_id:
         raise HTTPException(status_code=400, detail="ID de module invalide")
 
-    prerequisites = await ExamService.check_prerequisites("anonymous", sanitized_module_id)  # Auth supprimée
+    user_id = str(current_user["id"])
+    prerequisites = await ExamService.check_prerequisites(user_id, sanitized_module_id)
     return prerequisites
 
 
@@ -42,20 +44,21 @@ async def get_module_exam(
     num_questions: int = Query(15, ge=5, le=50, description="Nombre de questions"),
     passing_score: float = Query(70.0, ge=0, le=100, description="Score de passage (%)"),
     time_limit: int = Query(30, ge=10, le=180, description="Temps limite (minutes)"),
-    force_regenerate: bool = Query(False, description="Forcer la régénération de l'examen")
+    force_regenerate: bool = Query(False, description="Forcer la régénération de l'examen"),
+    current_user: dict = Depends(get_current_user)
 ):
     """
-    Récupère l'examen d'un module (génère s'il n'existe pas) (route publique)
+    Récupère l'examen d'un module (génère s'il n'existe pas)
     """
     # Valider l'ID du module
     sanitized_module_id = InputSanitizer.sanitize_object_id(module_id)
     if not sanitized_module_id:
         raise HTTPException(status_code=400, detail="ID de module invalide")
 
-    # Vérifier les prérequis (toujours autorisé car auth supprimée)
+    # Vérifier les prérequis
+    user_id = str(current_user["id"])
     if not force_regenerate:
-        prerequisites = await ExamService.check_prerequisites("anonymous", sanitized_module_id)  # Auth supprimée
-        # Ne plus bloquer même si prérequis non satisfaits (auth supprimée)
+        prerequisites = await ExamService.check_prerequisites(user_id, sanitized_module_id)
 
     exam = await ExamService.get_or_generate_exam(
         module_id=sanitized_module_id,
@@ -90,18 +93,20 @@ async def create_exam(
 
 @router.post("/start", response_model=ExamAttempt, status_code=201)
 async def start_exam(
-    attempt_data: ExamAttemptCreate
+    attempt_data: ExamAttemptCreate,
+    current_user: dict = Depends(get_current_user)
 ):
     """
-    Démarre une tentative d'examen (route publique)
+    Démarre une tentative d'examen
     """
     # Valider l'ID de l'examen
     sanitized_exam_id = InputSanitizer.sanitize_object_id(attempt_data.exam_id)
     if not sanitized_exam_id:
         raise HTTPException(status_code=400, detail="ID d'examen invalide")
 
+    user_id = str(current_user["id"])
     attempt = await ExamService.start_exam_attempt(
-        user_id="anonymous",  # Auth supprimée
+        user_id=user_id,
         exam_id=sanitized_exam_id
     )
     return attempt
@@ -109,10 +114,11 @@ async def start_exam(
 
 @router.post("/submit", response_model=ExamAttemptResponse)
 async def submit_exam(
-    submission: ExamSubmission
+    submission: ExamSubmission,
+    current_user: dict = Depends(get_current_user)
 ):
     """
-    Soumet les réponses d'un examen et calcule le score (route publique)
+    Soumet les réponses d'un examen et calcule le score
     """
     # Valider l'ID de l'examen
     sanitized_exam_id = InputSanitizer.sanitize_object_id(submission.exam_id)
@@ -121,8 +127,9 @@ async def submit_exam(
 
     submission.exam_id = sanitized_exam_id
 
+    user_id = str(current_user["id"])
     result = await ExamService.submit_exam(
-        user_id="anonymous",  # Auth supprimée
+        user_id=user_id,
         submission=submission
     )
     return ExamAttemptResponse(**result)
@@ -131,10 +138,11 @@ async def submit_exam(
 @router.get("/attempts", response_model=List[ExamAttempt])
 async def get_my_exam_attempts(
     module_id: Optional[str] = Query(None, description="Filtrer par module"),
-    limit: int = Query(50, ge=1, le=100, description="Limite de résultats")
+    limit: int = Query(50, ge=1, le=100, description="Limite de résultats"),
+    current_user: dict = Depends(get_current_user)
 ):
     """
-    Récupère toutes les tentatives d'examen (route publique)
+    Récupère toutes les tentatives d'examen de l'utilisateur connecté
     """
     try:
         sanitized_module_id = None
@@ -143,8 +151,9 @@ async def get_my_exam_attempts(
             if not sanitized_module_id:
                 raise HTTPException(status_code=400, detail="ID de module invalide")
 
+        user_id = str(current_user["id"])
         attempts = await ExamService.get_user_exam_attempts(
-            user_id="anonymous",  # Auth supprimée
+            user_id=user_id,
             module_id=sanitized_module_id,
             limit=limit
         )

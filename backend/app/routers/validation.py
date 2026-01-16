@@ -29,9 +29,10 @@ async def get_my_validations(
 @router.get("/module/{module_id}", response_model=ModuleValidationResponse)
 async def get_module_validation(
     module_id: str,
+    current_user: dict = Depends(get_current_user)
 ):
     """
-    Vérifie si un module est validé pour l'utilisateur
+    Vérifie si un module est validé pour l'utilisateur connecté
     """
     # Valider l'ID du module
     sanitized_module_id = InputSanitizer.sanitize_object_id(module_id)
@@ -39,8 +40,9 @@ async def get_module_validation(
         raise HTTPException(status_code=400, detail="ID de module invalide")
 
     # Utiliser le service avec cache
+    user_id = str(current_user["id"])
     validation = await CachedValidationService.get_module_validation(
-        user_id="anonymous",  # Auth supprimée
+        user_id=user_id,
         module_id=sanitized_module_id
     )
 
@@ -60,12 +62,13 @@ async def get_module_validation(
 
 @router.get("/modules", response_model=List[str])
 async def get_validated_modules(
+    current_user: dict = Depends(get_current_user)
 ):
     """
-    Récupère la liste des modules validés par l'utilisateur
+    Récupère la liste des modules validés par l'utilisateur connecté
     """
     try:
-        user_id = "anonymous"  # Auth supprimée
+        user_id = str(current_user["id"])
         # Utiliser le service avec cache
         modules = await CachedValidationService.get_validated_modules(user_id)
         return modules or []
@@ -82,6 +85,7 @@ async def get_validated_modules(
 @router.get("/check/{module_id}")
 async def check_module_validation(
     module_id: str,
+    current_user: dict = Depends(get_current_user)
 ):
     """
     Vérifie si un module est validé (retourne un booléen)
@@ -91,8 +95,9 @@ async def check_module_validation(
     if not sanitized_module_id:
         raise HTTPException(status_code=400, detail="ID de module invalide")
 
+    user_id = str(current_user["id"])
     is_validated = await ValidationService.is_module_validated(
-        user_id="anonymous",  # Auth supprimée
+        user_id=user_id,
         module_id=sanitized_module_id
     )
     return {

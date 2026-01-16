@@ -8,10 +8,14 @@ import theme from './theme' // Le thème bleu sera initialisé automatiquement v
 import { NotificationProvider } from './components/NotificationProvider'
 import ErrorBoundary from './components/ErrorBoundary'
 import { LogoColorProvider } from './components/LogoColorProvider'
+import { useAuthStore } from './store/authStore'
 import './i18n/config'
 import './styles/animations.css'
 import './styles/mobile.css'
 import './styles/mobile-enhancements.css'
+
+// Vérifier l'authentification au démarrage
+useAuthStore.getState().checkAuth()
 
 const queryClient = new QueryClient({
   defaultOptions: {

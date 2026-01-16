@@ -4,9 +4,12 @@ import { lazy, Suspense } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import { LoadingSpinner } from './components'
+import ProtectedRoute from './components/ProtectedRoute'
 
 // Code splitting - Lazy loading des pages
 const Home = lazy(() => import('./pages/Home'))
+const Login = lazy(() => import('./pages/Login'))
+const Register = lazy(() => import('./pages/Register'))
 const Modules = lazy(() => import('./pages/Modules'))
 const ModuleDetail = lazy(() => import('./pages/ModuleDetail'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -40,18 +43,20 @@ function App() {
         <Suspense fallback={<PageLoader />}>
           <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/modules" element={<Modules />} />
           <Route path="/modules/:id" element={<ModuleDetail />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/support" element={<Support />} />
           <Route path="/feedback" element={<Feedback />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/exams" element={<Exams />} />
+          <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+          <Route path="/exams" element={<ProtectedRoute><Exams /></ProtectedRoute>} />
           {/* Redirection des anciennes routes /exams/:subject vers /exams */}
           <Route path="/exams/:subject" element={<Navigate to="/exams" replace />} />
-          <Route path="/modules/:moduleId/exam" element={<ExamDetail />} />
+          <Route path="/modules/:moduleId/exam" element={<ProtectedRoute><ExamDetail /></ProtectedRoute>} />
           </Routes>
         </Suspense>
       </Box>

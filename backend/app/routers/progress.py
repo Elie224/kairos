@@ -8,6 +8,7 @@ from app.models import Progress, ProgressCreate
 from app.services.progress_service import ProgressService
 from app.services.cached_progress_service import CachedProgressService
 from app.utils.security import InputSanitizer
+from app.utils.permissions import get_current_user
 import logging
 
 logger = logging.getLogger(__name__)
@@ -18,11 +19,12 @@ router = APIRouter()
 @router.get("/")
 async def get_user_progress(
     module_id: Optional[str] = Query(None, description="Filtrer par module"),
-    limit: int = Query(100, description="Nombre maximum d'entrées retournées")
+    limit: int = Query(100, description="Nombre maximum d'entrées retournées"),
+    current_user: dict = Depends(get_current_user)
 ):
-    """Récupère la progression (route publique)"""
+    """Récupère la progression de l'utilisateur connecté"""
     try:
-        user_id = "anonymous"  # Auth supprimée
+        user_id = str(current_user["id"])
         if not user_id:
             logger.warning("GET /api/progress - user_id vide")
             return []
@@ -70,7 +72,10 @@ async def get_user_progress(
 
 
 @router.post("/", response_model=Progress, status_code=201)
-async def create_progress(progress_data: ProgressCreate):
+async def create_progress(
+    progress_data: ProgressCreate,
+    current_user: dict = Depends(get_current_user)
+):
     """Crée ou met à jour une entrée de progression"""
     # Valider le module_id
     sanitized_module_id = InputSanitizer.sanitize_object_id(progress_data.module_id)
@@ -81,14 +86,17 @@ async def create_progress(progress_data: ProgressCreate):
     progress_data.module_id = sanitized_module_id
     
     # Utiliser le service avec cache
-    return await CachedProgressService.create_or_update_progress("anonymous", progress_data)  # Auth supprimée
+    user_id = str(current_user["id"])
+    return await CachedProgressService.create_or_update_progress(user_id, progress_data)
 
 
 @router.get("/stats")
-async def get_progress_stats():
-    """Récupère les statistiques de progression (route publique)"""
+async def get_progress_stats(
+    current_user: dict = Depends(get_current_user)
+):
+    """Récupère les statistiques de progression de l'utilisateur connecté"""
     try:
-        user_id = "anonymous"  # Auth supprimée
+        user_id = str(current_user["id"])
         if not user_id:
             logger.warning("GET /api/progress/stats - user_id vide")
             return {

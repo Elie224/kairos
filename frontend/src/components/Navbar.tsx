@@ -17,17 +17,32 @@ import {
   DrawerCloseButton,
   useDisclosure,
   Stack,
-  Divider
+  Divider,
+  Avatar,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem
 } from '@chakra-ui/react'
 import { HamburgerIcon } from '@chakra-ui/icons'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { FiLogOut, FiUser } from 'react-icons/fi'
 import Logo from '../components/Logo'
+import { useAuthStore } from '../store/authStore'
 
 const Navbar = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
+  const { isAuthenticated, user, logout } = useAuthStore()
   const bg = useColorModeValue('rgba(255, 255, 255, 0.95)', 'gray.800')
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+    onClose()
+  }
 
   const NavLinks = () => (
     <>
@@ -158,6 +173,49 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <HStack spacing={1} display={{ base: 'none', md: 'flex' }}>
             <NavLinks />
+            {isAuthenticated ? (
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  variant="ghost"
+                  leftIcon={<Avatar size="sm" name={user?.username || user?.email} />}
+                  minH="44px"
+                >
+                  <Text display={{ base: 'none', lg: 'block' }}>
+                    {user?.username || user?.email}
+                  </Text>
+                </MenuButton>
+                <MenuList>
+                  <MenuItem icon={<FiUser />} as={Link} to="/profile">
+                    Mon profil
+                  </MenuItem>
+                  <MenuItem icon={<FiLogOut />} onClick={handleLogout}>
+                    Déconnexion
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="ghost" size="md" minH="44px">
+                    Connexion
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button 
+                    colorScheme="blue" 
+                    size="md"
+                    bgGradient="linear-gradient(135deg, blue.500 0%, blue.600 100%)"
+                    _hover={{
+                      bgGradient: 'linear-gradient(135deg, blue.600 0%, blue.700 100%)',
+                    }}
+                    minH="44px"
+                  >
+                    Inscription
+                  </Button>
+                </Link>
+              </>
+            )}
           </HStack>
 
           {/* Mobile Menu Button */}
@@ -197,6 +255,71 @@ const Navbar = () => {
             <VStack spacing={0} align="stretch">
               <Stack spacing={0} mt={2}>
                 <NavLinks />
+                <Divider my={2} />
+                {isAuthenticated ? (
+                  <>
+                    <Box px={4} py={2}>
+                      <HStack spacing={2}>
+                        <Avatar size="sm" name={user?.username || user?.email} />
+                        <Text fontSize="sm" fontWeight="600">
+                          {user?.username || user?.email}
+                        </Text>
+                      </HStack>
+                    </Box>
+                    <Link to="/profile" onClick={onClose}>
+                      <Button 
+                        variant="ghost" 
+                        w="full" 
+                        justifyContent="flex-start" 
+                        leftIcon={<FiUser />}
+                        px={4}
+                        minH="44px"
+                      >
+                        Mon profil
+                      </Button>
+                    </Link>
+                    <Button 
+                      variant="ghost" 
+                      w="full" 
+                      justifyContent="flex-start" 
+                      leftIcon={<FiLogOut />}
+                      onClick={handleLogout}
+                      px={4}
+                      minH="44px"
+                      color="red.500"
+                    >
+                      Déconnexion
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/login" onClick={onClose}>
+                      <Button 
+                        variant="ghost" 
+                        w="full" 
+                        justifyContent="flex-start" 
+                        px={4}
+                        minH="44px"
+                      >
+                        Connexion
+                      </Button>
+                    </Link>
+                    <Link to="/register" onClick={onClose}>
+                      <Button 
+                        colorScheme="blue" 
+                        w="full"
+                        bgGradient="linear-gradient(135deg, blue.500 0%, blue.600 100%)"
+                        _hover={{
+                          bgGradient: 'linear-gradient(135deg, blue.600 0%, blue.700 100%)',
+                        }}
+                        px={4}
+                        minH="44px"
+                      >
+                        Inscription
+                      </Button>
+                    </Link>
+                  </>
+                )}
               </Stack>
             </VStack>
           </DrawerBody>
