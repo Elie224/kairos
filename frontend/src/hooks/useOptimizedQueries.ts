@@ -14,7 +14,7 @@ interface OptimizedQueryOptions<T> extends Omit<UseQueryOptions<T>, 'queryFn'> {
 export function useOptimizedQuery<T = any>({
   endpoint,
   priority = 'medium',
-  timeout = 30000, // Timeout de 30 secondes par défaut
+  timeout = 1000, // Timeout de 1 seconde par défaut
   params,
   ...options
 }: OptimizedQueryOptions<T>) {
