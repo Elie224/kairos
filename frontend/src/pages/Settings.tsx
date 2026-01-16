@@ -48,9 +48,10 @@ const Settings = () => {
     },
     {
       enabled: !!user,
-    {
-      enabled: false, // Désactivé car auth supprimée
       refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      cacheTime: 10 * 60 * 1000, // 10 minutes
     }
   )
 
