@@ -135,14 +135,30 @@ const Register = () => {
       [name]: value,
     })
 
-    // Valider en temps réel si le champ a été touché
-    if (touched[name]) {
-      if (name === 'confirmPassword') {
-        const validation = validatePasswordConfirmation(formData.password, value)
-        setErrors({ ...errors, [name]: validation.error || '' })
+    // Valider en temps réel immédiatement (pas besoin d'attendre que le champ soit touché)
+    // Cela améliore l'expérience utilisateur avec un feedback instantané
+    if (name === 'confirmPassword') {
+      const validation = validatePasswordConfirmation(formData.password, value)
+      setErrors({ ...errors, [name]: validation.error || '' })
+    } else if (name === 'email') {
+      // Validation immédiate pour email (format)
+      if (value && !value.includes('@')) {
+        // Donner un feedback précoce pour email invalide
+        if (touched[name] || value.length > 3) {
+          const validation = validateEmail(value)
+          setErrors({ ...errors, [name]: validation.error || '' })
+        }
       } else {
         validateField(name, value)
       }
+    } else if (name === 'password' || name === 'username') {
+      // Validation immédiate pour mot de passe et nom d'utilisateur (longueur minimale)
+      if (touched[name] || value.length > 0) {
+        validateField(name, value)
+      }
+    } else if (touched[name]) {
+      // Pour les autres champs, valider seulement s'ils ont été touchés
+      validateField(name, value)
     }
   }
 

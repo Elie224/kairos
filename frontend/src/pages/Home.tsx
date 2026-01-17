@@ -10,11 +10,19 @@ import { useQuery } from 'react-query'
 import api from '../services/api'
 import { useAuthStore } from '../store/authStore'
 import { API_TIMEOUTS } from '../constants/api'
+import { useSEO } from '../hooks/useSEO'
 
 const Home = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { isAuthenticated } = useAuthStore()
+
+  // SEO
+  useSEO({
+    title: 'Kaïrox - Apprentissage Immersif avec IA | Visualisations 3D & Gamification',
+    description: 'Kaïrox est une plateforme d\'apprentissage intelligente avec visualisations 3D interactives, tutorat IA et gamification adaptative pour collège, lycée et université.',
+    keywords: 'apprentissage, éducation, IA, visualisations 3D, gamification, tutorat intelligent, mathématiques, physique, chimie, informatique',
+  })
 
   // Charger les statistiques dynamiques
   const { data: stats, isLoading: statsLoading } = useQuery(
@@ -175,6 +183,7 @@ const Home = () => {
                     boxShadow="0 15px 35px rgba(0, 0, 0, 0.3)"
                     rightIcon={<FiArrowRight />}
                     fontSize={{ base: 'md', md: 'lg' }}
+                    aria-label="Créer un compte gratuit sur Kaïrox pour commencer l'apprentissage"
                   >
                     Commencer gratuitement
                   </Button>
@@ -202,6 +211,7 @@ const Home = () => {
                   py={{ base: 5, md: 6 }}
                   leftIcon={<FiPlay />}
                   fontSize={{ base: 'md', md: 'lg' }}
+                  aria-label="Explorer les modules disponibles sur Kaïrox"
                 >
                   Explorer les modules
                 </Button>
