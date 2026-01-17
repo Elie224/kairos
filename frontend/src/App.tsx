@@ -9,9 +9,10 @@ import ProtectedAdminRoute from './components/ProtectedAdminRoute'
 import { useAuthStore } from './store/authStore'
 
 // Code splitting - Lazy loading des pages
+// Login et Register en import direct pour éviter les erreurs de chargement dynamique
+import Login from './pages/Login'
+import Register from './pages/Register'
 const Home = lazy(() => import('./pages/Home'))
-const Login = lazy(() => import('./pages/Login'))
-const Register = lazy(() => import('./pages/Register'))
 const Modules = lazy(() => import('./pages/Modules'))
 const ModuleDetail = lazy(() => import('./pages/ModuleDetail'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
