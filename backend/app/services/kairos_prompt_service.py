@@ -15,6 +15,10 @@ from app.prompts.kairos_prompts import (
     get_evaluation_prompt,
     get_explainability_prompt,
     get_lab_simulation_prompt,
+    get_gamification_advanced_prompt,
+    get_multi_agent_prompt,
+    get_analytics_prompt,
+    get_academic_content_prompt,
     MATHEMATICS_PROMPTS,
     PHYSICS_PROMPTS,
     CHEMISTRY_PROMPTS,
@@ -210,3 +214,215 @@ class KairosPromptService:
         }
         
         return topics_map.get(subject, [])
+    
+    @staticmethod
+    def get_curriculum_prompt_data(
+        subject: str,
+        level: str,
+        objective: str
+    ) -> Dict[str, Any]:
+        """
+        Génère un prompt pour créer un curriculum complet
+        
+        Args:
+            subject: La matière
+            level: Le niveau (collège, lycée, université)
+            objective: L'objectif (exam, compréhension, rattrapage)
+        
+        Returns:
+            Dict avec le prompt formaté
+        """
+        prompt = get_curriculum_prompt(subject, level, objective)
+        
+        return {
+            "prompt": prompt,
+            "subject": subject,
+            "level": level,
+            "objective": objective,
+            "response_format": "json"
+        }
+    
+    @staticmethod
+    def get_learner_profile_prompt_data(
+        learning_data: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Génère un prompt pour créer un profil cognitif
+        
+        Args:
+            learning_data: Données d'apprentissage de l'utilisateur
+        
+        Returns:
+            Dict avec le prompt formaté
+        """
+        learning_data_str = json.dumps(learning_data, ensure_ascii=False, indent=2)
+        prompt = get_learner_profile_prompt(learning_data_str)
+        
+        return {
+            "prompt": prompt,
+            "learning_data": learning_data,
+            "response_format": "json"
+        }
+    
+    @staticmethod
+    def get_evaluation_prompt_data(
+        subject: str,
+        level: str,
+        evaluation_type: str
+    ) -> Dict[str, Any]:
+        """
+        Génère un prompt pour créer une évaluation
+        
+        Args:
+            subject: La matière
+            level: Le niveau
+            evaluation_type: Type d'évaluation (formative, summative, adaptive, oral)
+        
+        Returns:
+            Dict avec le prompt formaté
+        """
+        prompt = get_evaluation_prompt(subject, level, evaluation_type)
+        
+        return {
+            "prompt": prompt,
+            "subject": subject,
+            "level": level,
+            "evaluation_type": evaluation_type,
+            "response_format": "json"
+        }
+    
+    @staticmethod
+    def get_explainability_prompt_data(
+        error_analysis: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Génère un prompt pour expliquer une erreur (Explainable AI)
+        
+        Args:
+            error_analysis: Analyse de l'erreur
+        
+        Returns:
+            Dict avec le prompt formaté
+        """
+        error_str = json.dumps(error_analysis, ensure_ascii=False, indent=2)
+        prompt = get_explainability_prompt(error_str)
+        
+        return {
+            "prompt": prompt,
+            "error_analysis": error_analysis,
+            "response_format": "json"
+        }
+    
+    @staticmethod
+    def get_lab_simulation_prompt_data(
+        simulation_request: str
+    ) -> Dict[str, Any]:
+        """
+        Génère un prompt pour créer une simulation de laboratoire
+        
+        Args:
+            simulation_request: Demande de simulation de l'apprenant
+        
+        Returns:
+            Dict avec le prompt formaté
+        """
+        prompt = get_lab_simulation_prompt(simulation_request)
+        
+        return {
+            "prompt": prompt,
+            "simulation_request": simulation_request,
+            "response_format": "json"
+        }
+    
+    @staticmethod
+    def get_season_prompt_data(
+        subject: str,
+        theme: str
+    ) -> Dict[str, Any]:
+        """
+        Génère un prompt pour créer une saison pédagogique
+        PRIORITÉ 6 - Gamification avancée
+        """
+        prompt = get_gamification_advanced_prompt("season_generation", subject=subject, theme=theme)
+        
+        return {
+            "prompt": prompt,
+            "subject": subject,
+            "theme": theme,
+            "response_format": "json"
+        }
+    
+    @staticmethod
+    def get_evolving_badge_prompt_data(
+        badge_type: str,
+        progress_data: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Génère un prompt pour évaluer l'évolution d'un badge
+        PRIORITÉ 6 - Gamification avancée
+        """
+        progress_str = json.dumps(progress_data, ensure_ascii=False, indent=2)
+        prompt = get_gamification_advanced_prompt("evolving_badge", badge_type=badge_type, progress=progress_str)
+        
+        return {
+            "prompt": prompt,
+            "badge_type": badge_type,
+            "progress_data": progress_data,
+            "response_format": "json"
+        }
+    
+    @staticmethod
+    def get_multi_agent_prompt_data(
+        agent_type: str,
+        context: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Génère un prompt pour un agent IA spécifique
+        PRIORITÉ 7 - Multi-agents IA
+        """
+        context_str = json.dumps(context, ensure_ascii=False, indent=2)
+        prompt = get_multi_agent_prompt(agent_type, context=context_str)
+        
+        return {
+            "prompt": prompt,
+            "agent_type": agent_type,
+            "context": context,
+            "response_format": "json"
+        }
+    
+    @staticmethod
+    def get_analytics_prompt_data(
+        prompt_type: str,
+        data: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Génère un prompt d'analytics
+        PRIORITÉ 8 - Analytics & Dashboard IA
+        """
+        data_str = json.dumps(data, ensure_ascii=False, indent=2)
+        prompt = get_analytics_prompt(prompt_type, **{f"{prompt_type}_data": data_str})
+        
+        return {
+            "prompt": prompt,
+            "analytics_type": prompt_type,
+            "data": data,
+            "response_format": "json"
+        }
+    
+    @staticmethod
+    def get_academic_content_prompt_data(
+        prompt_type: str,
+        **kwargs
+    ) -> Dict[str, Any]:
+        """
+        Génère un prompt pour du contenu académique
+        PRIORITÉ 9 - Génération de contenu académique
+        """
+        prompt = get_academic_content_prompt(prompt_type, **kwargs)
+        
+        return {
+            "prompt": prompt,
+            "content_type": prompt_type,
+            "parameters": kwargs,
+            "response_format": "json"
+        }

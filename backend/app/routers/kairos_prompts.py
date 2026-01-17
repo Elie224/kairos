@@ -524,3 +524,283 @@ async def simulate_lab(request: LabSimulationRequest) -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"Erreur lors de la génération de simulation: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# PRIORITÉ 6 - GAMIFICATION AVANCÉE
+# ============================================================================
+
+class SeasonRequest(BaseModel):
+    subject: str
+    theme: str
+
+
+class EvolvingBadgeRequest(BaseModel):
+    badge_type: str
+    progress_data: Dict[str, Any]
+
+
+@router.post("/gamification/season/generate")
+async def generate_season(request: SeasonRequest) -> Dict[str, Any]:
+    """
+    Génère une saison pédagogique avec progression et niveaux
+    PRIORITÉ 6 - Gamification avancée
+    """
+    try:
+        prompt_data = KairosPromptService.get_season_prompt_data(
+            subject=request.subject,
+            theme=request.theme
+        )
+        
+        response = await AIService.chat_with_ai(
+            user_id="system",
+            message=prompt_data["prompt"],
+            language="fr"
+        )
+        
+        try:
+            import json
+            season_data = json.loads(response.get("response", "{}"))
+        except:
+            season_data = {"raw_response": response.get("response", "")}
+        
+        return {
+            "success": True,
+            "season": season_data
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de la génération de saison: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/gamification/badge/evolve")
+async def evolve_badge(request: EvolvingBadgeRequest) -> Dict[str, Any]:
+    """
+    Évalue si un badge peut évoluer (Bronze → Argent → Or)
+    PRIORITÉ 6 - Gamification avancée
+    """
+    try:
+        prompt_data = KairosPromptService.get_evolving_badge_prompt_data(
+            badge_type=request.badge_type,
+            progress_data=request.progress_data
+        )
+        
+        response = await AIService.chat_with_ai(
+            user_id="system",
+            message=prompt_data["prompt"],
+            language="fr"
+        )
+        
+        try:
+            import json
+            evolution_data = json.loads(response.get("response", "{}"))
+        except:
+            evolution_data = {"raw_response": response.get("response", "")}
+        
+        return {
+            "success": True,
+            "badge_evolution": evolution_data
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de l'évaluation du badge: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# PRIORITÉ 7 - MULTI-AGENTS IA
+# ============================================================================
+
+class MultiAgentRequest(BaseModel):
+    agent_type: str  # theorist_prof, motivation_coach, examiner, scientific_researcher
+    context: Dict[str, Any]
+
+
+@router.post("/agents/{agent_type}")
+async def call_agent(agent_type: str, request: MultiAgentRequest) -> Dict[str, Any]:
+    """
+    Appelle un agent IA spécifique (Prof, Coach, Examinateur, Chercheur)
+    PRIORITÉ 7 - Multi-agents IA
+    """
+    try:
+        prompt_data = KairosPromptService.get_multi_agent_prompt_data(
+            agent_type=agent_type,
+            context=request.context
+        )
+        
+        response = await AIService.chat_with_ai(
+            user_id="system",
+            message=prompt_data["prompt"],
+            language="fr"
+        )
+        
+        try:
+            import json
+            agent_response = json.loads(response.get("response", "{}"))
+        except:
+            agent_response = {"raw_response": response.get("response", "")}
+        
+        return {
+            "success": True,
+            "agent": agent_type,
+            "response": agent_response
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de l'appel à l'agent {agent_type}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# PRIORITÉ 8 - ANALYTICS & DASHBOARD IA
+# ============================================================================
+
+class AnalyticsRequest(BaseModel):
+    analytics_type: str  # progress_prediction, dashboard_insights
+    data: Dict[str, Any]
+
+
+@router.post("/analytics/predict")
+async def predict_progress(request: AnalyticsRequest) -> Dict[str, Any]:
+    """
+    Prédit le taux de réussite et détecte les risques de décrochage
+    PRIORITÉ 8 - Analytics & Dashboard IA
+    """
+    try:
+        prompt_data = KairosPromptService.get_analytics_prompt_data(
+            prompt_type="progress_prediction",
+            data=request.data
+        )
+        
+        response = await AIService.chat_with_ai(
+            user_id="system",
+            message=prompt_data["prompt"],
+            language="fr"
+        )
+        
+        try:
+            import json
+            predictions = json.loads(response.get("response", "{}"))
+        except:
+            predictions = {"raw_response": response.get("response", "")}
+        
+        return {
+            "success": True,
+            "predictions": predictions
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de la prédiction: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/analytics/dashboard")
+async def get_dashboard_insights(request: AnalyticsRequest) -> Dict[str, Any]:
+    """
+    Génère des insights intelligents pour le dashboard
+    PRIORITÉ 8 - Analytics & Dashboard IA
+    """
+    try:
+        prompt_data = KairosPromptService.get_analytics_prompt_data(
+            prompt_type="dashboard_insights",
+            data=request.data
+        )
+        
+        response = await AIService.chat_with_ai(
+            user_id="system",
+            message=prompt_data["prompt"],
+            language="fr"
+        )
+        
+        try:
+            import json
+            insights = json.loads(response.get("response", "{}"))
+        except:
+            insights = {"raw_response": response.get("response", "")}
+        
+        return {
+            "success": True,
+            "insights": insights
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de la génération d'insights: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# PRIORITÉ 9 - GÉNÉRATION DE CONTENU ACADÉMIQUE
+# ============================================================================
+
+class PDFNotesRequest(BaseModel):
+    subject: str
+    module: str
+
+
+class LearningReportRequest(BaseModel):
+    user_id: str
+    period: str
+
+
+@router.post("/academic/pdf-notes")
+async def generate_pdf_notes(request: PDFNotesRequest) -> Dict[str, Any]:
+    """
+    Génère des notes de cours au format PDF
+    PRIORITÉ 9 - Génération de contenu académique
+    """
+    try:
+        prompt_data = KairosPromptService.get_academic_content_prompt_data(
+            prompt_type="pdf_notes",
+            subject=request.subject,
+            module=request.module
+        )
+        
+        response = await AIService.chat_with_ai(
+            user_id="system",
+            message=prompt_data["prompt"],
+            language="fr"
+        )
+        
+        try:
+            import json
+            pdf_content = json.loads(response.get("response", "{}"))
+        except:
+            pdf_content = {"raw_response": response.get("response", "")}
+        
+        return {
+            "success": True,
+            "pdf_content": pdf_content
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de la génération de notes PDF: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/academic/learning-report")
+async def generate_learning_report(request: LearningReportRequest) -> Dict[str, Any]:
+    """
+    Génère un rapport d'apprentissage complet
+    PRIORITÉ 9 - Génération de contenu académique
+    """
+    try:
+        prompt_data = KairosPromptService.get_academic_content_prompt_data(
+            prompt_type="learning_report",
+            user_id=request.user_id,
+            period=request.period
+        )
+        
+        response = await AIService.chat_with_ai(
+            user_id="system",
+            message=prompt_data["prompt"],
+            language="fr"
+        )
+        
+        try:
+            import json
+            report = json.loads(response.get("response", "{}"))
+        except:
+            report = {"raw_response": response.get("response", "")}
+        
+        return {
+            "success": True,
+            "report": report
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de la génération du rapport: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

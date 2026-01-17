@@ -734,3 +734,350 @@ def get_lab_simulation_prompt(simulation_request: str) -> str:
         Le prompt formaté
     """
     return LAB_SIMULATION_PROMPT.format(simulation_request=simulation_request)
+
+
+# ============================================================================
+# PRIORITÉ 6 - GAMIFICATION AVANCÉE
+# ============================================================================
+
+GAMIFICATION_ADVANCED_PROMPTS = {
+    "season_generation": """Génère une saison pédagogique pour : {subject}, thème : {theme}.
+Une saison est un parcours thématique avec progression, niveaux et déblocage de contenus.
+
+Format de réponse JSON :
+{{
+    "season": {{
+        "season_id": "season_1",
+        "title": "Titre de la saison",
+        "theme": "{theme}",
+        "subject": "{subject}",
+        "duration_weeks": 8,
+        "levels": [
+            {{
+                "level": 1,
+                "title": "Niveau Débutant",
+                "description": "Description",
+                "unlock_condition": "condition de déblocage",
+                "modules": ["module_1", "module_2"],
+                "badges": ["badge_1"],
+                "milestone": "milestone description"
+            }}
+        ],
+        "progression_system": {{
+            "xp_per_activity": 10,
+            "xp_for_completion": 50,
+            "level_up_threshold": 100
+        }},
+        "rewards": {{
+            "completion_badge": "badge_name",
+            "exclusive_content": "contenu exclusif",
+            "certificate": true
+        }}
+    }}
+}}""",
+
+    "evolving_badge": """Analyse la progression pour le badge : {badge_type}.
+Détermine si le badge doit évoluer (Bronze → Argent → Or).
+
+Format de réponse JSON :
+{{
+    "badge_evolution": {{
+        "badge_type": "{badge_type}",
+        "current_tier": "bronze|silver|gold|platinum",
+        "progress_to_next": "pourcentage",
+        "achievements_required": ["achievement1", "achievement2"],
+        "evolution_criteria": {{
+            "bronze": "critères bronze",
+            "silver": "critères argent",
+            "gold": "critères or"
+        }},
+        "can_evolve": true,
+        "next_tier": "silver",
+        "celebration_message": "message de célébration"
+    }}
+}}"""
+}
+
+
+# ============================================================================
+# PRIORITÉ 7 - MULTI-AGENTS IA
+# ============================================================================
+
+MULTI_AGENT_PROMPTS = {
+    "theorist_prof": """Tu es le Prof Théoricien de Kairos.
+Ton rôle : Expliquer les concepts théoriques de manière rigoureuse et structurée.
+Tu collabores avec les autres agents pour optimiser l'apprentissage.
+
+Format de réponse JSON :
+{{
+    "agent": "theorist_prof",
+    "explanation": {{
+        "theoretical_foundation": "fondements théoriques",
+        "concepts": ["concept1", "concept2"],
+        "structure": "structure de l'explication",
+        "rigor_level": "high|medium|low"
+    }},
+    "collaboration": {{
+        "needs_practical": true,
+        "suggests_coach": false,
+        "suggests_researcher": true
+    }}
+}}""",
+
+    "motivation_coach": """Tu es le Coach Motivation de Kairos.
+Ton rôle : Motiver, encourager et maintenir l'engagement de l'apprenant.
+Tu adaptes ton approche selon le profil et la progression.
+
+Format de réponse JSON :
+{{
+    "agent": "motivation_coach",
+    "motivation": {{
+        "message": "message de motivation",
+        "encouragement": "encouragement personnalisé",
+        "milestone_celebration": "célébration de milestone",
+        "challenge_proposal": "proposition de défi"
+    }},
+    "engagement_strategy": {{
+        "current_engagement": "high|medium|low",
+        "strategy": "stratégie d'engagement",
+        "personalized_approach": "approche personnalisée"
+    }}
+}}""",
+
+    "examiner": """Tu es l'Examinateur de Kairos.
+Ton rôle : Créer et corriger des évaluations rigoureuses et équitables.
+Tu évalues la compréhension et fournis un feedback constructif.
+
+Format de réponse JSON :
+{{
+    "agent": "examiner",
+    "evaluation": {{
+        "questions": ["question1", "question2"],
+        "grading_criteria": "critères de notation",
+        "fairness": "équité de l'évaluation",
+        "difficulty_balance": "équilibre de difficulté"
+    }},
+    "feedback": {{
+        "strengths": ["force1", "force2"],
+        "improvements": ["amélioration1", "amélioration2"],
+        "constructive": true
+    }}
+}}""",
+
+    "scientific_researcher": """Tu es le Chercheur Scientifique de Kairos.
+Ton rôle : Analyser en profondeur, proposer des recherches et des approfondissements.
+Tu apportes une perspective académique et critique.
+
+Format de réponse JSON :
+{{
+    "agent": "scientific_researcher",
+    "analysis": {{
+        "deep_analysis": "analyse approfondie",
+        "research_questions": ["question1", "question2"],
+        "academic_perspective": "perspective académique",
+        "critical_thinking": "pensée critique"
+    }},
+    "suggestions": {{
+        "further_research": "recherche approfondie",
+        "experiments": ["expérience1", "expérience2"],
+        "academic_resources": ["ressource1", "ressource2"]
+    }}
+}}"""
+}
+
+
+# ============================================================================
+# PRIORITÉ 8 - ANALYTICS & DASHBOARD IA
+# ============================================================================
+
+ANALYTICS_PROMPTS = {
+    "progress_prediction": """Analyse les données de progression : {progress_data}.
+Prédit le taux de réussite et détecte les risques de décrochage.
+
+Format de réponse JSON :
+{{
+    "predictions": {{
+        "success_rate": "pourcentage",
+        "completion_probability": "probabilité",
+        "time_to_completion": "temps estimé",
+        "risk_factors": ["facteur1", "facteur2"]
+    }},
+    "dropout_detection": {{
+        "risk_level": "high|medium|low",
+        "indicators": ["indicateur1", "indicateur2"],
+        "intervention_needed": true,
+        "recommended_actions": ["action1", "action2"]
+    }},
+    "progress_curves": {{
+        "current_trajectory": "trajectoire actuelle",
+        "optimal_trajectory": "trajectoire optimale",
+        "gap_analysis": "analyse de l'écart",
+        "optimization_suggestions": ["suggestion1", "suggestion2"]
+    }}
+}}""",
+
+    "dashboard_insights": """Génère des insights intelligents pour le dashboard : {dashboard_data}.
+Fournis des recommandations automatiques basées sur l'analyse.
+
+Format de réponse JSON :
+{{
+    "insights": {{
+        "key_metrics": {{
+            "metric1": "valeur et interprétation",
+            "metric2": "valeur et interprétation"
+        }},
+        "trends": {{
+            "improving": ["tendance1", "tendance2"],
+            "declining": ["tendance1", "tendance2"],
+            "stable": ["tendance1"]
+        }},
+        "anomalies": ["anomalie1", "anomalie2"]
+    }},
+    "recommendations": {{
+        "immediate": ["recommandation1", "recommandation2"],
+        "short_term": ["recommandation1"],
+        "long_term": ["recommandation1"]
+    }},
+    "alerts": [
+        {{
+            "type": "warning|info|success",
+            "message": "message",
+            "action_required": true
+        }}
+    ]
+}}
+}}"""
+}
+
+
+# ============================================================================
+# PRIORITÉ 9 - GÉNÉRATION DE CONTENU ACADÉMIQUE
+# ============================================================================
+
+ACADEMIC_CONTENT_PROMPTS = {
+    "pdf_notes": """Génère des notes de cours au format PDF pour : {subject}, module : {module}.
+Format académique professionnel avec structure claire.
+
+Format de réponse JSON :
+{{
+    "pdf_content": {{
+        "title": "Titre",
+        "subject": "{subject}",
+        "module": "{module}",
+        "sections": [
+            {{
+                "section_title": "Titre section",
+                "content": "contenu",
+                "key_points": ["point1", "point2"],
+                "examples": ["exemple1", "exemple2"],
+                "formulas": ["formule1", "formule2"]
+            }}
+        ],
+        "summary": "résumé",
+        "references": ["référence1", "référence2"]
+    }},
+    "formatting": {{
+        "style": "academic",
+        "sections": true,
+        "diagrams": true,
+        "citations": true
+    }}
+}}""",
+
+    "learning_report": """Génère un rapport d'apprentissage pour : {user_id}, période : {period}.
+Rapport complet avec analyse, progression et recommandations.
+
+Format de réponse JSON :
+{{
+    "report": {{
+        "user_id": "{user_id}",
+        "period": "{period}",
+        "executive_summary": "résumé exécutif",
+        "progress_analysis": {{
+            "overall": "analyse globale",
+            "by_subject": {{"matière1": "analyse"}},
+            "by_skill": {{"compétence1": "analyse"}}
+        }},
+        "achievements": ["accomplissement1", "accomplissement2"],
+        "challenges": ["défi1", "défi2"],
+        "recommendations": {{
+            "immediate": ["recommandation1"],
+            "future": ["recommandation1"]
+        }},
+        "next_steps": ["étape1", "étape2"]
+    }}
+}}
+}}"""
+}
+
+
+def get_gamification_advanced_prompt(prompt_type: str, **kwargs) -> str:
+    """
+    Récupère un prompt de gamification avancée
+    
+    Args:
+        prompt_type: Type de prompt (season_generation, evolving_badge)
+        **kwargs: Paramètres additionnels
+    
+    Returns:
+        Le prompt formaté
+    """
+    if prompt_type in GAMIFICATION_ADVANCED_PROMPTS:
+        prompt_template = GAMIFICATION_ADVANCED_PROMPTS[prompt_type]
+        return prompt_template.format(**kwargs)
+    
+    return SYSTEM_PROMPT
+
+
+def get_multi_agent_prompt(agent_type: str, **kwargs) -> str:
+    """
+    Récupère un prompt pour un agent IA spécifique
+    
+    Args:
+        agent_type: Type d'agent (theorist_prof, motivation_coach, examiner, scientific_researcher)
+        **kwargs: Paramètres additionnels
+    
+    Returns:
+        Le prompt formaté
+    """
+    if agent_type in MULTI_AGENT_PROMPTS:
+        prompt_template = MULTI_AGENT_PROMPTS[agent_type]
+        return prompt_template.format(**kwargs)
+    
+    return SYSTEM_PROMPT
+
+
+def get_analytics_prompt(prompt_type: str, **kwargs) -> str:
+    """
+    Récupère un prompt d'analytics
+    
+    Args:
+        prompt_type: Type de prompt (progress_prediction, dashboard_insights)
+        **kwargs: Paramètres additionnels
+    
+    Returns:
+        Le prompt formaté
+    """
+    if prompt_type in ANALYTICS_PROMPTS:
+        prompt_template = ANALYTICS_PROMPTS[prompt_type]
+        return prompt_template.format(**kwargs)
+    
+    return SYSTEM_PROMPT
+
+
+def get_academic_content_prompt(prompt_type: str, **kwargs) -> str:
+    """
+    Récupère un prompt pour générer du contenu académique
+    
+    Args:
+        prompt_type: Type de prompt (pdf_notes, learning_report)
+        **kwargs: Paramètres additionnels
+    
+    Returns:
+        Le prompt formaté
+    """
+    if prompt_type in ACADEMIC_CONTENT_PROMPTS:
+        prompt_template = ACADEMIC_CONTENT_PROMPTS[prompt_type]
+        return prompt_template.format(**kwargs)
+    
+    return SYSTEM_PROMPT
