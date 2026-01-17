@@ -87,10 +87,10 @@ const ModuleDetail = () => {
 
   // Vérifier si le module permet les simulations (physique, chimie, biologie)
   const hasSimulation = ['physics', 'chemistry', 'biology'].includes(module.subject?.toLowerCase() || '')
-  // Vérifier si le module ne doit pas avoir de TP (mathématiques)
-  const hasNoTP = module.subject === 'mathematics'
-  // Les quiz sont disponibles uniquement pour les modules d'informatique
-  const hasQuiz = module.subject === 'computer_science'
+  // Vérifier si le module ne doit pas avoir de TP (mathématiques, histoire, géographie, économie)
+  const hasNoTP = ['mathematics', 'history', 'geography', 'economics'].includes(module.subject?.toLowerCase() || '')
+  // Les quiz sont disponibles pour informatique et certaines sciences
+  const hasQuiz = ['computer_science', 'physics', 'chemistry', 'biology'].includes(module.subject?.toLowerCase() || '')
 
   return (
     <Box minH="100vh" bgGradient="linear-gradient(180deg, blue.50 0%, white 100%)" py={{ base: 4, md: 8 }}>
