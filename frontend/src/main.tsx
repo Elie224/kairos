@@ -15,11 +15,7 @@ import { handleMutationError } from './utils/errorHandler'
 import { prefetchMainRoutes } from './utils/navigation'
 import './i18n/config'
 import './styles/animations.css'
-import './styles/mobile.css'
-import './styles/mobile-enhancements.css'
-import './styles/mobile-responsive-global.css'
-import './styles/bootstrap-mobile-all-pages.css'
-import './styles/mobile-complete-bootstrap.css'
+import './styles/mobile-unified.css'
 
 // Vérifier l'authentification au démarrage
 useAuthStore.getState().checkAuth()
