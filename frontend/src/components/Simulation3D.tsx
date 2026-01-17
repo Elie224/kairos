@@ -20,8 +20,6 @@ interface Simulation3DProps {
 
 const Simulation3D = ({ module, visualizationData, onGenerateVisualization }: Simulation3DProps) => {
   const subject = module.subject?.toLowerCase()
-  const allowedSubjects3D = ['physics', 'chemistry']
-  const is3DSubject = allowedSubjects3D.includes(subject)
   const [isGenerating, setIsGenerating] = useState(false)
   
   // Générer la visualisation avec OpenAI si elle n'existe pas encore
@@ -41,19 +39,14 @@ const Simulation3D = ({ module, visualizationData, onGenerateVisualization }: Si
         <Box textAlign="center">
           <Spinner size="xl" color="blue.400" thickness="4px" mb={4} />
           <ChakraText color="white" fontSize="sm">
-            Génération de la simulation par l'IA...
+            Génération de la simulation 3D par l'IA...
           </ChakraText>
           <ChakraText color="gray.400" fontSize="xs" mt={2}>
-            Création d'une visualisation interactive personnalisée
+            Création d'une visualisation 3D interactive personnalisée
           </ChakraText>
         </Box>
       </Box>
     )
-  }
-  
-  // Pour les matières non-3D, afficher une visualisation 2D appropriée
-  if (!is3DSubject) {
-    return <Visualization2D module={module} visualizationData={visualizationData} />
   }
   
   const renderScene = () => {
@@ -61,31 +54,45 @@ const Simulation3D = ({ module, visualizationData, onGenerateVisualization }: Si
     const sceneType = visualizationData?.scene_type || 
                      visualizationData?.type || 
                      visualizationData?.visualization?.type ||
+                     visualizationData?.visualization_3d?.type ||
                      module.content?.scene || 
                      'default'
     
-    // Mapper les scènes selon la matière et les données générées par OpenAI
-    if (module.subject?.toLowerCase() === 'physics') {
-      // Utiliser les données générées par OpenAI si disponibles
-      if (visualizationData?.visualization_3d?.type === 'gravitation' || sceneType === 'gravitation') {
-        return <GravitationSimulation visualizationData={visualizationData} />
-      } else if (visualizationData?.visualization_3d?.type === 'mechanics' || sceneType === 'mechanics') {
-        return <MechanicsSimulation visualizationData={visualizationData} />
-      } else {
-        // Par défaut, utiliser mechanics avec les données IA si disponibles
-        return <MechanicsSimulation visualizationData={visualizationData} />
-      }
-    } else if (module.subject?.toLowerCase() === 'chemistry') {
-      // Utiliser les données générées par OpenAI si disponibles
-      if (visualizationData?.molecular_visualization || visualizationData?.visualization_3d?.type === 'chemical_reaction' || sceneType === 'chemical_reaction') {
-        return <ChemicalReaction visualizationData={visualizationData} />
-      } else {
-        return <ChemicalReaction visualizationData={visualizationData} />
-      }
-    }
+    const subjectLower = module.subject?.toLowerCase()
     
-    // Fallback par défaut
-    return <DefaultScene />
+    // Mapper les scènes selon la matière et les données générées par OpenAI
+    switch (subjectLower) {
+      case 'physics':
+        if (visualizationData?.visualization_3d?.type === 'gravitation' || sceneType === 'gravitation') {
+          return <GravitationSimulation visualizationData={visualizationData} />
+        } else {
+          return <MechanicsSimulation visualizationData={visualizationData} />
+        }
+      
+      case 'chemistry':
+        return <ChemicalReaction visualizationData={visualizationData} />
+      
+      case 'mathematics':
+        return <MathematicsSimulation3D visualizationData={visualizationData} />
+      
+      case 'computer_science':
+        return <ComputerScienceSimulation3D visualizationData={visualizationData} />
+      
+      case 'biology':
+        return <BiologySimulation3D visualizationData={visualizationData} />
+      
+      case 'geography':
+        return <GeographySimulation3D visualizationData={visualizationData} />
+      
+      case 'economics':
+        return <EconomicsSimulation3D visualizationData={visualizationData} />
+      
+      case 'history':
+        return <HistorySimulation3D visualizationData={visualizationData} />
+      
+      default:
+        return <DefaultScene />
+    }
   }
 
   return (
@@ -131,7 +138,14 @@ const Simulation3D = ({ module, visualizationData, onGenerateVisualization }: Si
         borderRadius="md"
         fontSize="xs"
       >
-        {module.subject === 'physics' ? '⚙️ Physique' : '🧪 Chimie'}
+        {module.subject === 'physics' ? '⚙️ Physique' : 
+         module.subject === 'chemistry' ? '🧪 Chimie' :
+         module.subject === 'mathematics' ? '📐 Mathématiques' :
+         module.subject === 'computer_science' ? '🤖 Informatique' :
+         module.subject === 'biology' ? '🧬 Biologie' :
+         module.subject === 'geography' ? '🌍 Géographie' :
+         module.subject === 'economics' ? '💰 Économie' :
+         module.subject === 'history' ? '🏛️ Histoire' : '📊 Simulation 3D'}
       </Box>
     </Box>
   )
