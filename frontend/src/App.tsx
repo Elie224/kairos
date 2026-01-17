@@ -1,6 +1,6 @@
-import { Routes, Route, Navigate, useLocation, ScrollRestoration } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { Box } from '@chakra-ui/react'
-import { lazy, Suspense, useState, useEffect, useTransition } from 'react'
+import { lazy, Suspense, useState, useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import { LoadingSpinner, Onboarding } from './components'
@@ -43,7 +43,6 @@ function App() {
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
   const { isAuthenticated } = useAuthStore()
   const [showOnboarding, setShowOnboarding] = useState(false)
-  const [isPending, startTransition] = useTransition()
 
   // Restaurer le scroll en haut de page lors de la navigation (optimisé)
   useEffect(() => {
@@ -100,10 +99,7 @@ function App() {
         id="main-content"
         tabIndex={-1}
         aria-label="Contenu principal"
-        opacity={isPending ? 0.7 : 1}
-        transition="opacity 0.2s ease-in-out"
       >
-        <ScrollRestoration />
         <Suspense fallback={<PageLoader />}>
           <Routes location={location}>
           <Route path="/login" element={<Login />} />
