@@ -31,8 +31,25 @@ interface ModuleCardProps {
 const navigatingModules = new Set<string>()
 let navigationLockTimeout: NodeJS.Timeout | null = null
 
+// Vérifier si on est actuellement sur une route /modules/:id (pour éviter les navigations pendant le chargement)
+const isOnModuleDetailPage = (): boolean => {
+  const pathname = window.location.pathname
+  return !!pathname.match(/^\/modules\/[^/]+$/)
+}
+
 // Fonction utilitaire pour gérer la navigation avec garde global
 const navigateWithGuard = (moduleId: string, targetPath: string, navigate: (path: string, opts?: any) => void): boolean => {
+  // CRITIQUE: Si on est déjà sur une page de détail de module, NE RIEN FAIRE
+  // Cela évite les navigations multiples quand le composant Modules se re-rend pendant la navigation
+  if (isOnModuleDetailPage()) {
+    console.warn('⚠️ Navigation ignorée - déjà sur une page de détail de module', { 
+      moduleId, 
+      currentPath: window.location.pathname,
+      targetPath 
+    })
+    return false
+  }
+  
   // Vérifier si n'importe quel module est en cours de navigation
   if (navigatingModules.size > 0) {
     console.warn('⚠️ Navigation déjà en cours, ignoré', { moduleId, navigatingModules: Array.from(navigatingModules) })
@@ -46,13 +63,13 @@ const navigateWithGuard = (moduleId: string, targetPath: string, navigate: (path
   navigate(targetPath, { replace: false })
   console.log('✅ Navigation React Router déclenchée vers:', targetPath)
   
-  // Nettoyer le garde après un délai (permettre une nouvelle navigation après 1.5s)
+  // Nettoyer le garde après un délai (permettre une nouvelle navigation après 2s)
   if (navigationLockTimeout) {
     clearTimeout(navigationLockTimeout)
   }
   navigationLockTimeout = setTimeout(() => {
     navigatingModules.clear()
-  }, 1500)
+  }, 2000) // Augmenter à 2 secondes pour plus de sécurité
   
   return true
 }
