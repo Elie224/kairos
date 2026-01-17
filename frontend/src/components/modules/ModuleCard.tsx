@@ -34,10 +34,27 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
     e.stopPropagation() // Empêcher le déclenchement du onClick du Card parent
     e.preventDefault() // Empêcher tout comportement par défaut
     if (module.id) {
+      const targetPath = `/modules/${module.id}`
       console.log('🟢 Navigation vers module:', module.id, module.title)
-      logger.debug('Navigation vers module', { moduleId: module.id, moduleTitle: module.title }, 'ModuleCard')
-      // Utiliser navigate avec replace: false pour permettre le retour en arrière
-      navigate(`/modules/${module.id}`, { replace: false, state: { from: 'modules-list' } })
+      console.log('🟢 URL cible:', targetPath)
+      logger.debug('Navigation vers module', { moduleId: module.id, moduleTitle: module.title, targetPath }, 'ModuleCard')
+      
+      // Forcer la navigation avec window.location si React Router ne fonctionne pas
+      // Essayer d'abord avec React Router
+      try {
+        navigate(targetPath, { replace: false, state: { from: 'modules-list' } })
+        // Vérifier après un court délai si la navigation a fonctionné
+        setTimeout(() => {
+          if (window.location.pathname !== targetPath) {
+            console.warn('⚠️ React Router navigation failed, using window.location')
+            window.location.href = targetPath
+          }
+        }, 100)
+      } catch (error) {
+        console.error('❌ Erreur lors de la navigation React Router:', error)
+        // Fallback: utiliser window.location
+        window.location.href = targetPath
+      }
     } else {
       // Logger l'erreur si module.id n'existe pas
       logger.error('Module ID manquant pour la navigation', { module }, 'ModuleCard')

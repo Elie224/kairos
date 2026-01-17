@@ -52,6 +52,13 @@ const ModuleDetail = () => {
       console.error('❌ ModuleDetail: ID manquant!', { pathname })
       console.error('❌ Cela signifie que React Router ne passe pas correctement le paramètre :id')
       console.error('❌ Vérifier la configuration des routes dans App.tsx')
+      
+      // Essayer d'extraire l'ID depuis l'URL directement
+      const match = pathname.match(/^\/modules\/([^/]+)/)
+      if (match && match[1]) {
+        console.warn('⚠️ ID trouvé dans l\'URL mais pas dans useParams:', match[1])
+        console.warn('⚠️ Cela indique un problème de routing React Router')
+      }
     } else {
       console.log('✅ ModuleDetail: ID présent, composant devrait s\'afficher correctement', { id })
       console.log('✅ Le composant va maintenant charger les données du module')
