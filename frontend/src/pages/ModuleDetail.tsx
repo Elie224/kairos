@@ -50,13 +50,22 @@ const ModuleDetail = () => {
     history: '🏛️ Histoire',
   }
 
-  const { data: module, isLoading } = useQuery<Module>(
+  const { data: module, isLoading, error } = useQuery<Module>(
     ['module', id],
     async () => {
-      const response = await api.get(`/modules/${id}`, {
-        timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour le chargement du module
-      })
-      return response.data
+      if (!id) {
+        throw new Error('Module ID manquant')
+      }
+      try {
+        const response = await api.get(`/modules/${id}`, {
+          timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour le chargement du module
+        })
+        logger.debug('Module chargé avec succès', { moduleId: id, hasContent: !!response.data?.content }, 'ModuleDetail')
+        return response.data
+      } catch (err: any) {
+        logger.error('Erreur lors du chargement du module', err, 'ModuleDetail')
+        throw err
+      }
     },
     { 
       enabled: !!id,
@@ -64,6 +73,8 @@ const ModuleDetail = () => {
       cacheTime: 10 * 60 * 1000,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
+      retry: 2,
+      retryDelay: 1000,
     }
   )
 
@@ -71,7 +82,28 @@ const ModuleDetail = () => {
     return (
       <Box minH="100vh" bgGradient="linear-gradient(180deg, blue.50 0%, white 100%)" py={{ base: 8, md: 12 }}>
         <Container maxW="1200px" px={{ base: 4, md: 6 }} textAlign="center">
-          <Spinner size="xl" />
+          <VStack spacing={4}>
+            <Spinner size="xl" color="blue.500" thickness="4px" />
+            <Text color="gray.600" fontSize="lg">Chargement du module...</Text>
+          </VStack>
+        </Container>
+      </Box>
+    )
+  }
+
+  if (error) {
+    return (
+      <Box minH="100vh" bgGradient="linear-gradient(180deg, blue.50 0%, white 100%)" py={{ base: 8, md: 12 }}>
+        <Container maxW="1200px" px={{ base: 4, md: 6 }}>
+          <VStack spacing={4} align="start">
+            <Heading size="lg" color="red.500">Erreur de chargement</Heading>
+            <Text fontSize={{ base: 'md', md: 'lg' }} color="gray.700">
+              {error instanceof Error ? error.message : 'Une erreur est survenue lors du chargement du module.'}
+            </Text>
+            <Button onClick={() => window.location.reload()} colorScheme="blue">
+              Réessayer
+            </Button>
+          </VStack>
         </Container>
       </Box>
     )
@@ -81,7 +113,12 @@ const ModuleDetail = () => {
     return (
       <Box minH="100vh" bgGradient="linear-gradient(180deg, blue.50 0%, white 100%)" py={{ base: 8, md: 12 }}>
         <Container maxW="1200px" px={{ base: 4, md: 6 }}>
-          <Text fontSize={{ base: 'md', md: 'lg' }}>{t('moduleDetail.notFound')}</Text>
+          <VStack spacing={4} align="start">
+            <Heading size="lg" color="gray.700">Module non trouvé</Heading>
+            <Text fontSize={{ base: 'md', md: 'lg' }} color="gray.600">
+              {t('moduleDetail.notFound') || 'Le module demandé n\'existe pas ou n\'est plus disponible.'}
+            </Text>
+          </VStack>
         </Container>
       </Box>
     )
