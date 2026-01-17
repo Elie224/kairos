@@ -25,9 +25,10 @@ const Exams = lazy(() => import('./pages/Exams'))
 const ExamDetail = lazy(() => import('./pages/ExamDetail'))
 const Gamification = lazy(() => import('./pages/Gamification'))
 const Visualizations = lazy(() => import('./pages/Visualizations'))
-const LegalMentions = lazy(() => import('./pages/LegalMentions'))
-const LegalPrivacy = lazy(() => import('./pages/LegalPrivacy'))
-const LegalCGU = lazy(() => import('./pages/LegalCGU'))
+// Pages légales en import direct pour garantir l'accessibilité
+import LegalMentions from './pages/LegalMentions'
+import LegalPrivacy from './pages/LegalPrivacy'
+import LegalCGU from './pages/LegalCGU'
 
 // Composant de chargement optimisé pour la navigation
 const PageLoader = () => (
