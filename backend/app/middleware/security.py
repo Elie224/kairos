@@ -357,7 +357,8 @@ class AIRateLimitMiddleware(BaseHTTPMiddleware):
     
     async def dispatch(self, request: Request, call_next):
         # Appliquer uniquement aux endpoints IA
-        if not request.url.path.startswith("/api/ai/"):
+        # Exclure /api/kairos/* qui a sa propre gestion
+        if not request.url.path.startswith("/api/ai/") or request.url.path.startswith("/api/kairos/"):
             return await call_next(request)
         
         ip = self._get_client_ip(request)
