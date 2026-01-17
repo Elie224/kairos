@@ -7,7 +7,7 @@
  * @module components/ProtectedRoute
  */
 import React, { useEffect } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import { Box, Spinner, Container, VStack, Text } from '@chakra-ui/react'
 
@@ -21,6 +21,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { isAuthenticated, isLoading, checkAuth } = useAuthStore()
+  const location = useLocation()
   const location = useLocation()
 
   // Vérifier l'authentification au montage (seulement si nécessaire)
