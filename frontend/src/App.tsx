@@ -149,9 +149,9 @@ function App() {
           <Route path="/exams" element={<ProtectedRoute><Exams key="exams" /></ProtectedRoute>} />
           {/* Redirection des anciennes routes /exams/:subject vers /exams */}
           <Route path="/exams/:subject" element={<Navigate to="/exams" replace />} />
-          {/* Routes paramétrées après les routes exactes */}
+          {/* Routes paramétrées après les routes exactes - IMPORTANT: /modules/:moduleId/exam doit être AVANT /modules/:id */}
           <Route path="/modules/:moduleId/exam" element={<ProtectedRoute><ExamDetail key={`exam-${location.pathname}`} /></ProtectedRoute>} />
-          <Route path="/modules/:id" element={<ProtectedRoute><ModuleDetail key={`module-${location.pathname}`} /></ProtectedRoute>} />
+          <Route path="/modules/:id" element={<ProtectedRoute><ModuleDetail key={`module-detail-${location.pathname}`} /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard key="dashboard" /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile key="profile" /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Settings key="settings" /></ProtectedRoute>} />

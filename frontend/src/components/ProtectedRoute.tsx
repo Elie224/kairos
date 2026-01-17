@@ -62,7 +62,8 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   // S'assurer que les enfants sont rendus avec une clé unique pour forcer le re-render
-  return <Box key={`protected-${location.pathname}`}>{children}</Box>
+  // Utiliser une clé plus spécifique incluant le pathname complet pour éviter les conflits
+  return <React.Fragment key={`protected-route-${location.pathname}-${Date.now()}`}>{children}</React.Fragment>
 }
 
 export default ProtectedRoute

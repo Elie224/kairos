@@ -9,11 +9,13 @@ const LegalCGU = () => {
   useEffect(() => {
     // Scroll en haut au chargement
     window.scrollTo({ top: 0, behavior: 'instant' })
+    // Logger pour déboguer
+    console.log('LegalCGU component mounted', { pathname: window.location.pathname })
   }, [])
 
   return (
     <Box py={{ base: 8, md: 12 }} minH="80vh" w="100%" bg="gray.50" px={{ base: 4, md: 6 }}>
-      <Container maxW="900px">
+      <Container maxW="900px" px={{ base: 4, md: 6 }}>
         <VStack spacing={8} align="stretch">
           <VStack spacing={4} align="start">
             <Heading size="2xl" color="gray.900" fontWeight="800">

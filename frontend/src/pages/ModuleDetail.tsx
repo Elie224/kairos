@@ -31,6 +31,11 @@ const ModuleDetail = () => {
   const { id } = useParams<{ id: string }>()
   const [tabIndex, setTabIndex] = useState(0)
   
+  // Log pour déboguer le rendu du composant
+  useEffect(() => {
+    logger.debug('ModuleDetail component mounted', { moduleId: id, pathname: window.location.pathname }, 'ModuleDetail')
+  }, [id])
+  
   // Réinitialiser l'onglet à "Contenu" quand le module change
   useEffect(() => {
     setTabIndex(0)
