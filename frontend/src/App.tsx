@@ -47,13 +47,46 @@ function App() {
   const { isAuthenticated } = useAuthStore()
   const [showOnboarding, setShowOnboarding] = useState(false)
 
-  // Restaurer le scroll en haut de page lors de la navigation (optimisé)
+  // Restaurer le scroll en haut de page lors de la navigation ET du rechargement (optimisé)
   useEffect(() => {
-    // Utiliser requestAnimationFrame pour s'assurer que le DOM est prêt
+    // Utiliser requestAnimationFrame et un léger délai pour s'assurer que le DOM est prêt
+    const scrollToTop = () => {
+      // Forcer le scroll en haut immédiatement
+      window.scrollTo({ top: 0, behavior: 'instant' })
+      // S'assurer que le body et html sont aussi en haut
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+    }
+    
+    // Scroll immédiat
+    scrollToTop()
+    
+    // Scroll après que le DOM soit complètement chargé
     requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, behavior: 'instant' }) // 'instant' pour éviter le délai
+      scrollToTop()
+      // Double vérification après un court délai
+      setTimeout(scrollToTop, 0)
     })
   }, [location.pathname])
+  
+  // S'assurer que le scroll est en haut lors du chargement initial de la page
+  useEffect(() => {
+    // Ne s'exécute qu'une fois au montage du composant
+    const handleLoad = () => {
+      window.scrollTo({ top: 0, behavior: 'instant' })
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+    }
+    
+    // Si la page est déjà chargée
+    if (document.readyState === 'complete') {
+      handleLoad()
+    } else {
+      // Sinon attendre le chargement complet
+      window.addEventListener('load', handleLoad)
+      return () => window.removeEventListener('load', handleLoad)
+    }
+  }, [])
 
   // Vérifier si l'utilisateur a déjà vu l'onboarding
   useEffect(() => {

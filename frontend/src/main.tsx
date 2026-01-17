@@ -45,11 +45,39 @@ const queryClient = new QueryClient({
   },
 })
 
+// S'assurer que le scroll est en haut lors du chargement initial
+if (typeof window !== 'undefined') {
+  // Scroll immédiat en haut de la page
+  window.scrollTo({ top: 0, behavior: 'instant' })
+  document.documentElement.scrollTop = 0
+  document.body.scrollTop = 0
+  
+  // S'assurer que le scroll reste en haut pendant le chargement
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+  }
+  
+  // Écouter les événements de chargement
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', scrollToTop)
+  } else {
+    scrollToTop()
+  }
+  
+  window.addEventListener('load', scrollToTop)
+}
+
 // Wrapper pour AccessibilityProvider qui nécessite BrowserRouter
 const AppWithAccessibility = () => {
   // Précharger les routes principales après le montage
   useEffect(() => {
     prefetchMainRoutes()
+    // S'assurer que le scroll est en haut au montage
+    window.scrollTo({ top: 0, behavior: 'instant' })
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
   }, [])
 
   return (
