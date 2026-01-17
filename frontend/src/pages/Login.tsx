@@ -205,7 +205,7 @@ const Login = () => {
         <AnimatedBox animation="fadeInUp" delay={0.1}>
           <Box
             bg={bgColor}
-            p={{ base: 4, md: 5 }}
+            p={{ base: 2, md: 5 }}
             borderRadius="2xl"
             boxShadow="2xl"
             border="1px solid"
@@ -217,9 +217,9 @@ const Login = () => {
             }}
             transition="all 0.3s"
           >
-            <VStack spacing={{ base: 2, md: 3 }} align="stretch">
+            <VStack spacing={{ base: 1.5, md: 3 }} align="stretch">
               {/* En-tête amélioré */}
-              <VStack spacing={{ base: 1, md: 2 }} align="center">
+              <VStack spacing={{ base: 0.5, md: 2 }} align="center">
                 <Box
                   p={3}
                   bgGradient="linear-gradient(135deg, blue.500 0%, blue.600 100%)"

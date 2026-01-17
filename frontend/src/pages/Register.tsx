@@ -296,7 +296,7 @@ const Register = () => {
         <AnimatedBox animation="fadeInUp" delay={0.1}>
           <Box
             bg={bgColor}
-            p={{ base: 3, md: 6 }}
+            p={{ base: 2, md: 6 }}
             borderRadius="2xl"
             boxShadow="2xl"
             border="1px solid"
@@ -307,11 +307,11 @@ const Register = () => {
             }}
             transition="all 0.3s"
           >
-            <VStack spacing={{ base: 2, md: 4 }} align="stretch">
+            <VStack spacing={{ base: 1.5, md: 4 }} align="stretch">
               {/* En-tête amélioré */}
-              <VStack spacing={{ base: 2, md: 3 }} align="center">
+              <VStack spacing={{ base: 1, md: 3 }} align="center">
                 <Box
-                  p={4}
+                  p={{ base: 2, md: 4 }}
                   bgGradient="linear-gradient(135deg, blue.500 0%, blue.600 100%)"
                   borderRadius="xl"
                   boxShadow="lg"
