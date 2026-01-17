@@ -1,47 +1,36 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { Box } from '@chakra-ui/react'
-import { lazy, Suspense, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import { LoadingSpinner, Onboarding } from './components'
+import { Onboarding } from './components'
 import ProtectedRoute from './components/ProtectedRoute'
 import ProtectedAdminRoute from './components/ProtectedAdminRoute'
 import { useAuthStore } from './store/authStore'
 
-// Code splitting - Lazy loading des pages
-// Pages critiques en import direct pour éviter les erreurs de chargement dynamique sur Render
+// Import direct de TOUTES les pages pour éviter les erreurs de chargement dynamique sur Render
+// Le lazy loading cause des erreurs "Failed to fetch dynamically imported module" sur Render
 import Login from './pages/Login'
 import Register from './pages/Register'
+import Home from './pages/Home'
 import Modules from './pages/Modules'
+import ModuleDetail from './pages/ModuleDetail'
 import Dashboard from './pages/Dashboard'
-const Home = lazy(() => import('./pages/Home'))
-const ModuleDetail = lazy(() => import('./pages/ModuleDetail'))
-const Profile = lazy(() => import('./pages/Profile'))
-const Settings = lazy(() => import('./pages/Settings'))
-const Support = lazy(() => import('./pages/Support'))
-const Feedback = lazy(() => import('./pages/Feedback'))
-const Admin = lazy(() => import('./pages/Admin'))
-const Exams = lazy(() => import('./pages/Exams'))
-const ExamDetail = lazy(() => import('./pages/ExamDetail'))
-const Gamification = lazy(() => import('./pages/Gamification'))
-const Visualizations = lazy(() => import('./pages/Visualizations'))
+import Profile from './pages/Profile'
+import Settings from './pages/Settings'
+import Support from './pages/Support'
+import Feedback from './pages/Feedback'
+import Admin from './pages/Admin'
+import Exams from './pages/Exams'
+import ExamDetail from './pages/ExamDetail'
+import Gamification from './pages/Gamification'
+import Visualizations from './pages/Visualizations'
 // Pages légales en import direct pour garantir l'accessibilité
 import LegalMentions from './pages/LegalMentions'
 import LegalPrivacy from './pages/LegalPrivacy'
 import LegalCGU from './pages/LegalCGU'
 
-// Composant de chargement optimisé pour la navigation
-const PageLoader = () => (
-  <Box 
-    minH="100vh" 
-    display="flex" 
-    alignItems="center" 
-    justifyContent="center"
-    bg="gray.50"
-  >
-    <LoadingSpinner size="lg" text="Chargement..." />
-  </Box>
-)
+// PageLoader retiré car on n'utilise plus Suspense (toutes les pages sont importées directement)
 
 function App() {
   const location = useLocation()
@@ -173,8 +162,7 @@ function App() {
         tabIndex={-1}
         aria-label="Contenu principal"
       >
-        <Suspense fallback={<PageLoader />}>
-          <Routes location={location}>
+        <Routes location={location}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<Home />} />
@@ -196,8 +184,7 @@ function App() {
           <Route path="/legal/mentions-legales" element={<LegalMentions />} />
           <Route path="/legal/politique-confidentialite" element={<LegalPrivacy />} />
           <Route path="/legal/cgu" element={<LegalCGU />} />
-          </Routes>
-        </Suspense>
+        </Routes>
       </Box>
       {!isAuthPage && <Footer />}
       
