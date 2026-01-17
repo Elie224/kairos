@@ -665,3 +665,72 @@ def get_recommendation_prompt(**kwargs) -> str:
         Le prompt formaté
     """
     return RECOMMENDATION_PROMPT.format(**kwargs)
+
+
+def get_curriculum_prompt(subject: str, level: str, objective: str) -> str:
+    """
+    Récupère le prompt pour générer un curriculum
+    
+    Args:
+        subject: La matière
+        level: Le niveau (collège, lycée, université)
+        objective: L'objectif (exam, compréhension, rattrapage)
+    
+    Returns:
+        Le prompt formaté
+    """
+    return CURRICULUM_PROMPT.format(subject=subject, level=level, objective=objective)
+
+
+def get_learner_profile_prompt(learning_data: str) -> str:
+    """
+    Récupère le prompt pour créer un profil cognitif
+    
+    Args:
+        learning_data: Données d'apprentissage de l'utilisateur (JSON string)
+    
+    Returns:
+        Le prompt formaté
+    """
+    return LEARNER_PROFILE_PROMPT.format(learning_data=learning_data)
+
+
+def get_evaluation_prompt(subject: str, level: str, evaluation_type: str) -> str:
+    """
+    Récupère le prompt pour générer une évaluation
+    
+    Args:
+        subject: La matière
+        level: Le niveau
+        evaluation_type: Type d'évaluation (formative, summative, adaptive, oral)
+    
+    Returns:
+        Le prompt formaté
+    """
+    return EVALUATION_PROMPT.format(subject=subject, level=level, evaluation_type=evaluation_type)
+
+
+def get_explainability_prompt(error_analysis: str) -> str:
+    """
+    Récupère le prompt pour expliquer une erreur (Explainable AI)
+    
+    Args:
+        error_analysis: Analyse de l'erreur (JSON string)
+    
+    Returns:
+        Le prompt formaté
+    """
+    return EXPLAINABILITY_PROMPT.format(error_analysis=error_analysis)
+
+
+def get_lab_simulation_prompt(simulation_request: str) -> str:
+    """
+    Récupère le prompt pour générer une simulation de laboratoire
+    
+    Args:
+        simulation_request: Demande de simulation de l'apprenant
+    
+    Returns:
+        Le prompt formaté
+    """
+    return LAB_SIMULATION_PROMPT.format(simulation_request=simulation_request)

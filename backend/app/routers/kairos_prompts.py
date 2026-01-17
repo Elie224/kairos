@@ -228,3 +228,299 @@ async def get_available_topics(subject: str) -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"Erreur lors de la récupération des topics: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# PRIORITÉ 1 - CURRICULUM INTELLIGENT
+# ============================================================================
+
+class CurriculumRequest(BaseModel):
+    subject: str
+    level: str  # collège, lycée, université
+    objective: str  # exam, compréhension, rattrapage
+
+
+@router.post("/curriculum/generate")
+async def generate_curriculum(request: CurriculumRequest) -> Dict[str, Any]:
+    """
+    Génère un curriculum complet et structuré pour une matière
+    PRIORITÉ 1 - Curriculum intelligent généré par l'IA
+    """
+    try:
+        prompt_data = KairosPromptService.get_curriculum_prompt_data(
+            subject=request.subject,
+            level=request.level,
+            objective=request.objective
+        )
+        
+        # Appeler OpenAI avec le prompt
+        response = await AIService.chat_with_ai(
+            user_id="system",
+            message=prompt_data["prompt"],
+            language="fr"
+        )
+        
+        # Parser la réponse JSON si possible
+        try:
+            import json
+            curriculum_data = json.loads(response.get("response", "{}"))
+        except:
+            curriculum_data = {"raw_response": response.get("response", "")}
+        
+        return {
+            "success": True,
+            "curriculum": curriculum_data,
+            "subject": request.subject,
+            "level": request.level,
+            "objective": request.objective
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de la génération du curriculum: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# PRIORITÉ 2 - PROFIL COGNITIF DE L'APPRENANT
+# ============================================================================
+
+class LearnerProfileRequest(BaseModel):
+    learning_data: Dict[str, Any]
+
+
+@router.post("/learner/profile/update")
+async def update_learner_profile(request: LearnerProfileRequest) -> Dict[str, Any]:
+    """
+    Met à jour le profil cognitif de l'apprenant
+    PRIORITÉ 2 - Profil cognitif de l'apprenant (Learner Model IA)
+    """
+    try:
+        prompt_data = KairosPromptService.get_learner_profile_prompt_data(
+            learning_data=request.learning_data
+        )
+        
+        # Appeler OpenAI avec le prompt
+        response = await AIService.chat_with_ai(
+            user_id="system",
+            message=prompt_data["prompt"],
+            language="fr"
+        )
+        
+        # Parser la réponse JSON si possible
+        try:
+            import json
+            profile_data = json.loads(response.get("response", "{}"))
+        except:
+            profile_data = {"raw_response": response.get("response", "")}
+        
+        return {
+            "success": True,
+            "learner_profile": profile_data
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de la mise à jour du profil: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/learner/profile")
+async def get_learner_profile(user_id: str) -> Dict[str, Any]:
+    """
+    Récupère le profil cognitif de l'apprenant
+    PRIORITÉ 2 - Profil cognitif de l'apprenant
+    """
+    try:
+        # TODO: Récupérer les données d'apprentissage depuis la base de données
+        # Pour l'instant, retourner un message indiquant que c'est à implémenter
+        return {
+            "success": True,
+            "message": "Endpoint à implémenter avec récupération des données depuis la base",
+            "user_id": user_id
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de la récupération du profil: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# PRIORITÉ 3 - ÉVALUATION INTELLIGENTE
+# ============================================================================
+
+class EvaluationRequest(BaseModel):
+    subject: str
+    level: str
+    evaluation_type: str  # formative, summative, adaptive, oral
+
+
+@router.post("/evaluation/generate")
+async def generate_evaluation(request: EvaluationRequest) -> Dict[str, Any]:
+    """
+    Génère une évaluation pédagogique complète
+    PRIORITÉ 3 - Évaluation intelligente (Examens générés par IA)
+    """
+    try:
+        prompt_data = KairosPromptService.get_evaluation_prompt_data(
+            subject=request.subject,
+            level=request.level,
+            evaluation_type=request.evaluation_type
+        )
+        
+        # Appeler OpenAI avec le prompt
+        response = await AIService.chat_with_ai(
+            user_id="system",
+            message=prompt_data["prompt"],
+            language="fr"
+        )
+        
+        # Parser la réponse JSON si possible
+        try:
+            import json
+            evaluation_data = json.loads(response.get("response", "{}"))
+        except:
+            evaluation_data = {"raw_response": response.get("response", "")}
+        
+        return {
+            "success": True,
+            "evaluation": evaluation_data,
+            "subject": request.subject,
+            "level": request.level,
+            "evaluation_type": request.evaluation_type
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de la génération de l'évaluation: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class CorrectionRequest(BaseModel):
+    evaluation_id: str
+    user_answers: Dict[str, Any]
+    evaluation_data: Dict[str, Any]
+
+
+@router.post("/evaluation/correct")
+async def correct_evaluation(request: CorrectionRequest) -> Dict[str, Any]:
+    """
+    Corrige une évaluation et génère un feedback détaillé
+    PRIORITÉ 3 - Évaluation intelligente
+    """
+    try:
+        # Utiliser le prompt d'explainability pour chaque erreur
+        corrections = []
+        for question_id, user_answer in request.user_answers.items():
+            question = request.evaluation_data.get("questions", {}).get(question_id, {})
+            if question:
+                error_analysis = {
+                    "question_id": question_id,
+                    "user_answer": user_answer,
+                    "correct_answer": question.get("correct_answer"),
+                    "question": question.get("question")
+                }
+                
+                prompt_data = KairosPromptService.get_explainability_prompt_data(
+                    error_analysis=error_analysis
+                )
+                
+                response = await AIService.chat_with_ai(
+                    user_id="system",
+                    message=prompt_data["prompt"],
+                    language="fr"
+                )
+                
+                try:
+                    import json
+                    correction_data = json.loads(response.get("response", "{}"))
+                except:
+                    correction_data = {"raw_response": response.get("response", "")}
+                
+                corrections.append(correction_data)
+        
+        return {
+            "success": True,
+            "corrections": corrections,
+            "evaluation_id": request.evaluation_id
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de la correction: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# PRIORITÉ 4 - EXPLAINABILITY & MÉTACOGNITION
+# ============================================================================
+
+class ExplainabilityRequest(BaseModel):
+    error_analysis: Dict[str, Any]
+
+
+@router.post("/explainability/analyze")
+async def analyze_error(request: ExplainabilityRequest) -> Dict[str, Any]:
+    """
+    Analyse une erreur et explique pourquoi l'apprenant s'est trompé
+    PRIORITÉ 4 - Explainability & Métacognition
+    """
+    try:
+        prompt_data = KairosPromptService.get_explainability_prompt_data(
+            error_analysis=request.error_analysis
+        )
+        
+        # Appeler OpenAI avec le prompt
+        response = await AIService.chat_with_ai(
+            user_id="system",
+            message=prompt_data["prompt"],
+            language="fr"
+        )
+        
+        # Parser la réponse JSON si possible
+        try:
+            import json
+            explanation_data = json.loads(response.get("response", "{}"))
+        except:
+            explanation_data = {"raw_response": response.get("response", "")}
+        
+        return {
+            "success": True,
+            "explanation": explanation_data
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de l'analyse d'erreur: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# PRIORITÉ 5 - MODE LABORATOIRE AVANCÉ
+# ============================================================================
+
+class LabSimulationRequest(BaseModel):
+    simulation_request: str
+
+
+@router.post("/lab/simulate")
+async def simulate_lab(request: LabSimulationRequest) -> Dict[str, Any]:
+    """
+    Génère une simulation de laboratoire interactive
+    PRIORITÉ 5 - Mode laboratoire avancé
+    """
+    try:
+        prompt_data = KairosPromptService.get_lab_simulation_prompt_data(
+            simulation_request=request.simulation_request
+        )
+        
+        # Appeler OpenAI avec le prompt
+        response = await AIService.chat_with_ai(
+            user_id="system",
+            message=prompt_data["prompt"],
+            language="fr"
+        )
+        
+        # Parser la réponse JSON si possible
+        try:
+            import json
+            simulation_data = json.loads(response.get("response", "{}"))
+        except:
+            simulation_data = {"raw_response": response.get("response", "")}
+        
+        return {
+            "success": True,
+            "simulation": simulation_data
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de la génération de simulation: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
