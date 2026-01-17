@@ -18,29 +18,12 @@ if (!fs.existsSync(distDir)) {
 // 1. Créer le fichier _redirects dans dist/
 const redirectsFile = path.join(distDir, '_redirects');
 const redirectsContent = `# Configuration Render.com pour SPA
-# IMPORTANT: L'ordre des règles est crucial
-# Les règles spécifiques doivent être AVANT la règle catch-all
+# IMPORTANT: Render sert automatiquement les fichiers statiques (.js, .css, images, etc.)
+# Ce fichier _redirects ne gère QUE les routes SPA
 
-# Ne PAS rediriger les fichiers statiques - ils doivent être servis directement
-/assets/*  /assets/:splat  200
-/*.js      /:splat.js      200
-/*.css     /:splat.css     200
-/*.json    /:splat.json    200
-/*.png     /:splat.png     200
-/*.jpg     /:splat.jpg   200
-/*.jpeg    /:splat.jpeg    200
-/*.gif     /:splat.gif     200
-/*.svg     /:splat.svg     200
-/*.ico     /:splat.ico     200
-/*.woff    /:splat.woff    200
-/*.woff2   /:splat.woff2   200
-/*.ttf     /:splat.ttf     200
-/*.eot     /:splat.eot     200
-/*.map     /:splat.map     200
-
-# Rediriger toutes les autres routes (routes SPA) vers index.html
-# Cette règle doit être EN DERNIER
-/*         /index.html     200
+# Rediriger toutes les routes SPA vers index.html
+# Les fichiers statiques (/.js, /.css, /assets/*, etc.) sont automatiquement servis par Render
+/*    /index.html   200
 `;
 
 // Copier aussi le fichier _headers si il existe
