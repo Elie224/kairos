@@ -1,7 +1,7 @@
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, PerspectiveCamera, Stars, Text } from '@react-three/drei'
-import { Suspense, useRef } from 'react'
-import { Box, Text as ChakraText } from '@chakra-ui/react'
+import React, { Suspense, useRef, useEffect } from 'react'
+import { Box, Text as ChakraText, Spinner } from '@chakra-ui/react'
 import * as THREE from 'three'
 import { ModuleContent } from '../types/moduleContent'
 
@@ -12,9 +12,11 @@ interface Module {
 
 interface Simulation3DProps {
   module: Module
+  visualizationData?: any
+  onGenerateVisualization?: (moduleId: string, subject: string, concept: string) => Promise<void>
 }
 
-const Simulation3D = ({ module }: Simulation3DProps) => {
+const Simulation3D = ({ module, visualizationData, onGenerateVisualization }: Simulation3DProps) => {
   const subject = module.subject?.toLowerCase()
   const allowedSubjects3D = ['physics', 'chemistry']
   const is3DSubject = allowedSubjects3D.includes(subject)
@@ -114,21 +116,33 @@ const GravitationSimulation = () => {
 
   return (
     <>
-      {/* Planète centrale */}
+      {/* Planète centrale - taille selon données IA */}
       <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[0.5, 32, 32]} />
-        <meshStandardMaterial color="#4A90E2" />
+        <sphereGeometry args={[
+          visualizationData?.visualization_3d?.parameters?.planet_size || 0.5, 
+          32, 
+          32
+        ]} />
+        <meshStandardMaterial color={
+          visualizationData?.visualization_3d?.parameters?.planet_color || "#4A90E2"
+        } />
       </mesh>
       
       {/* Satellite en orbite */}
-      <mesh ref={satelliteRef} position={[3, 0, 0]}>
-        <sphereGeometry args={[0.2, 16, 16]} />
-        <meshStandardMaterial color="#F5A623" />
+      <mesh ref={satelliteRef} position={[orbitRadius, 0, 0]}>
+        <sphereGeometry args={[
+          visualizationData?.visualization_3d?.parameters?.satellite_size || 0.2, 
+          16, 
+          16
+        ]} />
+        <meshStandardMaterial color={
+          visualizationData?.visualization_3d?.parameters?.satellite_color || "#F5A623"
+        } />
       </mesh>
       
       {/* Orbite */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[2.5, 3.5, 64]} />
+        <ringGeometry args={[orbitRadius - 0.5, orbitRadius + 0.5, 64]} />
         <meshBasicMaterial color="#888" side={2} transparent opacity={0.3} />
       </mesh>
       

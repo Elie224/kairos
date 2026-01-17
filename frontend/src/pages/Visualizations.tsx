@@ -53,6 +53,7 @@ const Visualizations = () => {
   const { user } = useAuthStore()
   const [selectedModule, setSelectedModule] = useState<Module | null>(null)
   const [selectedSubject, setSelectedSubject] = useState<string>('all')
+  const [generatedVisualizations, setGeneratedVisualizations] = useState<Record<string, any>>({})
 
   const { data: modules, isLoading, error } = useQuery<Module[]>(
     ['modules', selectedSubject],
@@ -70,7 +71,10 @@ const Visualizations = () => {
           params.subject = selectedSubject
         }
         
-        const response = await api.get('/modules/', { params })
+        const response = await api.get('/modules/', { 
+          params,
+          timeout: 10000 // Timeout de 10 secondes pour les modules
+        })
         let filteredData = response.data || []
         
         // Filtrer côté client pour les matières non encore supportées par l'API
@@ -437,7 +441,29 @@ const Visualizations = () => {
                       bg="black"
                       position="relative"
                     >
-                      <Simulation3D module={selectedModule} />
+                      <Simulation3D 
+                        module={selectedModule} 
+                        visualizationData={generatedVisualizations[selectedModule?.id || '']}
+                        onGenerateVisualization={async (moduleId, subject, concept) => {
+                          try {
+                            const response = await api.post('/kairos/visualization/generate', {
+                              subject: subject,
+                              concept: concept || selectedModule?.title || 'default',
+                              level: 'intermediate'
+                            }, {
+                              timeout: 30000 // 30 secondes pour la génération IA
+                            })
+                            if (response.data.success) {
+                              setGeneratedVisualizations(prev => ({
+                                ...prev,
+                                [moduleId]: response.data.visualization
+                              }))
+                            }
+                          } catch (err) {
+                            console.error('Erreur lors de la génération de visualisation:', err)
+                          }
+                        }}
+                      />
                     </Box>
 
                     <Alert status="info" borderRadius="md" fontSize="sm">
