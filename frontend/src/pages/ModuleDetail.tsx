@@ -198,17 +198,118 @@ const ModuleDetail = () => {
             <Text color="gray.600" fontSize={{ base: 'md', md: 'lg' }}>{module.description}</Text>
           </Box>
 
-          <Tabs index={tabIndex} onChange={setTabIndex} colorScheme="brand">
-            <Box overflowX="auto" className="table-container nav-tabs" mb={4}>
-              <TabList minW="max-content" flexWrap={{ base: 'nowrap', md: 'wrap' }} className="nav-tabs">
-                <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>{t('moduleDetail.content') || 'Contenu'}</Tab>
-                {hasSimulation && <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>{t('moduleDetail.simulation')}</Tab>}
-                <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>{t('moduleDetail.objectives')}</Tab>
-                <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>TD</Tab>
-                {!hasNoTP && <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>TP</Tab>}
-                <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>Ressources</Tab>
-                <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>{t('moduleDetail.aiTutor')}</Tab>
-                {hasQuiz && <Tab fontSize={{ base: 'sm', md: 'md' }} minH="48px" px={{ base: 3, md: 4 }}>{t('moduleDetail.quiz')}</Tab>}
+          <Tabs index={tabIndex} onChange={setTabIndex} colorScheme="brand" variant="enclosed" isLazy>
+            <Box 
+              overflowX="auto" 
+              overflowY="hidden"
+              className="table-container nav-tabs" 
+              mb={4}
+              sx={{
+                '&::-webkit-scrollbar': {
+                  height: '6px',
+                },
+                '&::-webkit-scrollbar-track': {
+                  background: 'gray.100',
+                  borderRadius: 'full',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  background: 'blue.400',
+                  borderRadius: 'full',
+                  '&:hover': {
+                    background: 'blue.500',
+                  },
+                },
+                scrollbarWidth: 'thin',
+                scrollbarColor: 'blue.400 gray.100',
+                WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
+              }}
+            >
+              <TabList 
+                minW="max-content" 
+                flexWrap={{ base: 'nowrap', md: 'wrap' }} 
+                className="nav-tabs"
+                display="flex"
+                gap={{ base: 1, md: 2 }}
+                pb={2}
+              >
+                <Tab 
+                  fontSize={{ base: 'xs', md: 'md' }} 
+                  minH={{ base: '44px', md: '48px' }} 
+                  px={{ base: 2, md: 4 }}
+                  whiteSpace="nowrap"
+                  flexShrink={0}
+                >
+                  {t('moduleDetail.content') || 'Contenu'}
+                </Tab>
+                {hasSimulation && (
+                  <Tab 
+                    fontSize={{ base: 'xs', md: 'md' }} 
+                    minH={{ base: '44px', md: '48px' }} 
+                    px={{ base: 2, md: 4 }}
+                    whiteSpace="nowrap"
+                    flexShrink={0}
+                  >
+                    {t('moduleDetail.simulation')}
+                  </Tab>
+                )}
+                <Tab 
+                  fontSize={{ base: 'xs', md: 'md' }} 
+                  minH={{ base: '44px', md: '48px' }} 
+                  px={{ base: 2, md: 4 }}
+                  whiteSpace="nowrap"
+                  flexShrink={0}
+                >
+                  {t('moduleDetail.objectives')}
+                </Tab>
+                <Tab 
+                  fontSize={{ base: 'xs', md: 'md' }} 
+                  minH={{ base: '44px', md: '48px' }} 
+                  px={{ base: 2, md: 4 }}
+                  whiteSpace="nowrap"
+                  flexShrink={0}
+                >
+                  TD
+                </Tab>
+                {!hasNoTP && (
+                  <Tab 
+                    fontSize={{ base: 'xs', md: 'md' }} 
+                    minH={{ base: '44px', md: '48px' }} 
+                    px={{ base: 2, md: 4 }}
+                    whiteSpace="nowrap"
+                    flexShrink={0}
+                  >
+                    TP
+                  </Tab>
+                )}
+                <Tab 
+                  fontSize={{ base: 'xs', md: 'md' }} 
+                  minH={{ base: '44px', md: '48px' }} 
+                  px={{ base: 2, md: 4 }}
+                  whiteSpace="nowrap"
+                  flexShrink={0}
+                >
+                  Ressources
+                </Tab>
+                <Tab 
+                  fontSize={{ base: 'xs', md: 'md' }} 
+                  minH={{ base: '44px', md: '48px' }} 
+                  px={{ base: 2, md: 4 }}
+                  whiteSpace="nowrap"
+                  flexShrink={0}
+                >
+                  {t('moduleDetail.aiTutor') || 'Kaïros'}
+                </Tab>
+                {hasQuiz && (
+                  <Tab 
+                    fontSize={{ base: 'xs', md: 'md' }} 
+                    minH={{ base: '44px', md: '48px' }} 
+                    px={{ base: 2, md: 4 }}
+                    whiteSpace="nowrap"
+                    flexShrink={0}
+                  >
+                    {t('moduleDetail.quiz')}
+                  </Tab>
+                )}
               </TabList>
             </Box>
 
@@ -377,14 +478,14 @@ const ModuleDetail = () => {
             </TabPanel>
 
             {hasSimulation && (
-              <TabPanel>
-                <Box h="600px" bg="gray.900" borderRadius="lg" overflow="hidden">
+              <TabPanel px={{ base: 0, md: 0 }} pt={{ base: 4, md: 0 }}>
+                <Box h={{ base: '400px', md: '600px' }} bg="gray.900" borderRadius="lg" overflow="hidden">
                   <ImmersiveExperience module={module} />
                 </Box>
               </TabPanel>
             )}
 
-            <TabPanel>
+            <TabPanel px={{ base: 0, md: 0 }} pt={{ base: 4, md: 0 }}>
               <Card _hover={{ boxShadow: 'md' }} transition="all 0.2s">
                 <CardBody p={{ base: 4, md: 6 }}>
                   <VStack align="start" spacing={{ base: 3, md: 4 }}>
@@ -404,26 +505,26 @@ const ModuleDetail = () => {
               </Card>
             </TabPanel>
 
-            <TabPanel>
+            <TabPanel px={{ base: 0, md: 0 }} pt={{ base: 4, md: 0 }}>
               <TDList moduleId={module.id} />
             </TabPanel>
 
             {!hasNoTP && (
-              <TabPanel>
+              <TabPanel px={{ base: 0, md: 0 }} pt={{ base: 4, md: 0 }}>
                 <TPList moduleId={module.id} />
               </TabPanel>
             )}
 
-            <TabPanel>
+            <TabPanel px={{ base: 0, md: 0 }} pt={{ base: 4, md: 0 }}>
               <ResourceList moduleId={module.id} />
             </TabPanel>
 
-            <TabPanel>
+            <TabPanel px={{ base: 0, md: 0 }} pt={{ base: 4, md: 0 }}>
               <AITutor moduleId={module.id} />
             </TabPanel>
 
             {hasQuiz && (
-              <TabPanel>
+              <TabPanel px={{ base: 0, md: 0 }} pt={{ base: 4, md: 0 }}>
                 <Quiz moduleId={module.id} />
               </TabPanel>
             )}
