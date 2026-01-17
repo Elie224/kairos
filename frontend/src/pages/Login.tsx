@@ -139,11 +139,11 @@ const Login = () => {
 
   return (
     <Box
-      minH="100vh"
+      minH={{ base: 'auto', md: '100vh' }}
       display="flex"
       alignItems="center"
       justifyContent="center"
-      py={{ base: 4, md: 8 }}
+      py={{ base: 2, md: 8 }}
       px={4}
       position="relative"
       overflow="hidden"
@@ -217,9 +217,9 @@ const Login = () => {
             }}
             transition="all 0.3s"
           >
-            <VStack spacing={3} align="stretch">
+            <VStack spacing={{ base: 2, md: 3 }} align="stretch">
               {/* En-tête amélioré */}
-              <VStack spacing={2} align="center">
+              <VStack spacing={{ base: 1, md: 2 }} align="center">
                 <Box
                   p={3}
                   bgGradient="linear-gradient(135deg, blue.500 0%, blue.600 100%)"

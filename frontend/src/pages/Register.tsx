@@ -230,11 +230,11 @@ const Register = () => {
 
   return (
     <Box
-      minH="100vh"
+      minH={{ base: 'auto', md: '100vh' }}
       display="flex"
       alignItems="center"
       justifyContent="center"
-      py={{ base: 4, md: 8 }}
+      py={{ base: 2, md: 8 }}
       px={4}
       position="relative"
       overflow="hidden"
@@ -296,7 +296,7 @@ const Register = () => {
         <AnimatedBox animation="fadeInUp" delay={0.1}>
           <Box
             bg={bgColor}
-            p={{ base: 5, md: 6 }}
+            p={{ base: 3, md: 6 }}
             borderRadius="2xl"
             boxShadow="2xl"
             border="1px solid"
@@ -307,9 +307,9 @@ const Register = () => {
             }}
             transition="all 0.3s"
           >
-            <VStack spacing={4} align="stretch">
+            <VStack spacing={{ base: 2, md: 4 }} align="stretch">
               {/* En-tête amélioré */}
-              <VStack spacing={3} align="center">
+              <VStack spacing={{ base: 2, md: 3 }} align="center">
                 <Box
                   p={4}
                   bgGradient="linear-gradient(135deg, blue.500 0%, blue.600 100%)"

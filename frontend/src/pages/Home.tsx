@@ -77,11 +77,11 @@ const Home = () => {
       {/* Hero Section - Design Premium Amélioré */}
       <Box
         color="white"
-        py={{ base: 12, md: 32 }}
+        py={{ base: 6, md: 32 }}
         px={{ base: 4, md: 0 }}
         position="relative"
         overflow="hidden"
-        minH={{ base: '70vh', md: '90vh' }}
+        minH={{ base: '50vh', md: '90vh' }}
         display="flex"
         alignItems="center"
         backgroundImage="url('/background.jfif')"
@@ -179,10 +179,10 @@ const Home = () => {
             
             <AnimatedBox animation="fadeInUp" delay={0.4}>
               <VStack 
-                spacing={4} 
+                spacing={{ base: 3, md: 4 }} 
                 w="full"
                 px={{ base: 4, md: 0 }}
-                mt={4}
+                mt={{ base: 2, md: 4 }}
               >
                 <Link to="/register" style={{ width: '100%', maxWidth: '400px' }}>
                   <Button
