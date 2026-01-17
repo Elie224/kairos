@@ -31,7 +31,7 @@ const Footer: React.FC = () => {
     <Box 
       as="footer" 
       bg="gray.900"
-      color="gray.300" 
+      color="gray.100" 
       mt={20}
       position="relative"
       role="contentinfo"
@@ -67,7 +67,7 @@ const Footer: React.FC = () => {
               </Heading>
               <Text 
                 fontSize="xs" 
-                color="gray.500"
+                color="gray.300"
                 fontWeight="medium"
                 letterSpacing="wide"
                 textTransform="uppercase"
@@ -77,7 +77,7 @@ const Footer: React.FC = () => {
             </VStack>
             <Text 
               fontSize="sm" 
-              color="gray.400" 
+              color="gray.200" 
               lineHeight="1.7"
               maxW="300px"
             >
@@ -194,7 +194,8 @@ const Footer: React.FC = () => {
           {/* Copyright */}
           <Text 
             fontSize="sm" 
-            color="gray.500"
+            color="gray.300"
+            fontWeight="medium"
           >
             © {currentYear} Kaïrox. Tous droits réservés.
           </Text>
@@ -203,44 +204,49 @@ const Footer: React.FC = () => {
           <HStack 
             spacing={4}
             fontSize="sm"
-            color="gray.500"
             flexWrap="wrap"
           >
             <RouterLink 
               to="/legal/mentions-legales"
-              style={{ color: 'inherit', textDecoration: 'none' }}
+              style={{ textDecoration: 'none' }}
             >
               <Text
                 as="span"
-                _hover={{ color: 'white', textDecoration: 'none' }}
+                color="gray.300"
+                fontWeight="medium"
+                _hover={{ color: 'white', textDecoration: 'underline' }}
                 transition="color 0.2s"
                 cursor="pointer"
               >
                 Mentions légales
               </Text>
             </RouterLink>
-            <Text color="gray.700">•</Text>
+            <Text color="gray.500" fontWeight="bold">•</Text>
             <RouterLink 
               to="/legal/politique-confidentialite"
-              style={{ color: 'inherit', textDecoration: 'none' }}
+              style={{ textDecoration: 'none' }}
             >
               <Text
                 as="span"
-                _hover={{ color: 'white', textDecoration: 'none' }}
+                color="gray.300"
+                fontWeight="medium"
+                _hover={{ color: 'white', textDecoration: 'underline' }}
                 transition="color 0.2s"
                 cursor="pointer"
               >
                 Politique de confidentialité
               </Text>
             </RouterLink>
-            <Text color="gray.700">•</Text>
+            <Text color="gray.500" fontWeight="bold">•</Text>
             <RouterLink 
               to="/legal/cgu"
-              style={{ color: 'inherit', textDecoration: 'none' }}
+              style={{ textDecoration: 'none' }}
             >
               <Text
                 as="span"
-                _hover={{ color: 'white', textDecoration: 'none' }}
+                color="gray.300"
+                fontWeight="medium"
+                _hover={{ color: 'white', textDecoration: 'underline' }}
                 transition="color 0.2s"
                 cursor="pointer"
               >
@@ -255,10 +261,10 @@ const Footer: React.FC = () => {
             icon={<FiArrowUp />}
             onClick={scrollToTop}
             variant="ghost"
-            color="gray.400"
+            color="gray.200"
             bg="gray.800"
             _hover={{ 
-              bg: 'gray.700',
+              bg: 'blue.500',
               color: 'white',
               transform: 'translateY(-2px)',
             }}
