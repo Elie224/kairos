@@ -19,6 +19,7 @@ import './styles/mobile.css'
 import './styles/mobile-enhancements.css'
 import './styles/mobile-responsive-global.css'
 import './styles/bootstrap-mobile-all-pages.css'
+import './styles/mobile-complete-bootstrap.css'
 
 // Vérifier l'authentification au démarrage
 useAuthStore.getState().checkAuth()
