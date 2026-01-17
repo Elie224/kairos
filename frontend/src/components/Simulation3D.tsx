@@ -877,7 +877,6 @@ const MathematicsSimulation3D = ({ visualizationData }: { visualizationData?: an
               array={new Uint16Array(indices)}
               itemSize={1}
             />
-            <mesh.position.needsUpdate = true
           </bufferGeometry>
           <meshStandardMaterial 
             color="#805AD5" 
