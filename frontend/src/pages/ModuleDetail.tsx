@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { Container, Box, VStack, Heading, Text, Badge, Button, Tabs, TabList, TabPanels, Tab, TabPanel, Card, CardBody, Spinner, HStack } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
