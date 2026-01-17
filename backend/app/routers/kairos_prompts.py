@@ -43,11 +43,15 @@ async def generate_visualization(request: VisualizationRequest) -> Dict[str, Any
     Utilise les prompts officiels Kairos
     """
     try:
+        logger.info(f"Génération de visualisation pour subject={request.subject}, concept={request.concept}, level={request.level}")
+        
         prompt_data = KairosPromptService.get_visualization_prompt(
             subject=request.subject,
             concept=request.concept,
             level=request.level
         )
+        
+        logger.info(f"Prompt généré, longueur: {len(prompt_data.get('prompt', ''))}")
         
         # Appeler OpenAI avec le prompt
         response = await AIService.chat_with_ai(
@@ -56,12 +60,39 @@ async def generate_visualization(request: VisualizationRequest) -> Dict[str, Any
             language="fr"
         )
         
+        logger.info(f"Réponse OpenAI reçue: {bool(response)}")
+        
         # Parser la réponse JSON si possible
+        visualization_data = {}
         try:
             import json
-            visualization_data = json.loads(response.get("response", "{}"))
-        except:
-            visualization_data = {"raw_response": response.get("response", "")}
+            response_text = response.get("response", "{}")
+            # Essayer de trouver un JSON dans la réponse
+            if isinstance(response_text, str):
+                # Chercher un bloc JSON dans la réponse
+                start = response_text.find('{')
+                end = response_text.rfind('}') + 1
+                if start >= 0 and end > start:
+                    json_text = response_text[start:end]
+                    visualization_data = json.loads(json_text)
+                else:
+                    # Si pas de JSON, créer une structure par défaut
+                    visualization_data = {
+                        "explanation": response_text,
+                        "description": response_text[:200] if len(response_text) > 200 else response_text,
+                        "type": "interactive"
+                    }
+            else:
+                visualization_data = response_text
+        except Exception as parse_error:
+            logger.warning(f"Erreur lors du parsing JSON: {parse_error}, utilisation de la réponse brute")
+            visualization_data = {
+                "raw_response": response.get("response", ""),
+                "explanation": str(response.get("response", ""))[:200],
+                "type": "interactive"
+            }
+        
+        logger.info(f"Visualisation générée avec succès pour {request.subject}")
         
         return {
             "success": True,
@@ -70,9 +101,20 @@ async def generate_visualization(request: VisualizationRequest) -> Dict[str, Any
             "concept": request.concept,
             "level": request.level
         }
+    except HTTPException:
+        # Re-lancer les HTTPException telles quelles
+        raise
     except Exception as e:
+        import traceback
+        error_trace = traceback.format_exc()
         logger.error(f"Erreur lors de la génération de visualisation: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Traceback: {error_trace}")
+        
+        # Retourner une réponse d'erreur structurée
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Erreur lors de la génération de visualisation: {str(e)}"
+        )
 
 
 @router.post("/quest/generate")

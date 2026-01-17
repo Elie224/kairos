@@ -305,6 +305,8 @@ RENDER_DOMAINS = [
     "https://kairos-frontend-hjg9.onrender.com",  # Domaine actuel avec hash
     "https://kairos-backend.onrender.com",
     "https://kairos-0aoy.onrender.com",  # Backend actuel
+    # Ajouter aussi les domaines sans hash pour compatibilité
+    "https://*.onrender.com",  # Pattern générique pour tous les sous-domaines Render
 ]
 
 if settings.is_production:
