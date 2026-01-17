@@ -33,6 +33,40 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- Script pour forcer le scroll en haut au chargement -->
+    <script>
+      (function() {
+        function scrollToTop() {
+          try {
+            window.scrollTo(0, 0);
+            if (document.documentElement) {
+              document.documentElement.scrollTop = 0;
+              document.documentElement.scrollLeft = 0;
+            }
+            if (document.body) {
+              document.body.scrollTop = 0;
+              document.body.scrollLeft = 0;
+            }
+          } catch(e) {}
+        }
+        // Scroll immédiat
+        scrollToTop();
+        // Scroll après chargement DOM
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', scrollToTop);
+        } else {
+          scrollToTop();
+        }
+        // Scroll après chargement complet
+        window.addEventListener('load', function() {
+          scrollToTop();
+          setTimeout(scrollToTop, 100);
+        });
+        // Scroll après un délai supplémentaire
+        setTimeout(scrollToTop, 200);
+        setTimeout(scrollToTop, 500);
+      })();
+    </script>
   </body>
 </html>
 
