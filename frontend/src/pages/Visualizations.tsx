@@ -381,8 +381,11 @@ const Visualizations = () => {
                       Aucune visualisation disponible
                     </Text>
                     <Text color="gray.500" fontSize="sm" maxW="400px" mx="auto">
-                      Les visualisations 3D interactives sont disponibles pour les modules de Physique et Chimie. 
-                      Sélectionnez une autre matière ou revenez plus tard pour voir de nouvelles simulations.
+                      Les visualisations 3D interactives sont disponibles pour les modules de <strong>Physique</strong> et <strong>Chimie</strong>. 
+                      <br /><br />
+                      Pour voir des simulations :
+                      <br />• Sélectionnez "⚙️ Physique" ou "🧪 Chimie" dans le filtre ci-dessus
+                      <br />• Ou créez des modules de Physique/Chimie dans la section Admin
                     </Text>
                   </Box>
                 ) : (
