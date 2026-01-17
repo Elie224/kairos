@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { FiClock, FiBookOpen } from 'react-icons/fi'
 import { Module } from '../../types/module'
 import { DIFFICULTY_COLORS } from '../../constants/modules'
+import logger from '../../utils/logger'
 
 interface ModuleCardProps {
   module: Module
@@ -20,16 +21,23 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
   const navigate = useNavigate()
 
   const handleStartLearning = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
+    e.stopPropagation() // Empêcher le déclenchement du onClick du Card parent
     if (module.id) {
-      navigate(`/modules/${module.id}`)
+      // Utiliser navigate avec replace pour une navigation plus fluide
+      navigate(`/modules/${module.id}`, { replace: false })
+    } else {
+      // Logger l'erreur si module.id n'existe pas
+      logger.error('Module ID manquant pour la navigation', { module }, 'ModuleCard')
     }
   }
 
-  const handleCardClick = () => {
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Ne naviguer que si le clic n'est pas sur le bouton
+    if ((e.target as HTMLElement).closest('button')) {
+      return // Le bouton gère sa propre navigation
+    }
     if (module.id) {
-      navigate(`/modules/${module.id}`)
+      navigate(`/modules/${module.id}`, { replace: false })
     }
   }
 
@@ -64,6 +72,14 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
       borderColor="blue.100"
       cursor="pointer"
       onClick={handleCardClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          if (module.id) {
+            navigate(`/modules/${module.id}`, { replace: false })
+          }
+        }
+      }}
       position="relative"
       overflow="hidden"
       boxShadow="soft"
