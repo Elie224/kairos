@@ -17,7 +17,7 @@ import { Box, Container, Heading, Text, Button, VStack, HStack, SimpleGrid, Badg
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useEffect } from 'react'
-import { FiTarget, FiCpu, FiEye, FiZap, FiUsers, FiAward, FiArrowRight, FiPlay, FiBook, FiCheck, FiTrendingUp, FiClock, FiChevronDown, FiStar, FiMessageCircle, FiCode, FiBarChart } from 'react-icons/fi'
+import { FiTarget, FiCpu, FiEye, FiZap, FiUsers, FiAward, FiArrowRight, FiPlay, FiBook, FiCheck, FiTrendingUp, FiClock, FiChevronDown, FiStar, FiMessageCircle, FiCode, FiBarChart, FiGlobe, FiHeart } from 'react-icons/fi'
 import { AnimatedBox } from '../components/AnimatedBox'
 import { useQuery } from 'react-query'
 import api from '../services/api'
