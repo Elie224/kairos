@@ -94,38 +94,8 @@ const Visualizations = () => {
     }
   )
 
-  // Filtrer les modules avec visualisations disponibles (3D pour physique/chimie, 2D pour les autres)
-  const modulesWithVisualizations = modules?.filter(
-    (module) => {
-      const subject = module.subject?.toLowerCase() || ''
-      // Toutes les matières peuvent avoir des visualisations
-      // Physique et Chimie : simulations 3D
-      // Autres matières : visualisations 2D (graphiques, diagrammes, etc.)
-      return ['physics', 'chemistry', 'mathematics', 'biology', 'geography', 'economics', 'history', 'computer_science'].includes(subject)
-    }
-  ) || []
-
-  // Créer des modules de démonstration pour les matières sans modules réels
-  const allSubjects = ['mathematics', 'physics', 'chemistry', 'computer_science', 'biology', 'geography', 'economics', 'history']
-  const existingSubjects = new Set(modulesWithVisualizations.map(m => m.subject?.toLowerCase()))
-  
-  const demoModules: Module[] = allSubjects
-    .filter(subject => !existingSubjects.has(subject))
-    .map((subject, index) => ({
-      id: `demo-${subject}-${index}`,
-      title: getDemoModuleTitle(subject),
-      subject: subject,
-      difficulty: 'intermediate',
-      content: {
-        scene: subject === 'physics' ? 'mechanics' : subject === 'chemistry' ? 'chemical_reaction' : undefined
-      }
-    }))
-
-  // Combiner les modules réels et les modules de démonstration
-  const allModulesWithVisualizations = [...modulesWithVisualizations, ...demoModules]
-
   // Fonction pour obtenir le titre de démonstration selon la matière
-  function getDemoModuleTitle(subject: string): string {
+  const getDemoModuleTitle = (subject: string): string => {
     const titles: Record<string, string> = {
       mathematics: 'Introduction aux Fonctions Mathématiques',
       physics: 'Mécanique Classique',
@@ -138,6 +108,63 @@ const Visualizations = () => {
     }
     return titles[subject] || `Module ${subject}`
   }
+
+  // Filtrer les modules avec visualisations disponibles (3D pour physique/chimie, 2D pour les autres)
+  const modulesWithVisualizations = modules?.filter(
+    (module) => {
+      const subject = module.subject?.toLowerCase() || ''
+      // Toutes les matières peuvent avoir des visualisations
+      // Physique et Chimie : simulations 3D
+      // Autres matières : visualisations 2D (graphiques, diagrammes, etc.)
+      return ['physics', 'chemistry', 'mathematics', 'biology', 'geography', 'economics', 'history', 'computer_science'].includes(subject)
+    }
+  ) || []
+
+  // Créer des modules de démonstration pour les matières sans modules réels
+  // Toujours créer 8 modules (un par matière) pour garantir qu'il y en a toujours 8
+  const allSubjects = ['mathematics', 'physics', 'chemistry', 'computer_science', 'biology', 'geography', 'economics', 'history']
+  const existingSubjects = new Set(modulesWithVisualizations.map(m => m.subject?.toLowerCase()))
+  
+  const demoModules: Module[] = allSubjects
+    .filter(subject => !existingSubjects.has(subject))
+    .map((subject) => ({
+      id: `demo-${subject}`,
+      title: getDemoModuleTitle(subject),
+      subject: subject,
+      difficulty: 'intermediate',
+      content: {
+        scene: subject === 'physics' ? 'mechanics' : subject === 'chemistry' ? 'chemical_reaction' : undefined
+      }
+    }))
+
+  // Combiner les modules réels et les modules de démonstration
+  // Si on a moins de 8 modules, compléter avec des démos pour avoir exactement 8
+  const allModulesWithVisualizations = (() => {
+    const combined = [...modulesWithVisualizations, ...demoModules]
+    // S'assurer qu'on a exactement un module par matière (8 au total)
+    const bySubject = new Map<string, Module>()
+    combined.forEach(m => {
+      const subject = m.subject?.toLowerCase() || ''
+      if (!bySubject.has(subject)) {
+        bySubject.set(subject, m)
+      }
+    })
+    // Si on n'a pas 8 matières, compléter avec des démos
+    allSubjects.forEach(subject => {
+      if (!bySubject.has(subject)) {
+        bySubject.set(subject, {
+          id: `demo-${subject}`,
+          title: getDemoModuleTitle(subject),
+          subject: subject,
+          difficulty: 'intermediate',
+          content: {
+            scene: subject === 'physics' ? 'mechanics' : subject === 'chemistry' ? 'chemical_reaction' : undefined
+          }
+        })
+      }
+    })
+    return Array.from(bySubject.values())
+  })()
 
   const handleSelectModule = (module: Module) => {
     setSelectedModule(module)
@@ -566,19 +593,49 @@ const Visualizations = () => {
                                 color="white"
                                 opacity={0.8}
                               />
-                              <Badge
-                                position="absolute"
-                                top={2}
-                                right={2}
-                                colorScheme="whiteAlpha"
-                                bg="whiteAlpha.200"
-                                color="white"
-                                fontSize="xs"
-                                px={2}
-                                py={1}
-                              >
-                                3D
-                              </Badge>
+                              {module.id?.startsWith('demo-') ? (
+                                <Badge
+                                  position="absolute"
+                                  top={2}
+                                  right={2}
+                                  colorScheme="yellow"
+                                  bg="yellow.400"
+                                  color="white"
+                                  fontSize="xs"
+                                  px={2}
+                                  py={1}
+                                >
+                                  Démo
+                                </Badge>
+                              ) : (module.subject?.toLowerCase() === 'physics' || module.subject?.toLowerCase() === 'chemistry') ? (
+                                <Badge
+                                  position="absolute"
+                                  top={2}
+                                  right={2}
+                                  colorScheme="whiteAlpha"
+                                  bg="whiteAlpha.200"
+                                  color="white"
+                                  fontSize="xs"
+                                  px={2}
+                                  py={1}
+                                >
+                                  3D
+                                </Badge>
+                              ) : (
+                                <Badge
+                                  position="absolute"
+                                  top={2}
+                                  right={2}
+                                  colorScheme="whiteAlpha"
+                                  bg="whiteAlpha.200"
+                                  color="white"
+                                  fontSize="xs"
+                                  px={2}
+                                  py={1}
+                                >
+                                  2D
+                                </Badge>
+                              )}
                             </Box>
                             <VStack align="start" spacing={2}>
                               <Heading size="sm" noOfLines={2} color="gray.900">
