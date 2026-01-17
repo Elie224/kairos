@@ -52,7 +52,7 @@ const ModuleDetail = () => {
     ['module', id],
     async () => {
       const response = await api.get(`/modules/${id}`, {
-        timeout: 1000, // Timeout de 1 seconde
+        timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour le chargement du module
       })
       return response.data
     },

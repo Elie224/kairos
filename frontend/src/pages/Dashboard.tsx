@@ -6,6 +6,7 @@ import { FiBook, FiClock, FiTrendingUp, FiAward, FiArrowRight, FiFileText, FiMes
 import { useAuthStore } from '../store/authStore'
 import api from '../services/api'
 import { StatCardSkeleton } from '../components/SkeletonLoader'
+import { API_TIMEOUTS } from '../constants/api'
 
 interface ProgressStats {
   total_modules: number
@@ -31,7 +32,7 @@ const Dashboard = () => {
     'progress-stats',
     async () => {
       const response = await api.get('/progress/stats', {
-        timeout: 1000, // Timeout de 1 seconde
+        timeout: API_TIMEOUTS.SIMPLE, // 10 secondes pour les stats
       })
       return response.data
     },
@@ -50,7 +51,7 @@ const Dashboard = () => {
     'modules',
     async () => {
       const response = await api.get('/modules/', {
-        timeout: 1000, // Timeout de 1 seconde
+        timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour les modules/progress
         params: { limit: 30 }, // Limiter à 30 modules pour la performance
       })
       return response.data
@@ -70,7 +71,7 @@ const Dashboard = () => {
     'progress',
     async () => {
       const response = await api.get('/progress/', {
-        timeout: 1000, // Timeout de 1 seconde
+        timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour les modules/progress
         params: { limit: 10 }, // Limiter à 10 pour la performance
       })
       return response.data
@@ -90,7 +91,7 @@ const Dashboard = () => {
     'validated-modules',
     async () => {
       const response = await api.get('/validations/modules', {
-        timeout: 1000, // Timeout de 1 seconde
+        timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour les modules/progress
       })
       return response.data as string[]
     },
@@ -109,7 +110,7 @@ const Dashboard = () => {
     'history-stats',
     async () => {
       const response = await api.get('/user-history/stats', {
-        timeout: 1000, // Timeout de 1 seconde
+        timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour les modules/progress
       })
       return response.data
     },

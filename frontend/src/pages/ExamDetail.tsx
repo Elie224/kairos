@@ -23,7 +23,7 @@ const ExamDetail = () => {
       setLoadingPrerequisites(true)
       try {
         const response = await api.get(`/exams/module/${moduleId}/prerequisites`, {
-          timeout: 1000, // Timeout de 1 seconde
+          timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour prerequisites/exam
         })
         setPrerequisites(response.data)
       } catch (error) {

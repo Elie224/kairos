@@ -36,6 +36,7 @@ import { useQuery } from 'react-query'
 import api from '../services/api'
 import { useAuthStore } from '../store/authStore'
 import { StatCardSkeleton } from '../components/SkeletonLoader'
+import { API_TIMEOUTS } from '../constants/api'
 
 const Gamification = () => {
   const { user } = useAuthStore()
@@ -44,7 +45,7 @@ const Gamification = () => {
     'badge-count',
     async () => {
       const response = await api.get('/badges/count', {
-        timeout: 1000, // Timeout de 1 seconde
+        timeout: API_TIMEOUTS.SIMPLE, // 10 secondes pour badges/quests/leaderboard
       })
       return response.data?.count || 0
     },
@@ -59,7 +60,7 @@ const Gamification = () => {
     'all-badges',
     async () => {
       const response = await api.get('/badges/', {
-        timeout: 1000, // Timeout de 1 seconde
+        timeout: API_TIMEOUTS.SIMPLE, // 10 secondes pour badges/quests/leaderboard
       })
       return response.data || []
     },
@@ -74,7 +75,7 @@ const Gamification = () => {
     'user-quests',
     async () => {
       const response = await api.get('/gamification/quests', {
-        timeout: 1000, // Timeout de 1 seconde
+        timeout: API_TIMEOUTS.SIMPLE, // 10 secondes pour badges/quests/leaderboard
         params: { limit: 10 },
       })
       return response.data || []
@@ -90,7 +91,7 @@ const Gamification = () => {
     ['leaderboard', 'points'],
     async () => {
       const response = await api.get('/gamification/leaderboard', {
-        timeout: 1000, // Timeout de 1 seconde
+        timeout: API_TIMEOUTS.SIMPLE, // 10 secondes pour badges/quests/leaderboard
         params: {
           leaderboard_type: 'points',
           limit: 100,

@@ -9,6 +9,7 @@ import { AnimatedBox } from '../components/AnimatedBox'
 import { useQuery } from 'react-query'
 import api from '../services/api'
 import { useAuthStore } from '../store/authStore'
+import { API_TIMEOUTS } from '../constants/api'
 
 const Home = () => {
   const { t } = useTranslation()
@@ -21,7 +22,7 @@ const Home = () => {
     async () => {
           try {
             const response = await api.get('/auth/stats', {
-              timeout: 1000, // Timeout de 1 seconde
+              timeout: API_TIMEOUTS.SIMPLE, // 10 secondes pour les stats home
             })
             return response.data
           } catch {

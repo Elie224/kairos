@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import api from '../services/api'
+import logger from '../utils/logger'
 
 export interface User {
   id: string
@@ -51,19 +52,19 @@ export const useAuthStore = create<AuthState>()(
       login: async (email: string, password: string) => {
         set({ isLoading: true })
         try {
-          console.log('Tentative de connexion pour email:', email)
+          logger.debug('Tentative de connexion', { email }, 'AuthStore')
           // OAuth2PasswordRequestForm attend application/x-www-form-urlencoded
           const params = new URLSearchParams()
           params.append('username', email)
           params.append('password', password)
 
-          console.log('Envoi de la requête de login avec params:', { username: email, password: '***' })
+          logger.debug('Envoi de la requête de login', { email }, 'AuthStore')
           const response = await api.post('/auth/login', params, {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            timeout: 10000, // 10 secondes pour login (peut être lent sur serveur hébergé)
+            timeout: 30000, // 30 secondes pour login (suffisant pour serveurs avec cold start)
           })
 
-          console.log('Réponse de login reçue:', { hasToken: !!response.data?.access_token, hasUser: !!response.data?.user })
+          logger.info('Réponse de login reçue', { hasToken: !!response.data?.access_token, hasUser: !!response.data?.user }, 'AuthStore')
           const { access_token, user } = response.data
           
           // Mettre à jour le header Authorization
@@ -77,6 +78,7 @@ export const useAuthStore = create<AuthState>()(
           })
         } catch (error: any) {
           set({ isLoading: false })
+          logger.error('Erreur lors de la connexion', error, 'AuthStore')
           throw error
         }
       },
@@ -95,9 +97,9 @@ export const useAuthStore = create<AuthState>()(
             password: data.password,
           }
 
-          console.log('Tentative d\'inscription avec payload:', { ...payload, password: '***' })
+          logger.debug('Tentative d\'inscription', { email: payload.email, username: payload.username }, 'AuthStore')
           const response = await api.post('/auth/register', payload, {
-            timeout: 10000, // 10 secondes pour register (peut être lent sur serveur hébergé)
+            timeout: 30000, // 30 secondes pour register (suffisant pour serveurs avec cold start)
           })
           const user = response.data
 
@@ -105,11 +107,11 @@ export const useAuthStore = create<AuthState>()(
             throw new Error('Réponse invalide du serveur')
           }
 
-          console.log('Inscription réussie:', user.id)
+          logger.info('Inscription réussie', { userId: user.id }, 'AuthStore')
           set({ user, isAuthenticated: false, isLoading: false })
         } catch (error: any) {
           set({ isLoading: false })
-          console.error('Erreur lors de l\'inscription:', error)
+          logger.error('Erreur lors de l\'inscription', error, 'AuthStore')
           // Améliorer le message d'erreur
           if (error.response?.status === 400) {
             const errorMessage = error.response?.data?.detail || 'Données invalides'
@@ -154,7 +156,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           api.defaults.headers.common['Authorization'] = `Bearer ${token}`
           const response = await api.get('/auth/me', {
-            timeout: 10000, // 10 secondes pour vérifier l'auth (peut être lent sur serveur hébergé)
+            timeout: 30000, // 30 secondes pour vérifier l'auth (suffisant pour serveurs avec cold start)
           })
           set({
             user: response.data,

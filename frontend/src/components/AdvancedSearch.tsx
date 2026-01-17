@@ -27,6 +27,7 @@ import { SearchIcon, XIcon } from '@chakra-ui/icons'
 import { FiFilter, FiX, FiClock, FiTrendingUp } from 'react-icons/fi'
 import { useQuery } from 'react-query'
 import api from '../services/api'
+import { API_TIMEOUTS } from '../constants/api'
 import { useDebounce } from '../hooks/useDebounce'
 
 interface SearchSuggestion {
@@ -81,7 +82,7 @@ export const AdvancedSearch = ({
       
       try {
         const response = await api.get('/modules/', {
-          timeout: 1000, // Timeout de 1 seconde
+          timeout: API_TIMEOUTS.SIMPLE, // 10 secondes pour les suggestions de recherche
           params: {
             search: debouncedQuery,
             limit: 10, // Limiter à 10 suggestions

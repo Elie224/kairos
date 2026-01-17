@@ -20,16 +20,18 @@ const getBaseURL = () => {
   return '/api'
 }
 
+import { API_TIMEOUTS } from '../constants/api'
+
 const api = axios.create({
   baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 1000, // Timeout de 1 seconde par défaut
+  timeout: API_TIMEOUTS.DEFAULT, // Timeout par défaut (30 secondes)
 })
 
-// Timeout pour les uploads de fichiers (1 seconde comme demandé)
-const FILE_UPLOAD_TIMEOUT = 1000 // 1 seconde
+// Timeout pour les uploads de fichiers
+const FILE_UPLOAD_TIMEOUT = API_TIMEOUTS.FILE_UPLOAD // 2 minutes pour les uploads
 
 // Initialiser l'authentification depuis le localStorage
 const initializeAuth = () => {

@@ -3,6 +3,7 @@
  * Optimisé pour 100k utilisateurs
  */
 import api from './api'
+import logger from '../utils/logger'
 
 // Helper pour obtenir l'URL de base de l'API pour fetch (streaming SSE)
 // fetch est nécessaire pour le streaming Server-Sent Events, axios ne supporte pas bien le streaming natif
@@ -174,10 +175,8 @@ class ChatService {
                 options.onChunk?.(parsed.content)
               }
             } catch (e) {
-              // Ignorer les erreurs de parsing pour les données malformées
-              if (import.meta.env.DEV) {
-                console.warn('Erreur de parsing SSE:', e, 'Data:', data)
-              }
+              // Ignorer les erreurs de parsing pour les données malformées (logger en dev uniquement)
+              logger.warn('Erreur de parsing SSE', { error: e, data }, 'ChatService')
             }
           }
         }
@@ -504,7 +503,8 @@ class ChatService {
       
       return []
     } catch (error) {
-      console.error('Erreur lors du chargement de l\'historique:', error)
+      // Logger l'erreur de manière centralisée
+      logger.error('Erreur lors du chargement de l\'historique', error, 'ChatService')
       return []
     }
   }

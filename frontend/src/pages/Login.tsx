@@ -28,6 +28,7 @@ import { useNotification } from '../components/NotificationProvider'
 import { validateEmail } from '../utils/formValidation'
 import { AnimatedBox } from '../components/AnimatedBox'
 import { Onboarding } from '../components/Onboarding'
+import logger from '../utils/logger'
 
 const Login = () => {
   const { t } = useTranslation()
@@ -103,11 +104,36 @@ const Login = () => {
       showNotification('Connexion réussie ! Bienvenue sur Kaïros.', 'success')
       navigate('/dashboard')
     } catch (err: any) {
-      const errorMessage = err.response?.data?.detail || 
-        err.message || 
-        'Email ou mot de passe incorrect'
+      // Logger l'erreur de manière centralisée
+      logger.error('Erreur lors de la connexion', err, 'Login')
+      
+      // Déterminer un message d'erreur approprié pour l'utilisateur
+      let errorMessage = 'Email ou mot de passe incorrect'
+      
+      if (err.response) {
+        // Erreur avec réponse du serveur
+        if (err.response.status === 401) {
+          errorMessage = 'Email ou mot de passe incorrect'
+        } else if (err.response.status === 429) {
+          errorMessage = 'Trop de tentatives. Veuillez réessayer plus tard.'
+        } else if (err.response.status >= 500) {
+          errorMessage = 'Erreur serveur. Veuillez réessayer dans quelques instants.'
+        } else if (err.response.data?.detail) {
+          errorMessage = err.response.data.detail
+        }
+      } else if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        // Timeout - le serveur prend trop de temps à répondre
+        errorMessage = 'Le serveur prend trop de temps à répondre. Veuillez réessayer.'
+      } else if (err.message) {
+        // Autre erreur avec message
+        if (err.message.includes('Network Error') || err.message.includes('ERR_NETWORK')) {
+          errorMessage = 'Erreur de connexion au serveur. Vérifiez votre connexion internet.'
+        } else {
+          errorMessage = err.message
+        }
+      }
+      
       setError(errorMessage)
-      console.error('Erreur de connexion:', err)
     }
   }
 

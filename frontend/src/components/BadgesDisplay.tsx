@@ -20,6 +20,8 @@ import {
 import { FiAward, FiStar, FiTarget, FiZap, FiBook, FiTrendingUp } from 'react-icons/fi'
 import api from '../services/api'
 import { useAuthStore } from '../store/authStore'
+import { API_TIMEOUTS } from '../constants/api'
+import logger from '../utils/logger'
 
 interface BadgeData {
   id: string
@@ -81,11 +83,12 @@ export const BadgesDisplay = ({ limit = 8 }: { limit?: number }) => {
     async () => {
       try {
         const response = await api.get('/badges/', {
-          timeout: 1000, // Timeout de 1 seconde
+          timeout: API_TIMEOUTS.SIMPLE, // 10 secondes pour les badges
         })
         return response.data || []
       } catch (error) {
-        console.error('Erreur lors de la récupération des badges:', error)
+        // Logger l'erreur de manière centralisée
+        logger.error('Erreur lors de la récupération des badges', error, 'BadgesDisplay')
         return []
       }
     },

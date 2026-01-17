@@ -1,0 +1,457 @@
+/**
+ * Mobile Responsive Global - CSS pour améliorer toutes les pages sur mobile
+ * Styles Bootstrap-like pour une expérience mobile optimale
+ */
+
+/* ============================================
+   GLOBAL MOBILE OVERRIDES - CHAKRA UI
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Container responsive */
+  .chakra-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* VStack - Espacement réduit sur mobile */
+  .chakra-stack--v,
+  .chakra-vstack {
+    gap: 1rem !important;
+    padding: 0 !important;
+  }
+
+  /* HStack - Flex-wrap sur mobile */
+  .chakra-stack--h,
+  .chakra-hstack {
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+  }
+
+  /* SimpleGrid - 1 colonne sur mobile */
+  .chakra-simple-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Cards - Padding réduit sur mobile */
+  .chakra-card,
+  [class*="Card"] {
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    border-radius: 1rem !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* CardBody - Padding réduit */
+  .chakra-card__body {
+    padding: 1rem !important;
+  }
+
+  /* Headings - Tailles réduites */
+  h1,
+  .chakra-heading--2xl,
+  .chakra-heading--xl {
+    font-size: 1.75rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  h2,
+  .chakra-heading--xl,
+  .chakra-heading--lg {
+    font-size: 1.5rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 0.625rem !important;
+  }
+
+  h3,
+  .chakra-heading--lg {
+    font-size: 1.25rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Text - Lisible sur mobile */
+  .chakra-text {
+    font-size: 0.9375rem !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Badges - Plus compacts */
+  .chakra-badge {
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.5rem !important;
+  }
+
+  /* Buttons - Full width sur mobile */
+  .chakra-button {
+    min-height: 48px !important;
+    width: 100% !important;
+    font-size: 1rem !important;
+    padding: 0.875rem 1.5rem !important;
+    border-radius: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* Button groups - Stack vertical */
+  .chakra-button__group {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  /* Buttons dans les groupes - Pas de marge sur le dernier */
+  .chakra-button__group .chakra-button:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  /* Select - Full width et taille optimale */
+  .chakra-select {
+    width: 100% !important;
+    min-height: 48px !important;
+    font-size: 16px !important; /* Évite zoom iOS */
+    padding: 0.875rem 1rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  /* Tabs - Scroll horizontal */
+  .chakra-tabs {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .chakra-tabs::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .chakra-tabs__tab-list {
+    flex-wrap: nowrap !important;
+    padding: 0 1rem !important;
+  }
+
+  .chakra-tabs__tab {
+    min-height: 48px !important;
+    padding: 0.875rem 1rem !important;
+    font-size: 0.9375rem !important;
+    white-space: nowrap !important;
+  }
+
+  /* Stat - Plus compact */
+  .chakra-stat {
+    padding: 1rem !important;
+  }
+
+  .chakra-stat__label {
+    font-size: 0.875rem !important;
+  }
+
+  .chakra-stat__number {
+    font-size: 1.75rem !important;
+  }
+
+  /* Alerts - Padding réduit */
+  .chakra-alert {
+    padding: 1rem !important;
+    border-radius: 0.75rem !important;
+    font-size: 0.9375rem !important;
+  }
+
+  /* Progress - Plus visible */
+  .chakra-progress {
+    height: 8px !important;
+    border-radius: 4px !important;
+  }
+
+  /* Divider - Margin réduit */
+  .chakra-divider {
+    margin: 1rem 0 !important;
+  }
+
+  /* Skeleton - Plus petits */
+  .chakra-skeleton {
+    border-radius: 0.75rem !important;
+  }
+
+  /* Images - Responsive */
+  img,
+  .chakra-image {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Sections - Padding réduit */
+  section,
+  [data-section] {
+    padding: 1.5rem 1rem !important;
+  }
+
+  /* Hero sections - Hauteur réduite */
+  [data-hero="true"],
+  [class*="hero"] {
+    min-height: 60vh !important;
+    padding: 2rem 1rem !important;
+  }
+
+  /* Navigation - Sticky */
+  nav,
+  [role="navigation"],
+  .chakra-nav {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    padding: 0.75rem 1rem !important;
+    backdrop-filter: blur(10px) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Footer - Compact */
+  footer,
+  .chakra-footer {
+    padding: 2rem 1rem !important;
+    text-align: center !important;
+  }
+
+  /* Modals - Full screen sur mobile */
+  .chakra-modal__content-container {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .chakra-modal__content {
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    padding: 1rem !important;
+  }
+
+  /* Drawers - Full width */
+  .chakra-drawer__content {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 0 !important;
+  }
+}
+
+/* ============================================
+   SPECIFIC COMPONENTS - MOBILE OPTIMIZATION
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Module Cards - Full width */
+  [class*="ModuleCard"],
+  [class*="module-card"] {
+    width: 100% !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Filter Bar - Stack vertical */
+  [class*="FilterBar"],
+  [class*="filter-bar"] {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  /* Simulation 3D - Hauteur ajustée */
+  [class*="Simulation3D"],
+  [class*="simulation-3d"] {
+    height: 400px !important;
+    max-height: 50vh !important;
+  }
+
+  /* Badges Display - Grid responsive */
+  [class*="BadgesDisplay"],
+  [class*="badges-display"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Leaderboard - Cards sur mobile */
+  [class*="LeaderboardDisplay"],
+  [class*="leaderboard-display"] {
+    display: block !important;
+  }
+
+  [class*="LeaderboardDisplay"] table,
+  [class*="leaderboard-display"] table {
+    display: none !important;
+  }
+
+  [class*="LeaderboardDisplay"] .leaderboard-mobile-cards {
+    display: block !important;
+  }
+
+  /* Quests Display - Cards */
+  [class*="QuestsDisplay"],
+  [class*="quests-display"] {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  /* Dashboard Stats - 1 colonne */
+  [class*="Dashboard"] .chakra-simple-grid,
+  [class*="dashboard"] .chakra-simple-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Home Hero - Hauteur optimisée */
+  [class*="Home"] [data-hero="true"],
+  [class*="home"] [data-hero="true"] {
+    min-height: 70vh !important;
+    padding: 2rem 1rem !important;
+  }
+
+  /* Visualizations - Filtres stack */
+  [class*="Visualizations"] .chakra-hstack,
+  [class*="visualizations"] .chakra-hstack {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  /* Gamification - Tabs scrollables */
+  [class*="Gamification"] .chakra-tabs__tab-list,
+  [class*="gamification"] .chakra-tabs__tab-list {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+/* ============================================
+   TOUCH TARGETS - ACCESSIBILITY
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Tous les éléments cliquables - Minimum 48px */
+  button,
+  a,
+  [role="button"],
+  .chakra-button,
+  [class*="btn"] {
+    min-height: 48px !important;
+    min-width: 48px !important;
+  }
+
+  /* Feedback tactile */
+  button:active,
+  a:active,
+  [role="button"]:active,
+  .chakra-button:active {
+    transform: scale(0.96) !important;
+    opacity: 0.9 !important;
+    transition: transform 0.1s ease !important;
+  }
+
+  /* Désactiver sélection de texte */
+  button,
+  .chakra-button,
+  [role="button"] {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+  }
+}
+
+/* ============================================
+   SAFE AREA (iPhone X+) - NOTCHES
+   ============================================ */
+
+@supports (padding: max(0px)) {
+  @media (max-width: 768px) {
+    nav,
+    [role="navigation"] {
+      padding-top: max(0.75rem, env(safe-area-inset-top)) !important;
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
+      padding-left: max(1rem, env(safe-area-inset-left)) !important;
+      padding-right: max(1rem, env(safe-area-inset-right)) !important;
+    }
+
+    footer,
+    .chakra-footer {
+      padding-bottom: max(2rem, env(safe-area-inset-bottom)) !important;
+      padding-left: max(1rem, env(safe-area-inset-left)) !important;
+      padding-right: max(1rem, env(safe-area-inset-right)) !important;
+    }
+
+    [data-hero="true"],
+    [class*="hero"] {
+      padding-top: max(2rem, env(safe-area-inset-top)) !important;
+      padding-bottom: max(2rem, env(safe-area-inset-bottom)) !important;
+    }
+  }
+}
+
+/* ============================================
+   PERFORMANCE - REDUCED MOTION
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   UTILITIES - HELPER CLASSES
+   ============================================ */
+
+/* Masquer sur mobile */
+@media (max-width: 768px) {
+  .hide-mobile,
+  [data-hide-mobile="true"] {
+    display: none !important;
+  }
+}
+
+/* Afficher uniquement sur mobile */
+@media (min-width: 769px) {
+  .show-mobile-only,
+  [data-show-mobile-only="true"] {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .show-mobile-only,
+  [data-show-mobile-only="true"] {
+    display: block !important;
+  }
+}
+
+/* Text center sur mobile */
+@media (max-width: 768px) {
+  .text-center-mobile,
+  [data-text-center-mobile="true"] {
+    text-align: center !important;
+  }
+}
+
+/* Full width sur mobile */
+@media (max-width: 768px) {
+  .full-width-mobile,
+  [data-full-width-mobile="true"] {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Stack vertical sur mobile */
+@media (max-width: 768px) {
+  .stack-mobile,
+  [data-stack-mobile="vertical"] {
+    flex-direction: column !important;
+  }
+}

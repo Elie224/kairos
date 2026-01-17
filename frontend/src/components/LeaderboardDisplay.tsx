@@ -46,7 +46,7 @@ export const LeaderboardDisplay = ({ limit = 10 }: { limit?: number }) => {
     async () => {
       try {
         const response = await api.get('/gamification/leaderboard', {
-          timeout: 1000, // Timeout de 1 seconde
+          timeout: API_TIMEOUTS.SIMPLE, // 10 secondes pour le leaderboard
           params: {
             leaderboard_type: leaderboardType,
             limit,

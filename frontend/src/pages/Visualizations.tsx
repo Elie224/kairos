@@ -38,6 +38,7 @@ import Simulation3D from '../components/Simulation3D'
 import { useQuery } from 'react-query'
 import api from '../services/api'
 import { useAuthStore } from '../store/authStore'
+import logger from '../utils/logger'
 
 interface Module {
   id: string
@@ -87,7 +88,8 @@ const Visualizations = () => {
         
         return filteredData
       } catch (err) {
-        console.error('Erreur lors de la récupération des modules:', err)
+        // Logger l'erreur de manière centralisée
+        logger.error('Erreur lors de la récupération des modules', err, 'Visualizations')
         return []
       }
     },
@@ -460,7 +462,8 @@ const Visualizations = () => {
                               }))
                             }
                           } catch (err) {
-                            console.error('Erreur lors de la génération de visualisation:', err)
+                            // Logger l'erreur de manière centralisée
+                            logger.error('Erreur lors de la génération de visualisation', err, 'Visualizations')
                           }
                         }}
                       />

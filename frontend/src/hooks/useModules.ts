@@ -7,6 +7,7 @@ import { Module, ModuleFilters, GroupedModules } from '../types/module'
 import { SUBJECT_ORDER } from '../constants/modules'
 import { useMemo } from 'react'
 import { useDebounce } from './useDebounce'
+import { API_TIMEOUTS } from '../constants/api'
 
 export const useModules = (filters: Partial<ModuleFilters> = {}) => {
   // Debounce la recherche pour éviter trop de requêtes
@@ -16,7 +17,7 @@ export const useModules = (filters: Partial<ModuleFilters> = {}) => {
     ['modules', 'all'],
     async () => {
       const response = await api.get('/modules/', {
-        timeout: 1000, // Timeout de 1 seconde
+        timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour les modules
         params: { limit: 100 }, // Limiter les résultats
       })
       return response.data
@@ -38,7 +39,7 @@ export const useModules = (filters: Partial<ModuleFilters> = {}) => {
       if (filters.subject) params.append('subject', filters.subject)
       if (debouncedSearchQuery) params.append('search', debouncedSearchQuery)
       const response = await api.get(`/modules/?${params.toString()}`, {
-        timeout: 1000, // Timeout de 1 seconde
+        timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour les modules
         params: { limit: 100 }, // Limiter les résultats
       })
       return response.data

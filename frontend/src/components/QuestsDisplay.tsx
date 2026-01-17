@@ -49,7 +49,7 @@ export const QuestsDisplay = ({ limit = 5 }: { limit?: number }) => {
     async () => {
       try {
         const response = await api.get('/gamification/quests', {
-          timeout: 1000, // Timeout de 1 seconde
+          timeout: API_TIMEOUTS.SIMPLE, // 10 secondes pour les quêtes
           params: { limit },
         })
         return response.data || []

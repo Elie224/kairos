@@ -3,6 +3,7 @@ import { Box, VStack, HStack, Input, Button, Text, Card, CardBody, Badge, Spinne
 import { useTranslation } from 'react-i18next'
 import { FiSend, FiX, FiMessageCircle, FiPaperclip } from 'react-icons/fi'
 import { chatService, ChatMessage } from '../services/chatService'
+import logger from '../utils/logger'
 
 interface AITutorProps {
   moduleId: string
@@ -64,8 +65,8 @@ const AITutor = ({ moduleId }: AITutorProps) => {
           setMessages(historyMessages)
         }
       } catch (error) {
-        console.error('Erreur lors du chargement de l\'historique:', error)
-        // Ne pas bloquer l'interface si l'historique ne peut pas être chargé
+        // Logger l'erreur de manière centralisée (ne pas bloquer l'interface)
+        logger.error('Erreur lors du chargement de l\'historique', error, 'AITutor')
       }
     }
     
@@ -152,7 +153,8 @@ const AITutor = ({ moduleId }: AITutorProps) => {
               setAttachedFiles([])
             },
             onError: (error) => {
-              console.error('Erreur chat:', error)
+              // Logger l'erreur de manière centralisée
+              logger.error('Erreur chat avec fichiers', error, 'AITutor')
               setError(error instanceof Error ? error.message : 'Une erreur est survenue lors de la communication avec Kaïrox')
               setIsStreaming(false)
               setCurrentStreamingMessage('')
@@ -196,7 +198,8 @@ const AITutor = ({ moduleId }: AITutorProps) => {
         })
       }
     } catch (error) {
-      console.error('Erreur:', error)
+      // Logger l'erreur de manière centralisée
+      logger.error('Erreur lors de l\'envoi du message', error, 'AITutor')
       setError(error instanceof Error ? error.message : 'Une erreur est survenue. Veuillez réessayer.')
       setIsStreaming(false)
       setCurrentStreamingMessage('')

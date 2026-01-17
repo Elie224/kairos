@@ -11,10 +11,13 @@ import { LogoColorProvider } from './components/LogoColorProvider'
 import { AccessibilityProvider } from './components/AccessibilityProvider'
 import { useAuthStore } from './store/authStore'
 import { cacheConfigs } from './services/cacheService'
+import { handleMutationError } from './utils/errorHandler'
 import './i18n/config'
 import './styles/animations.css'
 import './styles/mobile.css'
 import './styles/mobile-enhancements.css'
+import './styles/mobile-responsive-global.css'
+import './styles/bootstrap-mobile-all-pages.css'
 
 // Vérifier l'authentification au démarrage
 useAuthStore.getState().checkAuth()
@@ -34,10 +37,8 @@ const queryClient = new QueryClient({
     },
     mutations: {
       retry: 1,
-      // Optimiser les mutations
-      onError: (error) => {
-        console.error('Mutation error:', error)
-      },
+      // Optimiser les mutations - Utiliser le gestionnaire d'erreurs centralisé
+      onError: handleMutationError,
     },
   },
 })
