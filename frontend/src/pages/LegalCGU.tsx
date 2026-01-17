@@ -2,10 +2,17 @@
  * Page Conditions Générales d'Utilisation (CGU)
  */
 import { Box, Container, VStack, Heading, Text, Divider } from '@chakra-ui/react'
+import { useEffect } from 'react'
 
 const LegalCGU = () => {
+  // S'assurer que la page se rend immédiatement
+  useEffect(() => {
+    // Scroll en haut au chargement
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [])
+
   return (
-    <Box py={{ base: 8, md: 12 }} minH="80vh">
+    <Box py={{ base: 8, md: 12 }} minH="80vh" w="100%">
       <Container maxW="900px">
         <VStack spacing={8} align="stretch">
           <VStack spacing={4} align="start">

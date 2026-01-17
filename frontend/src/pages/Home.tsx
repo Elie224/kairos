@@ -71,6 +71,7 @@ const Home = () => {
    * Chargement des statistiques dynamiques pour la page d'accueil
    * Affiche le nombre d'utilisateurs, modules et utilisateurs actifs si disponibles
    * Ces stats ne sont chargées que si l'utilisateur est authentifié
+   * IMPORTANT: Ne pas bloquer le rendu initial - les stats sont optionnelles
    */
   const { data: stats, isLoading: statsLoading } = useQuery(
     'home-stats',
@@ -92,6 +93,8 @@ const Home = () => {
       enabled: isAuthenticated,
       retry: false,
       // Ne pas bloquer l'affichage si non authentifié
+      // Ne pas attendre le chargement pour rendre la page
+      suspense: false,
     }
   )
 
@@ -103,8 +106,9 @@ const Home = () => {
     navigate('/modules')
   }
 
+  // S'assurer que le contenu se rend immédiatement, même si les stats ne sont pas encore chargées
   return (
-    <Box minH="100vh" position="relative" bg="gray.50">
+    <Box minH="100vh" position="relative" bg="gray.50" w="100%">
       {/* Hero Section - Design Premium Amélioré */}
       <Box
         color="white"
@@ -121,6 +125,7 @@ const Home = () => {
         backgroundRepeat="no-repeat"
         data-hero="true"
         id="hero-section"
+        w="100%"
       >
         {/* Overlay sombre pour améliorer la lisibilité */}
         <Box
