@@ -119,7 +119,7 @@ def _get_temperature_param(model: str, temperature_value: float) -> dict:
         return {"temperature": temperature_value}
 
 
-def _get_system_prompt(language: str = "fr", expert_mode: bool = False, research_mode: bool = False) -> str:
+def _get_system_prompt(language: str = "fr", expert_mode: bool = False, research_mode: bool = False, use_kairos_prompt: bool = True) -> str:
     """Génère le prompt système selon la langue et le mode"""
     if research_mode:
         # Mode Research AI avec GPT-5.2 Pro

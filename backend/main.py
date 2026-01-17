@@ -29,7 +29,7 @@ except ImportError:
     # Redis est optionnel
     init_redis = None
     close_redis = None
-from app.routers import auth, modules, ai_tutor, progress, badges, favorites, recommendations, support, quiz, exam, validation, td, tp, adaptive_learning, pathways, exercise_generator, error_learning, analytics, anti_cheat, virtual_labs, avatar, gamification, collaboration, gdpr, subscriptions, prompt_router, user_history, resources, openai_content, feedback, pedagogical_memory
+from app.routers import auth, modules, ai_tutor, progress, badges, favorites, recommendations, support, quiz, exam, validation, td, tp, adaptive_learning, pathways, exercise_generator, error_learning, analytics, anti_cheat, virtual_labs, avatar, gamification, collaboration, gdpr, subscriptions, prompt_router, user_history, resources, openai_content, feedback, pedagogical_memory, kairos_prompts
 from app.middleware.error_handler import (
     validation_exception_handler,
     http_exception_handler,
