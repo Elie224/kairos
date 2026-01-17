@@ -559,6 +559,163 @@ const Home = () => {
         </Container>
       </Box>
 
+      {/* Section Vision & Objectifs - Nouvelle */}
+      <Box 
+        bgGradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+        py={{ base: 12, md: 20 }}
+        position="relative"
+        overflow="hidden"
+      >
+        <Box
+          position="absolute"
+          top="0"
+          left="0"
+          right="0"
+          bottom="0"
+          bgGradient="radial(circle at 30% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 60%)"
+        />
+        <Container maxW="1200px" position="relative" zIndex={1}>
+          <VStack spacing={8} textAlign="center">
+            <Badge 
+              fontSize={{ base: 'sm', md: 'md' }} 
+              px={4} 
+              py={2} 
+              borderRadius="full"
+              bg="whiteAlpha.300"
+              color="white"
+              fontWeight="700"
+              boxShadow="md"
+              backdropFilter="blur(10px)"
+            >
+              💡 Notre Vision & Objectifs
+            </Badge>
+            
+            <Heading 
+              size={{ base: 'xl', md: '2xl', lg: '3xl' }} 
+              color="white"
+              fontWeight="extrabold"
+              letterSpacing="tight"
+              maxW="900px"
+            >
+              Révolutionner l'Apprentissage pour 100 000 Utilisateurs
+            </Heading>
+
+            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8} w="full" mt={8}>
+              {/* Vision */}
+              <AnimatedBox animation="fadeInUp" delay={0.1}>
+                <Card
+                  bg="whiteAlpha.95"
+                  backdropFilter="blur(20px)"
+                  borderRadius="2xl"
+                  boxShadow="xl"
+                  p={8}
+                  height="100%"
+                  _hover={{
+                    transform: 'translateY(-4px)',
+                    boxShadow: '2xl',
+                  }}
+                  transition="all 0.3s"
+                >
+                  <VStack spacing={6} align="start">
+                    <Box
+                      p={4}
+                      bgGradient="linear(to-br, blue.400, blue.600)"
+                      borderRadius="xl"
+                      boxShadow="lg"
+                    >
+                      <Icon as={FiGlobe} boxSize={8} color="white" />
+                    </Box>
+                    <Heading size="lg" color="gray.900" fontWeight="700">
+                      Notre Vision
+                    </Heading>
+                    <Text 
+                      color="gray.700" 
+                      lineHeight="1.9" 
+                      fontSize="md"
+                      textAlign="left"
+                    >
+                      Kaïrox a pour ambition de démocratiser l'accès à une éducation de qualité grâce à l'intelligence artificielle. Nous visons à créer une plateforme d'apprentissage immersive qui s'adapte à chaque apprenant, rendant l'éducation accessible, engageante et efficace pour tous, quel que soit leur niveau ou leur localisation géographique.
+                    </Text>
+                  </VStack>
+                </Card>
+              </AnimatedBox>
+
+              {/* Objectif */}
+              <AnimatedBox animation="fadeInUp" delay={0.2}>
+                <Card
+                  bg="whiteAlpha.95"
+                  backdropFilter="blur(20px)"
+                  borderRadius="2xl"
+                  boxShadow="xl"
+                  p={8}
+                  height="100%"
+                  _hover={{
+                    transform: 'translateY(-4px)',
+                    boxShadow: '2xl',
+                  }}
+                  transition="all 0.3s"
+                >
+                  <VStack spacing={6} align="start">
+                    <Box
+                      p={4}
+                      bgGradient="linear(to-br, purple.400, purple.600)"
+                      borderRadius="xl"
+                      boxShadow="lg"
+                    >
+                      <Icon as={FiTarget} boxSize={8} color="white" />
+                    </Box>
+                    <Heading size="lg" color="gray.900" fontWeight="700">
+                      Notre Objectif
+                    </Heading>
+                    <VStack spacing={4} align="start" w="full">
+                      <Box
+                        p={6}
+                        bgGradient="linear(to-r, purple.50, blue.50)"
+                        borderRadius="xl"
+                        w="full"
+                        border="2px solid"
+                        borderColor="purple.200"
+                      >
+                        <HStack spacing={4} align="center">
+                          <Box
+                            p={3}
+                            bgGradient="linear(to-br, purple.500, blue.500)"
+                            borderRadius="full"
+                            boxShadow="md"
+                          >
+                            <Icon as={FiUsers} boxSize={6} color="white" />
+                          </Box>
+                          <VStack spacing={1} align="start">
+                            <Text fontSize="3xl" fontWeight="extrabold" color="purple.700">
+                              100 000
+                            </Text>
+                            <Text fontSize="lg" fontWeight="600" color="gray.700">
+                              Utilisateurs
+                            </Text>
+                            <Text fontSize="sm" color="gray.600">
+                              Notre objectif est d'atteindre 100 000 utilisateurs actifs qui bénéficient d'un apprentissage personnalisé et efficace grâce à Kaïrox.
+                            </Text>
+                          </VStack>
+                        </HStack>
+                      </Box>
+                      <Text 
+                        color="gray.700" 
+                        lineHeight="1.9" 
+                        fontSize="md"
+                        textAlign="left"
+                        mt={2}
+                      >
+                        Nous nous engageons à fournir une plateforme éducative de pointe qui transforme l'expérience d'apprentissage, rendant l'éducation accessible à tous et contribuant à la réussite académique de nos utilisateurs.
+                      </Text>
+                    </VStack>
+                  </VStack>
+                </Card>
+              </AnimatedBox>
+            </SimpleGrid>
+          </VStack>
+        </Container>
+      </Box>
+
       {/* Features Section - Design amélioré */}
       <Box bgGradient="linear-gradient(180deg, gray.50 0%, white 100%)" py={{ base: 12, md: 20 }}>
         <Container maxW="1200px">
