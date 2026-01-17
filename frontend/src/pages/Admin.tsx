@@ -795,31 +795,65 @@ const Admin = () => {
 
           {/* Onglets */}
           <Tabs index={activeTab} onChange={setActiveTab} colorScheme="gray">
-            <TabList>
-              <Tab>
-                <HStack spacing={2}>
+            <TabList 
+              overflowX="auto" 
+              overflowY="hidden"
+              sx={{
+                '&::-webkit-scrollbar': {
+                  display: 'none',
+                },
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                WebkitOverflowScrolling: 'touch',
+              }}
+              display="flex"
+              flexWrap={{ base: 'nowrap', md: 'wrap' }}
+              minW={{ base: '100%', md: 'auto' }}
+            >
+              <Tab 
+                whiteSpace="nowrap"
+                minW={{ base: 'auto', md: 'auto' }}
+                px={{ base: 3, md: 4 }}
+                fontSize={{ base: 'xs', md: 'sm' }}
+              >
+                <HStack spacing={1}>
                   <FiBook />
-                  <Text>Modules</Text>
+                  <Text display={{ base: 'none', sm: 'block' }}>Modules</Text>
                 </HStack>
               </Tab>
-              <Tab>
-                <HStack spacing={2}>
+              <Tab 
+                whiteSpace="nowrap"
+                minW={{ base: 'auto', md: 'auto' }}
+                px={{ base: 3, md: 4 }}
+                fontSize={{ base: 'xs', md: 'sm' }}
+              >
+                <HStack spacing={1}>
                   <FiUsers />
-                  <Text>Utilisateurs</Text>
+                  <Text display={{ base: 'none', sm: 'block' }}>Utilisateurs</Text>
                 </HStack>
               </Tab>
-              <Tab>
-                <HStack spacing={2}>
+              <Tab 
+                whiteSpace="nowrap"
+                minW={{ base: 'auto', md: 'auto' }}
+                px={{ base: 3, md: 4 }}
+                fontSize={{ base: 'xs', md: 'sm' }}
+              >
+                <HStack spacing={1}>
                   <FiBarChart2 />
-                  <Text>Statistiques</Text>
+                  <Text display={{ base: 'none', sm: 'block' }}>Statistiques</Text>
                 </HStack>
               </Tab>
-              <Tab>
-                <HStack spacing={2}>
+              <Tab 
+                whiteSpace="nowrap"
+                minW={{ base: 'auto', md: 'auto' }}
+                px={{ base: 3, md: 4 }}
+                fontSize={{ base: 'xs', md: 'sm' }}
+              >
+                <HStack spacing={1}>
                   <FiMessageSquare />
-                  <Text>Messages Support</Text>
+                  <Text display={{ base: 'none', sm: 'block' }}>Support</Text>
                   {supportMessages.filter((m) => !m.read).length > 0 && (
-                    <Badge colorScheme="red" borderRadius="full" fontSize="xs">
+                    <Badge colorScheme="red" borderRadius="full" fontSize="2xs" minW="18px" h="18px" display="flex" alignItems="center" justifyContent="center">
                       {supportMessages.filter((m) => !m.read).length}
                     </Badge>
                   )}
@@ -1167,27 +1201,27 @@ const Admin = () => {
                       <Spinner size="xl" color="gray.500" />
                     </Flex>
                   ) : stats ? (
-                    <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-                      <Stat bg="white" p={6} borderRadius="lg" boxShadow="sm">
-                        <StatLabel>Utilisateurs totaux</StatLabel>
-                        <StatNumber color="gray.600">{stats.total_users}</StatNumber>
-                        <StatHelpText>{stats.active_users} actifs</StatHelpText>
+                    <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} spacing={{ base: 4, md: 6 }}>
+                      <Stat bg="white" p={{ base: 4, md: 6 }} borderRadius="lg" boxShadow="sm">
+                        <StatLabel fontSize={{ base: 'xs', md: 'sm' }}>Utilisateurs totaux</StatLabel>
+                        <StatNumber color="gray.600" fontSize={{ base: 'xl', md: '2xl' }}>{stats.total_users}</StatNumber>
+                        <StatHelpText fontSize={{ base: 'xs', md: 'sm' }}>{stats.active_users} actifs</StatHelpText>
                       </Stat>
-                      <Stat bg="white" p={6} borderRadius="lg" boxShadow="sm">
-                        <StatLabel>Administrateurs</StatLabel>
-                        <StatNumber color="gray.600">{stats.total_admins}</StatNumber>
+                      <Stat bg="white" p={{ base: 4, md: 6 }} borderRadius="lg" boxShadow="sm">
+                        <StatLabel fontSize={{ base: 'xs', md: 'sm' }}>Administrateurs</StatLabel>
+                        <StatNumber color="gray.600" fontSize={{ base: 'xl', md: '2xl' }}>{stats.total_admins}</StatNumber>
                       </Stat>
-                      <Stat bg="white" p={6} borderRadius="lg" boxShadow="sm">
-                        <StatLabel>Modules</StatLabel>
-                        <StatNumber color="blue.500">{stats.total_modules}</StatNumber>
+                      <Stat bg="white" p={{ base: 4, md: 6 }} borderRadius="lg" boxShadow="sm">
+                        <StatLabel fontSize={{ base: 'xs', md: 'sm' }}>Modules</StatLabel>
+                        <StatNumber color="blue.500" fontSize={{ base: 'xl', md: '2xl' }}>{stats.total_modules}</StatNumber>
                       </Stat>
-                      <Stat bg="white" p={6} borderRadius="lg" boxShadow="sm">
-                        <StatLabel>Progression</StatLabel>
-                        <StatNumber color="gray.600">{stats.total_progress}</StatNumber>
+                      <Stat bg="white" p={{ base: 4, md: 6 }} borderRadius="lg" boxShadow="sm">
+                        <StatLabel fontSize={{ base: 'xs', md: 'sm' }}>Progression</StatLabel>
+                        <StatNumber color="gray.600" fontSize={{ base: 'xl', md: '2xl' }}>{stats.total_progress}</StatNumber>
                       </Stat>
-                      <Stat bg="white" p={6} borderRadius="lg" boxShadow="sm">
-                        <StatLabel>Messages de support</StatLabel>
-                        <StatNumber color="gray.600">{stats.total_support_messages}</StatNumber>
+                      <Stat bg="white" p={{ base: 4, md: 6 }} borderRadius="lg" boxShadow="sm">
+                        <StatLabel fontSize={{ base: 'xs', md: 'sm' }}>Messages de support</StatLabel>
+                        <StatNumber color="gray.600" fontSize={{ base: 'xl', md: '2xl' }}>{stats.total_support_messages}</StatNumber>
                       </Stat>
                     </SimpleGrid>
                   ) : (
@@ -1250,35 +1284,42 @@ const Admin = () => {
                           bg="white"
                           borderRadius="lg"
                           boxShadow="sm"
-                          p={6}
+                          p={{ base: 4, md: 6 }}
                           borderLeft="4px solid"
                           borderLeftColor={msg.read ? 'gray.300' : 'blue.500'}
                         >
                           <VStack spacing={4} align="stretch">
-                            <Flex justify="space-between" align="start">
-                              <VStack align="start" spacing={2}>
-                                <HStack spacing={3}>
-                                  <Heading size="sm" color="gray.800">
+                            <Flex 
+                              justify="space-between" 
+                              align="start" 
+                              direction={{ base: 'column', md: 'row' }}
+                              gap={3}
+                            >
+                              <VStack align="start" spacing={2} flex={1}>
+                                <VStack align="start" spacing={2} w="full">
+                                  <Heading size={{ base: 'xs', md: 'sm' }} color="gray.800" fontWeight="bold">
                                     {msg.subject}
                                   </Heading>
-                                  <Badge colorScheme="blue" variant="subtle">
-                                    {getSupportTypeLabel(msg.support_type)}
-                                  </Badge>
-                                  {!msg.read && (
-                                    <Badge colorScheme="red" borderRadius="full" fontSize="xs">
-                                      Non lu
+                                  <HStack spacing={2} flexWrap="wrap">
+                                    <Badge colorScheme="blue" variant="subtle" fontSize={{ base: '2xs', md: 'xs' }}>
+                                      {getSupportTypeLabel(msg.support_type)}
                                     </Badge>
-                                  )}
-                                  {msg.responded && (
-                                    <Badge colorScheme="green" borderRadius="full" fontSize="xs">
-                                      Répondu
-                                    </Badge>
-                                  )}
-                                </HStack>
-                                <HStack spacing={4} fontSize="sm" color="gray.600">
+                                    {!msg.read && (
+                                      <Badge colorScheme="red" borderRadius="full" fontSize="2xs">
+                                        Non lu
+                                      </Badge>
+                                    )}
+                                    {msg.responded && (
+                                      <Badge colorScheme="green" borderRadius="full" fontSize="2xs">
+                                        Répondu
+                                      </Badge>
+                                    )}
+                                  </HStack>
+                                </VStack>
+                                <VStack align="start" spacing={1} fontSize={{ base: 'xs', md: 'sm' }} color="gray.600" w="full">
                                   <HStack spacing={1}>
                                     <FiMail />
-                                    <Text>{msg.email}</Text>
+                                    <Text isTruncated maxW={{ base: '200px', md: 'none' }}>{msg.email}</Text>
                                   </HStack>
                                   {msg.phone && (
                                     <HStack spacing={1}>
@@ -1288,23 +1329,25 @@ const Admin = () => {
                                   )}
                                   <HStack spacing={1}>
                                     <FiClock />
-                                    <Text>{formatDate(msg.created_at)}</Text>
+                                    <Text fontSize={{ base: '2xs', md: 'xs' }}>{formatDate(msg.created_at)}</Text>
                                   </HStack>
-                                </HStack>
-                                <Text fontWeight="medium" color="gray.700">
+                                </VStack>
+                                <Text fontWeight="medium" color="gray.700" fontSize={{ base: 'xs', md: 'sm' }}>
                                   De: {msg.name}
                                 </Text>
                               </VStack>
-                              <HStack spacing={2}>
+                              <HStack spacing={2} align="flex-start">
                                 {!msg.read && (
                                   <Tooltip label="Marquer comme lu">
                                     <IconButton
                                       icon={<FiCheck />}
                                       aria-label="Marquer comme lu"
-                                      size="sm"
+                                      size={{ base: 'md', md: 'sm' }}
                                       colorScheme="blue"
                                       variant="ghost"
                                       onClick={() => markAsRead(msg.id)}
+                                      minH="48px"
+                                      minW="48px"
                                     />
                                   </Tooltip>
                                 )}
@@ -1313,10 +1356,12 @@ const Admin = () => {
                                     <IconButton
                                       icon={<FiMail />}
                                       aria-label="Marquer comme répondu"
-                                      size="sm"
+                                      size={{ base: 'md', md: 'sm' }}
                                       colorScheme="green"
                                       variant="ghost"
                                       onClick={() => markAsResponded(msg.id)}
+                                      minH="48px"
+                                      minW="48px"
                                     />
                                   </Tooltip>
                                 )}
@@ -1325,12 +1370,17 @@ const Admin = () => {
                             <Divider />
                             <Box
                               bg="gray.50"
-                              p={4}
+                              p={{ base: 3, md: 4 }}
                               borderRadius="md"
                               border="1px solid"
                               borderColor="gray.200"
                             >
-                              <Text color="gray.800" whiteSpace="pre-wrap">
+                              <Text 
+                                color="gray.800" 
+                                whiteSpace="pre-wrap"
+                                fontSize={{ base: 'xs', md: 'sm' }}
+                                lineHeight="1.6"
+                              >
                                 {msg.message}
                               </Text>
                             </Box>
@@ -1345,19 +1395,54 @@ const Admin = () => {
           </Tabs>
 
           {/* Modal de création/édition de module */}
-          <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
+          <Modal 
+            isOpen={isOpen} 
+            onClose={onClose} 
+            size={{ base: 'full', md: 'xl' }} 
+            scrollBehavior="inside"
+            motionPreset="slideInBottom"
+          >
             <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(4px)" />
-            <ModalContent bg="white" borderRadius="lg" maxH="90vh">
-              <ModalHeader color="gray.800" fontWeight="bold">
+            <ModalContent 
+              bg="white" 
+              borderRadius={{ base: 'none', md: 'lg' }} 
+              maxH={{ base: '100vh', md: '90vh' }}
+              m={{ base: 0, md: 'auto' }}
+              maxW={{ base: '100%', md: '90vw' }}
+            >
+              <ModalHeader 
+                color="gray.800" 
+                fontWeight="bold"
+                fontSize={{ base: 'lg', md: 'xl' }}
+                px={{ base: 4, md: 6 }}
+                pt={{ base: 4, md: 6 }}
+              >
                 {editingModule ? 'Modifier le module' : 'Nouveau module'}
               </ModalHeader>
-              <ModalCloseButton />
-              <ModalBody pb={6}>
+              <ModalCloseButton 
+                size={{ base: 'md', md: 'lg' }}
+                top={{ base: 3, md: 4 }}
+                right={{ base: 3, md: 4 }}
+              />
+              <ModalBody pb={6} px={{ base: 4, md: 6 }}>
                 {editingModule ? (
                   <Tabs>
-                    <TabList>
-                      <Tab>Informations</Tab>
-                      <Tab>Ressources</Tab>
+                    <TabList 
+                      overflowX="auto"
+                      sx={{
+                        '&::-webkit-scrollbar': {
+                          display: 'none',
+                        },
+                        scrollbarWidth: 'none',
+                        msOverflowStyle: 'none',
+                      }}
+                    >
+                      <Tab fontSize={{ base: 'xs', md: 'sm' }} whiteSpace="nowrap" px={{ base: 2, md: 4 }}>
+                        Informations
+                      </Tab>
+                      <Tab fontSize={{ base: 'xs', md: 'sm' }} whiteSpace="nowrap" px={{ base: 2, md: 4 }}>
+                        Ressources
+                      </Tab>
                     </TabList>
                     <TabPanels>
                       <TabPanel px={0}>
@@ -1389,45 +1474,93 @@ const Admin = () => {
                     />
                   </FormControl>
 
-                  <HStack spacing={4}>
-                    <FormControl isRequired>
-                      <FormLabel color="gray.700" fontWeight="medium">Matière</FormLabel>
-                      <Select
-                        value={formData.subject}
-                        onChange={(e) => setFormData({ ...formData, subject: e.target.value as Subject })}
-                        placeholder="Sélectionner une matière"
-                        bg="white"
-                        borderColor="gray.300"
-                        _hover={{ borderColor: 'gray.400' }}
-                        _focus={{ borderColor: 'gray.500', boxShadow: '0 0 0 1px rgba(128, 128, 128, 0.3)' }}
-                      >
-                        {SUBJECTS.map((subject) => (
-                          <option key={subject} value={subject}>
-                            {getSubjectLabel(subject)}
-                          </option>
-                        ))}
-                      </Select>
-                    </FormControl>
+                    <VStack spacing={4} align="stretch" display={{ base: 'flex', md: 'none' }}>
+                      <FormControl isRequired>
+                        <FormLabel color="gray.700" fontWeight="medium" fontSize={{ base: 'sm', md: 'md' }}>
+                          Matière
+                        </FormLabel>
+                        <Select
+                          value={formData.subject}
+                          onChange={(e) => setFormData({ ...formData, subject: e.target.value as Subject })}
+                          placeholder="Sélectionner une matière"
+                          bg="white"
+                          borderColor="gray.300"
+                          _hover={{ borderColor: 'gray.400' }}
+                          _focus={{ borderColor: 'gray.500', boxShadow: '0 0 0 1px rgba(128, 128, 128, 0.3)' }}
+                          size={{ base: 'md', md: 'lg' }}
+                          minH="48px"
+                        >
+                          {SUBJECTS.map((subject) => (
+                            <option key={subject} value={subject}>
+                              {getSubjectLabel(subject)}
+                            </option>
+                          ))}
+                        </Select>
+                      </FormControl>
 
-                    <FormControl isRequired>
-                      <FormLabel color="gray.700" fontWeight="medium">Difficulté</FormLabel>
-                      <Select
-                        value={formData.difficulty}
-                        onChange={(e) => setFormData({ ...formData, difficulty: e.target.value as Difficulty })}
-                        placeholder="Sélectionner une difficulté"
-                        bg="white"
-                        borderColor="gray.300"
-                        _hover={{ borderColor: 'gray.400' }}
-                        _focus={{ borderColor: 'gray.500', boxShadow: '0 0 0 1px rgba(128, 128, 128, 0.3)' }}
-                      >
-                        {DIFFICULTIES.map((difficulty) => (
-                          <option key={difficulty} value={difficulty}>
-                            {getDifficultyLabel(difficulty)}
-                          </option>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </HStack>
+                      <FormControl isRequired>
+                        <FormLabel color="gray.700" fontWeight="medium" fontSize={{ base: 'sm', md: 'md' }}>
+                          Difficulté
+                        </FormLabel>
+                        <Select
+                          value={formData.difficulty}
+                          onChange={(e) => setFormData({ ...formData, difficulty: e.target.value as Difficulty })}
+                          placeholder="Sélectionner une difficulté"
+                          bg="white"
+                          borderColor="gray.300"
+                          _hover={{ borderColor: 'gray.400' }}
+                          _focus={{ borderColor: 'gray.500', boxShadow: '0 0 0 1px rgba(128, 128, 128, 0.3)' }}
+                          size={{ base: 'md', md: 'lg' }}
+                          minH="48px"
+                        >
+                          {DIFFICULTIES.map((difficulty) => (
+                            <option key={difficulty} value={difficulty}>
+                              {getDifficultyLabel(difficulty)}
+                            </option>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </VStack>
+
+                    <HStack spacing={4} display={{ base: 'none', md: 'flex' }}>
+                      <FormControl isRequired>
+                        <FormLabel color="gray.700" fontWeight="medium">Matière</FormLabel>
+                        <Select
+                          value={formData.subject}
+                          onChange={(e) => setFormData({ ...formData, subject: e.target.value as Subject })}
+                          placeholder="Sélectionner une matière"
+                          bg="white"
+                          borderColor="gray.300"
+                          _hover={{ borderColor: 'gray.400' }}
+                          _focus={{ borderColor: 'gray.500', boxShadow: '0 0 0 1px rgba(128, 128, 128, 0.3)' }}
+                        >
+                          {SUBJECTS.map((subject) => (
+                            <option key={subject} value={subject}>
+                              {getSubjectLabel(subject)}
+                            </option>
+                          ))}
+                        </Select>
+                      </FormControl>
+
+                      <FormControl isRequired>
+                        <FormLabel color="gray.700" fontWeight="medium">Difficulté</FormLabel>
+                        <Select
+                          value={formData.difficulty}
+                          onChange={(e) => setFormData({ ...formData, difficulty: e.target.value as Difficulty })}
+                          placeholder="Sélectionner une difficulté"
+                          bg="white"
+                          borderColor="gray.300"
+                          _hover={{ borderColor: 'gray.400' }}
+                          _focus={{ borderColor: 'gray.500', boxShadow: '0 0 0 1px rgba(128, 128, 128, 0.3)' }}
+                        >
+                          {DIFFICULTIES.map((difficulty) => (
+                            <option key={difficulty} value={difficulty}>
+                              {getDifficultyLabel(difficulty)}
+                            </option>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </HStack>
 
                   <FormControl isRequired>
                     <FormLabel color="gray.700" fontWeight="medium">Temps estimé (minutes)</FormLabel>
@@ -1573,7 +1706,33 @@ const Admin = () => {
                     </VStack>
                   </FormControl>
 
-                          <HStack spacing={4} pt={4}>
+                          <VStack spacing={3} pt={4} display={{ base: 'flex', md: 'none' }}>
+                            <Button
+                              leftIcon={<FiSave />}
+                              colorScheme="gray"
+                              bgGradient="gradient.primary"
+                              _hover={{ bgGradient: 'gradient.secondary' }}
+                              onClick={handleSubmit}
+                              isLoading={isSubmitting}
+                              w="full"
+                              size="lg"
+                              minH="48px"
+                            >
+                              Enregistrer
+                            </Button>
+                            <Button
+                              leftIcon={<FiX />}
+                              variant="outline"
+                              colorScheme="gray"
+                              onClick={onClose}
+                              w="full"
+                              size="lg"
+                              minH="48px"
+                            >
+                              Annuler
+                            </Button>
+                          </VStack>
+                          <HStack spacing={4} pt={4} display={{ base: 'none', md: 'flex' }}>
                             <Button
                               leftIcon={<FiSave />}
                               colorScheme="gray"
@@ -1634,7 +1793,55 @@ const Admin = () => {
                       />
                     </FormControl>
 
-                    <HStack spacing={4}>
+                    <VStack spacing={4} align="stretch" display={{ base: 'flex', md: 'none' }}>
+                      <FormControl isRequired>
+                        <FormLabel color="gray.700" fontWeight="medium" fontSize={{ base: 'sm', md: 'md' }}>
+                          Matière
+                        </FormLabel>
+                        <Select
+                          value={formData.subject || ''}
+                          onChange={(e) => setFormData({ ...formData, subject: e.target.value as Subject })}
+                          placeholder="Sélectionner une matière"
+                          bg="white"
+                          borderColor="gray.300"
+                          _hover={{ borderColor: 'gray.400' }}
+                          _focus={{ borderColor: 'gray.500', boxShadow: '0 0 0 1px rgba(128, 128, 128, 0.3)' }}
+                          size={{ base: 'md', md: 'lg' }}
+                          minH="48px"
+                        >
+                          {SUBJECTS.map((subject) => (
+                            <option key={subject} value={subject}>
+                              {getSubjectLabel(subject)}
+                            </option>
+                          ))}
+                        </Select>
+                      </FormControl>
+
+                      <FormControl isRequired>
+                        <FormLabel color="gray.700" fontWeight="medium" fontSize={{ base: 'sm', md: 'md' }}>
+                          Difficulté
+                        </FormLabel>
+                        <Select
+                          value={formData.difficulty || ''}
+                          onChange={(e) => setFormData({ ...formData, difficulty: e.target.value as Difficulty })}
+                          placeholder="Sélectionner une difficulté"
+                          bg="white"
+                          borderColor="gray.300"
+                          _hover={{ borderColor: 'gray.400' }}
+                          _focus={{ borderColor: 'gray.500', boxShadow: '0 0 0 1px rgba(128, 128, 128, 0.3)' }}
+                          size={{ base: 'md', md: 'lg' }}
+                          minH="48px"
+                        >
+                          {DIFFICULTIES.map((difficulty) => (
+                            <option key={difficulty} value={difficulty}>
+                              {getDifficultyLabel(difficulty)}
+                            </option>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </VStack>
+
+                    <HStack spacing={4} display={{ base: 'none', md: 'flex' }}>
                       <FormControl isRequired>
                         <FormLabel color="gray.700" fontWeight="medium">Matière</FormLabel>
                         <Select
@@ -1818,7 +2025,33 @@ const Admin = () => {
                       </VStack>
                     </FormControl>
 
-                    <HStack spacing={4} pt={4}>
+                    <VStack spacing={3} pt={4} display={{ base: 'flex', md: 'none' }}>
+                      <Button
+                        leftIcon={<FiSave />}
+                        colorScheme="gray"
+                        bgGradient="gradient.primary"
+                        _hover={{ bgGradient: 'gradient.secondary' }}
+                        onClick={handleSubmit}
+                        isLoading={isSubmitting}
+                        w="full"
+                        size="lg"
+                        minH="48px"
+                      >
+                        Créer
+                      </Button>
+                      <Button
+                        leftIcon={<FiX />}
+                        variant="outline"
+                        colorScheme="gray"
+                        onClick={onClose}
+                        w="full"
+                        size="lg"
+                        minH="48px"
+                      >
+                        Annuler
+                      </Button>
+                    </VStack>
+                    <HStack spacing={4} pt={4} display={{ base: 'none', md: 'flex' }}>
                       <Button
                         leftIcon={<FiSave />}
                         colorScheme="gray"
