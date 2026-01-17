@@ -1,0 +1,31 @@
+{
+  "routes": [
+    {
+      "path": "/*",
+      "headers": {
+        "Content-Type": "text/html"
+      }
+    },
+    {
+      "path": "/*.js",
+      "headers": {
+        "Content-Type": "application/javascript",
+        "X-Content-Type-Options": "nosniff"
+      }
+    },
+    {
+      "path": "/assets/*.js",
+      "headers": {
+        "Content-Type": "application/javascript",
+        "X-Content-Type-Options": "nosniff"
+      }
+    },
+    {
+      "path": "/*.css",
+      "headers": {
+        "Content-Type": "text/css",
+        "X-Content-Type-Options": "nosniff"
+      }
+    }
+  ]
+}

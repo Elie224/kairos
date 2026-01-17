@@ -9,7 +9,11 @@ export default defineConfig(({ mode }) => {
   return {
     // Configuration de base pour les assets
     base: '/',
-    plugins: [react()],
+    plugins: [
+      react(),
+      // Plugin pour générer _redirects pour Render (sans réécriture SPA)
+      ...(mode === 'production' ? [renderRedirectsPlugin()] : []),
+    ],
     server: {
       port: 5173,
       host: '0.0.0.0', // Écouter sur toutes les interfaces

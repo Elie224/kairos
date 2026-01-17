@@ -17,13 +17,17 @@ if (!fs.existsSync(distDir)) {
 
 // 1. Créer le fichier _redirects dans dist/
 const redirectsFile = path.join(distDir, '_redirects');
-const redirectsContent = `# Configuration Render.com pour SPA
-# IMPORTANT: Render sert automatiquement les fichiers statiques (.js, .css, images, etc.)
-# Ce fichier _redirects ne gère QUE les routes SPA
+const redirectsContent = `# Configuration Render.com pour Static Site
+# IMPORTANT: Le fichier _redirects avec /* /index.html 200 cause des problèmes MIME type
+# car il redirige aussi les fichiers statiques (.js, .css) vers index.html
 
-# Rediriger toutes les routes SPA vers index.html
-# Les fichiers statiques (/.js, /.css, /assets/*, etc.) sont automatiquement servis par Render
-/*    /index.html   200
+# Solution: NE PAS utiliser de réécriture SPA dans _redirects
+# Render Static Sites sert automatiquement les fichiers statiques s'ils existent
+# Pour les routes SPA, configurer dans Render Dashboard > Static Site > Routes
+# ou utiliser un serveur web qui gère automatiquement les fallbacks
+
+# Ce fichier est vide - Render gère les fichiers statiques automatiquement
+# Pour les routes SPA, il faut configurer côté Render Dashboard
 `;
 
 // Copier aussi le fichier _headers si il existe
