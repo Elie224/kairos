@@ -567,7 +567,7 @@ const Register = () => {
                       <HStack spacing={2}>
                         <Icon as={FiUser} color="blue.500" />
                         <Text>Prénom</Text>
-                        <Text fontSize="xs" color="gray.400" fontWeight="normal">(optionnel)</Text>
+                        <Badge colorScheme="gray" fontSize="xs" fontWeight="normal" variant="subtle">optionnel</Badge>
                       </HStack>
                     </FormLabel>
                     <Input
@@ -604,7 +604,7 @@ const Register = () => {
                       <HStack spacing={2}>
                         <Icon as={FiUser} color="blue.500" />
                         <Text>Nom</Text>
-                        <Text fontSize="xs" color="gray.400" fontWeight="normal">(optionnel)</Text>
+                        <Badge colorScheme="gray" fontSize="xs" fontWeight="normal" variant="subtle">optionnel</Badge>
                       </HStack>
                     </FormLabel>
                     <Input
@@ -643,7 +643,7 @@ const Register = () => {
                       <HStack spacing={2}>
                         <Icon as={FiPhone} color="blue.500" />
                         <Text>Téléphone</Text>
-                        <Text fontSize="xs" color="gray.400" fontWeight="normal">(optionnel)</Text>
+                        <Badge colorScheme="gray" fontSize="xs" fontWeight="normal" variant="subtle">optionnel</Badge>
                       </HStack>
                     </FormLabel>
                     <Input

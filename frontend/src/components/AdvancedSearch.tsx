@@ -239,7 +239,8 @@ export const AdvancedSearch = ({
           isOpen={isOpen}
           onClose={onClose}
           placement="bottom-start"
-          closeOnBlur={false}
+          closeOnBlur={true}
+          closeOnEsc={true}
           autoFocus={false}
         >
           <PopoverTrigger>

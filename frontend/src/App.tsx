@@ -13,9 +13,9 @@ import { useAuthStore } from './store/authStore'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Modules from './pages/Modules'
+import Dashboard from './pages/Dashboard'
 const Home = lazy(() => import('./pages/Home'))
 const ModuleDetail = lazy(() => import('./pages/ModuleDetail'))
-const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Profile = lazy(() => import('./pages/Profile'))
 const Settings = lazy(() => import('./pages/Settings'))
 const Support = lazy(() => import('./pages/Support'))
@@ -121,11 +121,13 @@ function App() {
     }
   }, [])
 
-  // Vérifier si l'utilisateur a déjà vu l'onboarding
+  // Vérifier si l'utilisateur a déjà vu l'onboarding (une seule fois)
   useEffect(() => {
     if (isAuthenticated && !isAuthPage) {
       const hasSeenOnboarding = localStorage.getItem('kairos-onboarding-completed')
-      if (!hasSeenOnboarding) {
+      // Vérifier aussi si l'utilisateur a déjà complété l'onboarding dans cette session
+      const sessionOnboarding = sessionStorage.getItem('kairos-onboarding-session')
+      if (!hasSeenOnboarding && !sessionOnboarding) {
         // Attendre un peu pour que l'interface se charge
         const timer = setTimeout(() => {
           setShowOnboarding(true)
@@ -137,11 +139,13 @@ function App() {
 
   const handleOnboardingComplete = () => {
     localStorage.setItem('kairos-onboarding-completed', 'true')
+    sessionStorage.setItem('kairos-onboarding-session', 'true')
     setShowOnboarding(false)
   }
 
   const handleOnboardingSkip = () => {
     localStorage.setItem('kairos-onboarding-completed', 'true')
+    sessionStorage.setItem('kairos-onboarding-session', 'true')
     setShowOnboarding(false)
   }
 

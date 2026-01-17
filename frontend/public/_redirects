@@ -1,11 +1,22 @@
-# Configuration Render.com pour Static Site
-# IMPORTANT: Le fichier _redirects avec /* /index.html 200 cause des problèmes MIME type
-# car il redirige aussi les fichiers statiques (.js, .css) vers index.html
+# Configuration Render.com pour SPA (Single Page Application)
+# IMPORTANT: Les fichiers statiques (.js, .css, images) doivent être servis directement
+# Seules les routes non trouvées doivent rediriger vers index.html
 
-# Solution: NE PAS utiliser de réécriture SPA dans _redirects
-# Render Static Sites sert automatiquement les fichiers statiques s'ils existent
-# Pour les routes SPA, configurer dans Render Dashboard > Static Site > Routes
-# ou utiliser un serveur web qui gère automatiquement les fallbacks
+# Servir les fichiers statiques directement (priorité)
+/assets/* 200
+/*.js 200
+/*.css 200
+/*.json 200
+/*.png 200
+/*.jpg 200
+/*.jpeg 200
+/*.gif 200
+/*.svg 200
+/*.ico 200
+/*.woff 200
+/*.woff2 200
+/*.ttf 200
+/*.eot 200
 
-# Ce fichier est vide - Render gère les fichiers statiques automatiquement
-# Pour les routes SPA, il faut configurer côté Render Dashboard
+# Fallback SPA : toutes les autres routes vers index.html
+/*    /index.html   200
