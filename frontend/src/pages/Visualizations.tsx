@@ -105,6 +105,40 @@ const Visualizations = () => {
     }
   ) || []
 
+  // Créer des modules de démonstration pour les matières sans modules réels
+  const allSubjects = ['mathematics', 'physics', 'chemistry', 'computer_science', 'biology', 'geography', 'economics', 'history']
+  const existingSubjects = new Set(modulesWithVisualizations.map(m => m.subject?.toLowerCase()))
+  
+  const demoModules: Module[] = allSubjects
+    .filter(subject => !existingSubjects.has(subject))
+    .map((subject, index) => ({
+      id: `demo-${subject}-${index}`,
+      title: getDemoModuleTitle(subject),
+      subject: subject,
+      difficulty: 'intermediate',
+      content: {
+        scene: subject === 'physics' ? 'mechanics' : subject === 'chemistry' ? 'chemical_reaction' : undefined
+      }
+    }))
+
+  // Combiner les modules réels et les modules de démonstration
+  const allModulesWithVisualizations = [...modulesWithVisualizations, ...demoModules]
+
+  // Fonction pour obtenir le titre de démonstration selon la matière
+  function getDemoModuleTitle(subject: string): string {
+    const titles: Record<string, string> = {
+      mathematics: 'Introduction aux Fonctions Mathématiques',
+      physics: 'Mécanique Classique',
+      chemistry: 'Réactions Chimiques de Base',
+      computer_science: 'Algorithmes et Structures de Données',
+      biology: 'Structure Cellulaire',
+      geography: 'Cartographie et Reliefs',
+      economics: 'Principes de l\'Économie',
+      history: 'Chronologie Historique'
+    }
+    return titles[subject] || `Module ${subject}`
+  }
+
   const handleSelectModule = (module: Module) => {
     setSelectedModule(module)
   }
@@ -332,7 +366,7 @@ const Visualizations = () => {
               <option value="history">🏛️ Histoire</option>
             </Select>
             <Badge colorScheme="blue" fontSize="sm" px={3} py={1}>
-              {modulesWithVisualizations.length} simulation{modulesWithVisualizations.length > 1 ? 's' : ''} disponible{modulesWithVisualizations.length > 1 ? 's' : ''}
+              {allModulesWithVisualizations.length} simulation{allModulesWithVisualizations.length > 1 ? 's' : ''} disponible{allModulesWithVisualizations.length > 1 ? 's' : ''}
             </Badge>
           </HStack>
 
@@ -480,7 +514,7 @@ const Visualizations = () => {
                       </CardBody>
                     </Card>
                   ))
-                ) : modulesWithVisualizations.length === 0 ? (
+                ) : allModulesWithVisualizations.length === 0 ? (
                   <Box textAlign="center" py={12} gridColumn="1 / -1">
                     <Icon as={FiEye} boxSize={16} color="gray.300" mb={4} />
                     <Text color="gray.600" fontSize="lg" mb={2} fontWeight="semibold">
@@ -499,7 +533,7 @@ const Visualizations = () => {
                     </Text>
                   </Box>
                 ) : (
-                  modulesWithVisualizations.map((module) => {
+                  allModulesWithVisualizations.map((module) => {
                     const info = getSimulationInfo(module)
                     return (
                       <Card
