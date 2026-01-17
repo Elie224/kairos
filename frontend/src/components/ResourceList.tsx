@@ -13,10 +13,21 @@ import {
   Badge,
   Link,
   SimpleGrid,
-  useToast
+  useToast,
+  Image,
+  AspectRatio,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure
 } from '@chakra-ui/react'
-import { FiFile, FiDownload, FiExternalLink, FiFileText, FiVideo, FiLink } from 'react-icons/fi'
+import { useState } from 'react'
+import { FiFile, FiDownload, FiExternalLink, FiFileText, FiVideo, FiLink, FiPlay } from 'react-icons/fi'
 import api from '../services/api'
+import { detectVideoPlatform, extractYouTubeVideoId, isValidVideoUrl } from '../utils/videoUtils'
 
 interface Resource {
   id: string
@@ -37,6 +48,9 @@ interface ResourceListProps {
 
 const ResourceList = ({ moduleId }: ResourceListProps) => {
   const toast = useToast()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(null)
+  const [selectedVideoTitle, setSelectedVideoTitle] = useState<string>('')
   
   const { data: resources, isLoading } = useQuery<Resource[]>(
     ['resources', moduleId],
@@ -89,7 +103,11 @@ const ResourceList = ({ moduleId }: ResourceListProps) => {
     }
   }
 
-  const getResourceIcon = (type: string) => {
+  const getResourceIcon = (type: string, externalUrl?: string) => {
+    // Si c'est un lien et qu'on peut détecter une plateforme vidéo
+    if (type === 'link' && externalUrl && isValidVideoUrl(externalUrl)) {
+      return FiVideo
+    }
     switch (type) {
       case 'pdf':
         return FiFileText
@@ -104,6 +122,20 @@ const ResourceList = ({ moduleId }: ResourceListProps) => {
       default:
         return FiFile
     }
+  }
+  
+  const handleVideoClick = (url: string, title: string) => {
+    setSelectedVideoUrl(url)
+    setSelectedVideoTitle(title)
+    onOpen()
+  }
+  
+  const getVideoEmbedUrl = (url: string): string | null => {
+    const platform = detectVideoPlatform(url)
+    if (platform?.embedUrl) {
+      return platform.embedUrl(url)
+    }
+    return null
   }
 
   const getResourceColor = (type: string) => {
@@ -163,8 +195,13 @@ const ResourceList = ({ moduleId }: ResourceListProps) => {
       </Heading>
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
         {resources.map((resource) => {
-          const IconComponent = getResourceIcon(resource.resource_type)
+          const IconComponent = getResourceIcon(resource.resource_type, resource.external_url)
           const colorScheme = getResourceColor(resource.resource_type)
+          const isVideoLink = resource.resource_type === 'link' && resource.external_url && isValidVideoUrl(resource.external_url)
+          const videoPlatform = resource.external_url ? detectVideoPlatform(resource.external_url) : null
+          const youtubeThumbnail = videoPlatform?.name === 'YouTube' && resource.external_url 
+            ? videoPlatform.thumbnailUrl?.(resource.external_url) 
+            : null
           
           return (
             <Card 
@@ -182,6 +219,31 @@ const ResourceList = ({ moduleId }: ResourceListProps) => {
             >
               <CardBody>
                 <VStack align="stretch" spacing={3}>
+                  {/* Miniature vidéo si disponible (YouTube) */}
+                  {isVideoLink && youtubeThumbnail && (
+                    <Box position="relative" borderRadius="lg" overflow="hidden" cursor="pointer" onClick={() => resource.external_url && handleVideoClick(resource.external_url, resource.title)}>
+                      <AspectRatio ratio={16 / 9}>
+                        <Image src={youtubeThumbnail} alt={resource.title} objectFit="cover" />
+                      </AspectRatio>
+                      <Box position="absolute" top="50%" left="50%" transform="translate(-50%, -50%)" bg="blackAlpha.700" borderRadius="full" p={3}>
+                        <Icon as={FiPlay} boxSize={6} color="white" />
+                      </Box>
+                      {videoPlatform && (
+                        <Badge 
+                          position="absolute" 
+                          top={2} 
+                          right={2}
+                          colorScheme={videoPlatform.color}
+                          fontSize="xs"
+                          px={2}
+                          py={1}
+                        >
+                          {videoPlatform.icon} {videoPlatform.name}
+                        </Badge>
+                      )}
+                    </Box>
+                  )}
+                  
                   <HStack justify="space-between" align="start">
                     <HStack spacing={3} flex="1">
                       <Box
@@ -204,14 +266,14 @@ const ResourceList = ({ moduleId }: ResourceListProps) => {
                       </VStack>
                     </HStack>
                     <Badge 
-                      colorScheme={colorScheme}
+                      colorScheme={isVideoLink && videoPlatform ? videoPlatform.color : colorScheme}
                       fontSize="xs"
                       px={2}
                       py={1}
                       borderRadius="full"
                       textTransform="uppercase"
                     >
-                      {resource.resource_type}
+                      {isVideoLink && videoPlatform ? `${videoPlatform.icon} ${videoPlatform.name}` : resource.resource_type}
                     </Badge>
                   </HStack>
                   
@@ -221,19 +283,35 @@ const ResourceList = ({ moduleId }: ResourceListProps) => {
                         {formatFileSize(resource.file_size)}
                       </Text>
                     )}
-                    {resource.resource_type === 'link' ? (
-                      <Button
-                        as={Link}
-                        href={resource.external_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        size="sm"
-                        colorScheme={colorScheme}
-                        leftIcon={<FiExternalLink />}
-                        variant="outline"
-                      >
-                        Ouvrir le lien
-                      </Button>
+                    {resource.resource_type === 'link' || isVideoLink ? (
+                      isVideoLink ? (
+                        <Button
+                          onClick={() => resource.external_url && handleVideoClick(resource.external_url, resource.title)}
+                          size="sm"
+                          colorScheme={videoPlatform?.color || colorScheme}
+                          leftIcon={<FiPlay />}
+                          bgGradient={`linear-gradient(135deg, ${videoPlatform?.color || colorScheme}.500 0%, ${videoPlatform?.color || colorScheme}.600 100%)`}
+                          color="white"
+                          _hover={{
+                            bgGradient: `linear-gradient(135deg, ${videoPlatform?.color || colorScheme}.600 0%, ${videoPlatform?.color || colorScheme}.700 100%)`,
+                          }}
+                        >
+                          Regarder la vidéo
+                        </Button>
+                      ) : (
+                        <Button
+                          as={Link}
+                          href={resource.external_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          size="sm"
+                          colorScheme={colorScheme}
+                          leftIcon={<FiExternalLink />}
+                          variant="outline"
+                        >
+                          Ouvrir le lien
+                        </Button>
+                      )
                     ) : (
                       <Button
                         onClick={() => resource.file_url && handleDownload(resource.file_url, resource.file_name || resource.title)}
@@ -256,6 +334,47 @@ const ResourceList = ({ moduleId }: ResourceListProps) => {
           )
         })}
       </SimpleGrid>
+      
+      {/* Modal pour afficher la vidéo */}
+      <Modal isOpen={isOpen} onClose={onClose} size="full" isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{selectedVideoTitle}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody p={0}>
+            {selectedVideoUrl && (
+              <AspectRatio ratio={16 / 9} maxH="90vh">
+                {getVideoEmbedUrl(selectedVideoUrl) ? (
+                  <iframe
+                    src={getVideoEmbedUrl(selectedVideoUrl) || ''}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    style={{ border: 'none' }}
+                    title={selectedVideoTitle}
+                  />
+                ) : (
+                  <Box p={8} textAlign="center">
+                    <Text fontSize="lg" mb={4} color="gray.600">
+                      Ouverture de la vidéo dans un nouvel onglet...
+                    </Text>
+                    <Button
+                      as={Link}
+                      href={selectedVideoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      colorScheme="blue"
+                      size="lg"
+                      leftIcon={<FiExternalLink />}
+                    >
+                      Ouvrir la vidéo
+                    </Button>
+                  </Box>
+                )}
+              </AspectRatio>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </VStack>
   )
 }
