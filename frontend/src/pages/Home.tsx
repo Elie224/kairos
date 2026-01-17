@@ -30,25 +30,28 @@ const Home = () => {
   const navigate = useNavigate()
   const { isAuthenticated } = useAuthStore()
 
-  // S'assurer que le scroll est en haut au chargement (sans scrollIntoView qui peut cacher le contenu)
+  // Scroll restoration minimal - seulement après que le contenu soit rendu
   useEffect(() => {
-    // Simple scroll to top sans scrollIntoView qui peut causer des problèmes d'affichage
-    const scrollToTop = () => {
-      window.scrollTo({ top: 0, behavior: 'instant' })
-      if (document.documentElement) {
-        document.documentElement.scrollTop = 0
+    // Attendre que le contenu soit complètement rendu avant de scroller
+    const timer = setTimeout(() => {
+      try {
+        // Vérifier que le contenu existe avant de scroller
+        const heroSection = document.getElementById('hero-section')
+        if (heroSection) {
+          window.scrollTo({ top: 0, behavior: 'instant' })
+          if (document.documentElement) {
+            document.documentElement.scrollTop = 0
+          }
+          if (document.body) {
+            document.body.scrollTop = 0
+          }
+        }
+      } catch (e) {
+        // Ignorer les erreurs
       }
-      if (document.body) {
-        document.body.scrollTop = 0
-      }
-    }
+    }, 300) // Délai plus long pour laisser le contenu se rendre
     
-    // Exécuter après un court délai pour laisser le DOM se rendre
-    const timer = setTimeout(scrollToTop, 50)
-    
-    return () => {
-      clearTimeout(timer)
-    }
+    return () => clearTimeout(timer)
   }, [])
 
   // SEO
