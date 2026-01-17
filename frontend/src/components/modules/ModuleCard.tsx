@@ -13,7 +13,6 @@
  */
 import { memo } from 'react'
 import { Card, CardBody, VStack, HStack, Badge, Heading, Text, Button, Box, Icon } from '@chakra-ui/react'
-import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { FiClock, FiBookOpen } from 'react-icons/fi'
 import { Module } from '../../types/module'
@@ -55,7 +54,8 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
       return // Le bouton gère sa propre navigation
     }
     if (module.id) {
-      navigate(`/modules/${module.id}`, { replace: false })
+      // Utiliser window.location.href pour garantir la navigation
+      window.location.href = `/modules/${module.id}`
     }
   }
 
@@ -94,7 +94,8 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
           if (module.id) {
-            navigate(`/modules/${module.id}`, { replace: false })
+            // Utiliser window.location.href pour garantir la navigation
+            window.location.href = `/modules/${module.id}`
           }
         }
       }}
