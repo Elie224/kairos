@@ -31,26 +31,28 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
   const navigate = useNavigate()
 
   const handleStartLearning = (e: React.MouseEvent) => {
-    e.stopPropagation() // Empêcher le déclenchement du onClick du Card parent
-    e.preventDefault() // Empêcher tout comportement par défaut
-    if (module.id) {
-      const targetPath = `/modules/${module.id}`
-      console.log('🟢 Navigation vers module:', module.id, module.title)
-      console.log('🟢 URL cible:', targetPath)
-      logger.debug('Navigation vers module', { moduleId: module.id, moduleTitle: module.title, targetPath }, 'ModuleCard')
-      
-      // SOLUTION CRITIQUE: Utiliser navigate() de React Router SANS fallback window.location.href
-      // window.location.href cause un rechargement complet qui peut faire échouer le routing SPA
-      // et rediriger vers /index.html si le serveur ne trouve pas la route
-      navigate(targetPath, { replace: false })
-      
-      // Log pour vérifier que la navigation a été déclenchée
-      console.log('✅ Navigation React Router déclenchée vers:', targetPath)
-    } else {
-      // Logger l'erreur si module.id n'existe pas
+    // CRITIQUE: Arrêter la propagation AVANT toute autre opération
+    e.stopPropagation()
+    e.preventDefault()
+    e.nativeEvent.stopImmediatePropagation()
+    
+    if (!module.id) {
       logger.error('Module ID manquant pour la navigation', { module }, 'ModuleCard')
       console.error('❌ Module ID manquant pour la navigation', module)
+      return
     }
+    
+    const targetPath = `/modules/${module.id}`
+    console.log('🟢 Navigation vers module:', module.id, module.title)
+    console.log('🟢 URL cible:', targetPath)
+    logger.debug('Navigation vers module', { moduleId: module.id, moduleTitle: module.title, targetPath }, 'ModuleCard')
+    
+    // Utiliser navigate() avec un petit délai pour s'assurer que l'événement est bien traité
+    // Cela évite les problèmes de propagation d'événements avec les filtres
+    setTimeout(() => {
+      navigate(targetPath, { replace: false })
+      console.log('✅ Navigation React Router déclenchée vers:', targetPath)
+    }, 0)
   }
 
   const handleCardClick = (e: React.MouseEvent) => {
@@ -206,11 +208,15 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
         </VStack>
 
         {/* Bouton d'action amélioré avec thème bleu */}
-        <Box width="full" mt={3} pt={3} borderTop="1px solid" borderColor="blue.100">
+        <Box width="full" mt={3} pt={3} borderTop="1px solid" borderColor="blue.100" onClick={(e) => e.stopPropagation()}>
           <Button
             width="full"
             size="md"
             onClick={handleStartLearning}
+            onMouseDown={(e) => {
+              // Empêcher le focus de la carte parent
+              e.stopPropagation()
+            }}
             leftIcon={<Icon as={FiBookOpen} boxSize={4} />}
             bgGradient="linear(to-r, blue.500, blue.600)"
             color="white"
@@ -228,6 +234,8 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
             py={4}
             borderRadius="xl"
             boxShadow="md"
+            type="button"
+            aria-label={`Commencer l'apprentissage: ${module.title}`}
           >
             {t('modules.startLearning') || 'Commencer l\'apprentissage'}
           </Button>

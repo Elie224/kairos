@@ -60,7 +60,8 @@ export const AdvancedSearch = ({
   const inputRef = useRef<HTMLInputElement>(null)
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const debouncedQuery = useDebounce(query, debounceMs)
+  // Réduire le debounce pour améliorer la réactivité (300ms -> 150ms)
+  const debouncedQuery = useDebounce(query, Math.min(debounceMs, 150))
 
   // Charger les recherches récentes depuis localStorage
   useEffect(() => {
@@ -74,7 +75,7 @@ export const AdvancedSearch = ({
     }
   }, [])
 
-  // Recherche de suggestions
+  // Recherche de suggestions - Optimisée pour performance
   const { data: suggestions, isLoading: suggestionsLoading } = useQuery<SearchSuggestion[]>(
     ['search-suggestions', debouncedQuery],
     async () => {
@@ -101,7 +102,11 @@ export const AdvancedSearch = ({
     },
     {
       enabled: showSuggestions && debouncedQuery.length >= 2,
-      staleTime: 5 * 60 * 1000,
+      staleTime: 10 * 60 * 1000, // Augmenter le cache à 10 minutes
+      cacheTime: 30 * 60 * 1000, // Garder en cache 30 minutes
+      refetchOnMount: false, // Ne pas refetch si déjà en cache
+      refetchOnWindowFocus: false, // Ne pas refetch au focus
+      retry: 1, // Réessayer une seule fois en cas d'erreur
     }
   )
 

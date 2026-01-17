@@ -147,8 +147,11 @@ function App() {
           <Route path="/legal/cgu" element={<LegalCGU />} />
           {/* Routes protégées - IMPORTANT: Routes paramétrées AVANT routes exactes pour React Router v6 */}
           {/* L'ordre est CRITIQUE: React Router v6 match la première route qui correspond */}
+          {/* Route pour les examens de modules - doit être avant /modules/:id */}
           <Route path="/modules/:moduleId/exam" element={<ProtectedRoute><ExamDetail /></ProtectedRoute>} />
+          {/* Route pour le détail d'un module - doit être avant /modules */}
           <Route path="/modules/:id" element={<ProtectedRoute><ModuleDetail /></ProtectedRoute>} />
+          {/* Route pour la liste des modules - doit être après les routes paramétrées */}
           <Route path="/modules" element={<ProtectedRoute><Modules /></ProtectedRoute>} />
           <Route path="/exams" element={<ProtectedRoute><Exams /></ProtectedRoute>} />
           {/* Redirection des anciennes routes /exams/:subject vers /exams */}

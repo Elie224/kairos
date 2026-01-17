@@ -45,20 +45,16 @@ const ModuleDetail = () => {
     })
     console.log('🔵 useParams id:', id)
     console.log('🔵 window.location.pathname:', pathname)
-    console.log('🔵 window.location.href:', window.location.href)
     
     // Vérifier qu'on est bien sur une route /modules/:id
     if (!pathname.match(/^\/modules\/[^/]+$/)) {
       console.error('❌ ERREUR: ModuleDetail rendu sur une mauvaise route!', { pathname })
-      // Si on est sur /modules (sans ID), rediriger vers /modules avec navigate
-      if (pathname === '/modules') {
-        console.error('❌ Redirection vers /modules car on est sur /modules sans ID')
-        // Utiliser navigate au lieu de window.location.href pour éviter les problèmes de routing SPA
+      // Si on est sur /modules (sans ID), rediriger vers /modules
+      if (pathname === '/modules' || pathname === '/index.html' || pathname === '/') {
+        console.error('❌ Redirection vers /modules car route invalide')
         navigate('/modules', { replace: true })
         return
       }
-      // Si on est sur une autre route (comme /index.html), ne rien faire (laisser React Router gérer)
-      // Ne pas utiliser window.location.href car cela cause des problèmes de routing SPA
       return
     }
     
@@ -66,38 +62,25 @@ const ModuleDetail = () => {
     if (!id) {
       logger.error('ModuleDetail: ID manquant dans les params', { pathname }, 'ModuleDetail')
       console.error('❌ ModuleDetail: ID manquant dans useParams!', { pathname })
-      console.error('❌ Cela signifie que React Router ne passe pas correctement le paramètre :id')
-      console.error('❌ Vérifier la configuration des routes dans App.tsx')
       
       // Essayer d'extraire l'ID depuis l'URL directement
       const match = pathname.match(/^\/modules\/([^/]+)/)
       if (match && match[1]) {
         const extractedId = match[1]
         console.warn('⚠️ ID trouvé dans l\'URL mais pas dans useParams:', extractedId)
-        console.warn('⚠️ Cela indique un problème de routing React Router')
-        console.warn('⚠️ Tentative de rechargement avec l\'ID extrait...')
-        // Attendre un peu pour voir si React Router se corrige
-        setTimeout(() => {
-          // Vérifier si l'ID est maintenant présent
-          if (!id) {
-            console.error('❌ ID toujours manquant après délai, navigation forcée avec navigate')
-            // Utiliser navigate au lieu de window.location.href
-            navigate(`/modules/${extractedId}`, { replace: true })
-          }
-        }, 200)
+        // Forcer la navigation avec l'ID extrait
+        navigate(`/modules/${extractedId}`, { replace: true })
         return
       } else {
         // Pas d'ID trouvé, rediriger vers /modules
         console.error('❌ Aucun ID trouvé dans l\'URL, redirection vers /modules')
-        // Utiliser navigate au lieu de window.location.href
         navigate('/modules', { replace: true })
         return
       }
     } else {
       console.log('✅ ModuleDetail: ID présent, composant devrait s\'afficher correctement', { id })
-      console.log('✅ Le composant va maintenant charger les données du module')
     }
-  }, [id])
+  }, [id, navigate])
   
   // Réinitialiser l'onglet à "Contenu" quand le module change
   useEffect(() => {
