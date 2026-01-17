@@ -57,8 +57,9 @@ export default defineConfig(({ mode }) => {
           warn(warning);
         },
       },
-      // Augmenter la limite de taille des chunks (mais viser < 500KB par chunk)
-      chunkSizeWarningLimit: 500,
+      // Augmenter la limite de taille des chunks pour éviter les avertissements
+      // Les chunks 3D (Three.js) peuvent être plus volumineux
+      chunkSizeWarningLimit: 1000, // 1 MB
       // Optimiser les assets
       assetsInlineLimit: 4096, // Inline les assets < 4KB
       // Minification avec esbuild (inclus avec Vite, pas besoin de terser)
