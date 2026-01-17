@@ -58,7 +58,7 @@ const Exams = () => {
   )
 
   const { data: validatedModules, isLoading: validationsLoading, error: validationsError } = useQuery<ModuleValidation[]>(
-    'module-validations',
+    ['module-validations', 'exams-page'], // Clé unique pour éviter les conflits
     async () => {
       const response = await api.get('/validations/modules', {
         timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour modules/validations/attempts
@@ -68,7 +68,7 @@ const Exams = () => {
     {
       staleTime: 5 * 60 * 1000,
       cacheTime: 10 * 60 * 1000,
-      refetchOnMount: false,
+      refetchOnMount: true, // Forcer le refetch au montage
       refetchOnWindowFocus: false,
       retry: 1,
       retryDelay: 1000,
@@ -79,7 +79,7 @@ const Exams = () => {
   )
 
   const { data: examAttempts, isLoading: attemptsLoading, error: attemptsError } = useQuery<ExamAttempt[]>(
-    'exam-attempts',
+    ['exam-attempts', 'exams-page'], // Clé unique pour éviter les conflits
     async () => {
       const response = await api.get('/exams/attempts', {
         timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour modules/validations/attempts
@@ -90,7 +90,7 @@ const Exams = () => {
     {
       staleTime: 5 * 60 * 1000,
       cacheTime: 10 * 60 * 1000,
-      refetchOnMount: false,
+      refetchOnMount: true, // Forcer le refetch au montage
       refetchOnWindowFocus: false,
       retry: 1,
       retryDelay: 1000,

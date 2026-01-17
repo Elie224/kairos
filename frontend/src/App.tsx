@@ -140,7 +140,17 @@ function App() {
           <Route path="/register" element={<Register key="register" />} />
           <Route path="/" element={<Home key="home" />} />
           <Route path="/index.html" element={<Home key="home-index" />} />
+          {/* Pages légales - Accessibles sans authentification (avant les routes protégées) */}
+          <Route path="/legal/mentions-legales" element={<LegalMentions key="legal-mentions" />} />
+          <Route path="/legal/politique-confidentialite" element={<LegalPrivacy key="legal-privacy" />} />
+          <Route path="/legal/cgu" element={<LegalCGU key="legal-cgu" />} />
+          {/* Routes protégées - Routes exactes en premier pour éviter les conflits */}
           <Route path="/modules" element={<ProtectedRoute><Modules key="modules" /></ProtectedRoute>} />
+          <Route path="/exams" element={<ProtectedRoute><Exams key="exams" /></ProtectedRoute>} />
+          {/* Redirection des anciennes routes /exams/:subject vers /exams */}
+          <Route path="/exams/:subject" element={<Navigate to="/exams" replace />} />
+          {/* Routes paramétrées après les routes exactes */}
+          <Route path="/modules/:moduleId/exam" element={<ProtectedRoute><ExamDetail key={`exam-${location.pathname}`} /></ProtectedRoute>} />
           <Route path="/modules/:id" element={<ProtectedRoute><ModuleDetail key={`module-${location.pathname}`} /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard key="dashboard" /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile key="profile" /></ProtectedRoute>} />
@@ -148,16 +158,8 @@ function App() {
           <Route path="/support" element={<ProtectedRoute><Support key="support" /></ProtectedRoute>} />
           <Route path="/feedback" element={<ProtectedRoute><Feedback key="feedback" /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedAdminRoute><Admin key="admin" /></ProtectedAdminRoute>} />
-          <Route path="/exams" element={<ProtectedRoute><Exams key="exams" /></ProtectedRoute>} />
-          {/* Redirection des anciennes routes /exams/:subject vers /exams */}
-          <Route path="/exams/:subject" element={<Navigate to="/exams" replace />} />
-          <Route path="/modules/:moduleId/exam" element={<ProtectedRoute><ExamDetail key={`exam-${location.pathname}`} /></ProtectedRoute>} />
           <Route path="/gamification" element={<ProtectedRoute><Gamification key="gamification" /></ProtectedRoute>} />
           <Route path="/visualizations" element={<ProtectedRoute><Visualizations key="visualizations" /></ProtectedRoute>} />
-          {/* Pages légales - Accessibles sans authentification */}
-          <Route path="/legal/mentions-legales" element={<LegalMentions key="legal-mentions" />} />
-          <Route path="/legal/politique-confidentialite" element={<LegalPrivacy key="legal-privacy" />} />
-          <Route path="/legal/cgu" element={<LegalCGU key="legal-cgu" />} />
         </Routes>
       </Box>
       {!isAuthPage && <Footer />}

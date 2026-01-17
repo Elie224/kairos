@@ -50,20 +50,31 @@ const ModuleDetail = () => {
     history: '🏛️ Histoire',
   }
 
-  const { data: module, isLoading, error } = useQuery<Module>(
+  const { data: module, isLoading, error, refetch } = useQuery<Module>(
     ['module', id],
     async () => {
       if (!id) {
         throw new Error('Module ID manquant')
       }
       try {
+        logger.debug('Chargement du module', { moduleId: id }, 'ModuleDetail')
         const response = await api.get(`/modules/${id}`, {
           timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour le chargement du module
         })
-        logger.debug('Module chargé avec succès', { moduleId: id, hasContent: !!response.data?.content }, 'ModuleDetail')
+        logger.debug('Module chargé avec succès', { 
+          moduleId: id, 
+          hasContent: !!response.data?.content,
+          hasLessons: !!response.data?.content?.lessons,
+          lessonsCount: response.data?.content?.lessons?.length || 0,
+          hasText: !!response.data?.content?.text
+        }, 'ModuleDetail')
         return response.data
       } catch (err: any) {
-        logger.error('Erreur lors du chargement du module', err, 'ModuleDetail')
+        logger.error('Erreur lors du chargement du module', { 
+          moduleId: id, 
+          error: err?.message || err,
+          status: err?.response?.status 
+        }, 'ModuleDetail')
         throw err
       }
     },
@@ -71,12 +82,20 @@ const ModuleDetail = () => {
       enabled: !!id,
       staleTime: 5 * 60 * 1000,
       cacheTime: 10 * 60 * 1000,
-      refetchOnMount: false,
+      refetchOnMount: true, // Forcer le refetch au montage pour s'assurer que le contenu est chargé
       refetchOnWindowFocus: false,
       retry: 2,
       retryDelay: 1000,
     }
   )
+
+  // Forcer le refetch si le module change
+  useEffect(() => {
+    if (id) {
+      logger.debug('Module ID changé, refetch du module', { moduleId: id }, 'ModuleDetail')
+      refetch()
+    }
+  }, [id, refetch])
 
   if (isLoading) {
     return (
