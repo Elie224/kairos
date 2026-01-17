@@ -129,20 +129,20 @@ const Home = () => {
                 letterSpacing="tight"
                 maxW="900px"
               >
-                Apprenez diverses matières avec l'IA
+                Kairos – Visualisations Interactives & Gamification Pilotées par l'IA
               </Heading>
             </AnimatedBox>
             
             <AnimatedBox animation="fadeInUp" delay={0.3}>
               <Text 
-                fontSize={{ base: 'lg', md: 'xl', lg: '2xl' }} 
-                maxW="800px" 
+                fontSize={{ base: 'md', md: 'lg', lg: 'xl' }} 
+                maxW="900px" 
                 lineHeight="tall" 
                 color="whiteAlpha.95"
                 fontWeight="medium"
                 textShadow="0 2px 10px rgba(0, 0, 0, 0.2)"
               >
-                Maîtrisez les concepts complexes de toutes les matières grâce à des explications personnalisées par IA et des visualisations interactives
+                Kairos repose sur un modèle OpenAI intelligent capable de générer automatiquement des contenus pédagogiques interactifs, des simulations dynamiques et une gamification adaptative, couvrant les niveaux collège, lycée et université.
               </Text>
             </AnimatedBox>
             
@@ -298,16 +298,16 @@ const Home = () => {
               fontWeight="800"
               letterSpacing="tight"
             >
-              Deux Domaines d'Excellence
+              Multiples Disciplines d'Excellence
             </Heading>
             <Text 
               fontSize={{ base: 'md', md: 'lg' }} 
               color="gray.600" 
               textAlign="center" 
-              maxW="700px"
+              maxW="800px"
               lineHeight="1.8"
             >
-                  Explorez nos modules spécialisés dans diverses matières, conçus pour vous accompagner à chaque niveau
+              Explorez nos modules couvrant les niveaux collège, lycée et université : Mathématiques avancées, Physique classique & quantique, Chimie complète, Informatique & IA, Biologie, Géographie, Économie et Histoire
             </Text>
           </VStack>
 
@@ -488,16 +488,16 @@ const Home = () => {
               fontWeight="800"
               letterSpacing="tight"
             >
-              Pourquoi choisir Kaïros ?
+              Visualisations Interactives Avancées Pilotées par l'IA
             </Heading>
             <Text 
               fontSize={{ base: 'md', md: 'lg' }} 
               color="gray.600" 
               textAlign="center" 
-              maxW="700px"
+              maxW="900px"
               lineHeight="1.8"
             >
-              Une plateforme innovante qui combine intelligence artificielle et visualisations interactives pour un apprentissage optimal
+              Le modèle IA analyse le niveau de l'apprenant, génère des simulations 2D/3D interactives, adapte la difficulté en temps réel et propose des expériences exploratoires guidées. Une plateforme EdTech intelligente avec assistant pédagogique autonome.
             </Text>
           </VStack>
 
@@ -505,24 +505,24 @@ const Home = () => {
             {[
               {
                 icon: FiCpu,
-                title: 'Tutorat IA Intelligent',
-                description: 'Obtenez des explications personnalisées adaptées à votre niveau. Kaïros analyse vos questions et fournit des réponses claires avec des exemples concrets.',
+                title: 'Modèle OpenAI Intelligent',
+                description: 'Kairos repose sur un modèle OpenAI qui génère automatiquement des contenus pédagogiques interactifs, des simulations dynamiques et une gamification adaptative pour tous les niveaux.',
                 gradient: 'linear(to-br, blue.100, blue.200)',
                 iconColor: 'blue.600',
                 delay: 0,
               },
               {
                 icon: FiEye,
-                title: 'Visualisations Interactives',
-                description: 'Visualisez des concepts complexes en 3D avec des simulations interactives. Manipulez, explorez et comprenez mieux grâce à des représentations visuelles dynamiques.',
+                title: 'Visualisations 2D/3D Interactives',
+                description: 'Simulations avancées en Mathématiques, Physique classique & quantique, Chimie complète, Biologie, et plus. Adaptées en temps réel selon votre niveau d\'apprentissage.',
                 gradient: 'linear(to-br, purple.100, purple.200)',
                 iconColor: 'purple.600',
                 delay: 0.1,
               },
               {
-                icon: FiTarget,
-                title: 'Suivi de Progression',
-                description: 'Suivez votre progression, identifiez vos forces et vos faiblesses. Obtenez des recommandations personnalisées pour optimiser votre apprentissage.',
+                icon: FiAward,
+                title: 'Gamification Intelligente Pilotée par IA',
+                description: 'Badges dynamiques, quêtes générées par IA, système de points adaptatif, classement intelligent et bienveillant. Statistiques générées par IA avec recommandations ciblées.',
                 gradient: 'linear(to-br, pink.100, pink.200)',
                 iconColor: 'pink.600',
                 delay: 0.2,
