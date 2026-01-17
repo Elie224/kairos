@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import { ChakraProvider } from '@chakra-ui/react'
 import { BrowserRouter } from 'react-router-dom'
@@ -12,6 +12,7 @@ import { AccessibilityProvider } from './components/AccessibilityProvider'
 import { useAuthStore } from './store/authStore'
 import { cacheConfigs } from './services/cacheService'
 import { handleMutationError } from './utils/errorHandler'
+import { prefetchMainRoutes } from './utils/navigation'
 import './i18n/config'
 import './styles/animations.css'
 import './styles/mobile.css'
@@ -45,14 +46,17 @@ const queryClient = new QueryClient({
 
 // Wrapper pour AccessibilityProvider qui nécessite BrowserRouter
 const AppWithAccessibility = () => {
+  // Précharger les routes principales après le montage
+  useEffect(() => {
+    prefetchMainRoutes()
+  }, [])
+
   return (
     <BrowserRouter
       future={{
         v7_startTransition: true,
         v7_relativeSplatPath: true,
       }}
-      // Restaurer le scroll lors de la navigation
-      window={window}
     >
       <AccessibilityProvider>
         <App />

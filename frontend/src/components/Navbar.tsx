@@ -30,6 +30,7 @@ import { useTranslation } from 'react-i18next'
 import { FiLogOut, FiUser } from 'react-icons/fi'
 import Logo from '../components/Logo'
 import { useAuthStore } from '../store/authStore'
+import { prefetchRoute } from '../utils/navigation'
 
 const Navbar = () => {
   const { t } = useTranslation()
@@ -46,7 +47,11 @@ const Navbar = () => {
 
   const NavLinks = () => (
     <>
-      <Link to="/modules" onClick={onClose}>
+      <Link 
+        to="/modules" 
+        onClick={onClose}
+        onMouseEnter={() => prefetchRoute('/modules')}
+      >
         <Button 
           variant="ghost" 
           w={{ base: 'full', md: 'auto' }} 
@@ -58,7 +63,11 @@ const Navbar = () => {
           {t('navbar.modules')}
         </Button>
       </Link>
-      <Link to="/dashboard" onClick={onClose}>
+      <Link 
+        to="/dashboard" 
+        onClick={onClose}
+        onMouseEnter={() => prefetchRoute('/dashboard')}
+      >
         <Button 
           variant="ghost" 
           w={{ base: 'full', md: 'auto' }} 
@@ -70,7 +79,11 @@ const Navbar = () => {
           {t('navbar.dashboard')}
         </Button>
       </Link>
-      <Link to="/exams" onClick={onClose}>
+      <Link 
+        to="/exams" 
+        onClick={onClose}
+        onMouseEnter={() => prefetchRoute('/exams')}
+      >
         <Button 
           variant="ghost" 
           w={{ base: 'full', md: 'auto' }} 
@@ -94,7 +107,11 @@ const Navbar = () => {
           Profil
         </Button>
       </Link>
-      <Link to="/support" onClick={onClose}>
+      <Link 
+        to="/support" 
+        onClick={onClose}
+        onMouseEnter={() => prefetchRoute('/support')}
+      >
         <Button 
           variant="ghost" 
           w={{ base: 'full', md: 'auto' }} 
@@ -106,7 +123,11 @@ const Navbar = () => {
           Soutenir
         </Button>
       </Link>
-      <Link to="/gamification" onClick={onClose}>
+      <Link 
+        to="/gamification" 
+        onClick={onClose}
+        onMouseEnter={() => prefetchRoute('/gamification')}
+      >
         <Button 
           variant="ghost" 
           w={{ base: 'full', md: 'auto' }} 
@@ -118,7 +139,11 @@ const Navbar = () => {
           🏆 Récompenses
         </Button>
       </Link>
-      <Link to="/visualizations" onClick={onClose}>
+      <Link 
+        to="/visualizations" 
+        onClick={onClose}
+        onMouseEnter={() => prefetchRoute('/visualizations')}
+      >
         <Button 
           variant="ghost" 
           w={{ base: 'full', md: 'auto' }} 
@@ -131,7 +156,11 @@ const Navbar = () => {
         </Button>
       </Link>
       {user?.is_admin && (
-        <Link to="/admin" onClick={onClose}>
+        <Link 
+          to="/admin" 
+          onClick={onClose}
+          onMouseEnter={() => prefetchRoute('/admin')}
+        >
           <Button 
             variant="ghost" 
             w={{ base: 'full', md: 'auto' }} 
@@ -212,7 +241,12 @@ const Navbar = () => {
                   </Text>
                 </MenuButton>
                 <MenuList>
-                  <MenuItem icon={<FiUser />} as={Link} to="/profile">
+                  <MenuItem 
+                  icon={<FiUser />} 
+                  as={Link} 
+                  to="/profile"
+                  onMouseEnter={() => prefetchRoute('/profile')}
+                >
                     Mon profil
                   </MenuItem>
                   <MenuItem icon={<FiLogOut />} onClick={handleLogout}>
@@ -222,12 +256,18 @@ const Navbar = () => {
               </Menu>
             ) : (
               <>
-                <Link to="/login">
+                <Link 
+                  to="/login"
+                  onMouseEnter={() => prefetchRoute('/login')}
+                >
                   <Button variant="ghost" size="md" minH="44px">
                     Connexion
                   </Button>
                 </Link>
-                <Link to="/register">
+                <Link 
+                  to="/register"
+                  onMouseEnter={() => prefetchRoute('/register')}
+                >
                   <Button 
                     colorScheme="blue" 
                     size="md"
@@ -292,7 +332,11 @@ const Navbar = () => {
                         </Text>
                       </HStack>
                     </Box>
-                    <Link to="/profile" onClick={onClose}>
+                    <Link 
+                      to="/profile" 
+                      onClick={onClose}
+                      onMouseEnter={() => prefetchRoute('/profile')}
+                    >
                       <Button 
                         variant="ghost" 
                         w="full" 
@@ -319,7 +363,11 @@ const Navbar = () => {
                   </>
                 ) : (
                   <>
-                    <Link to="/login" onClick={onClose}>
+                    <Link 
+                      to="/login" 
+                      onClick={onClose}
+                      onMouseEnter={() => prefetchRoute('/login')}
+                    >
                       <Button 
                         variant="ghost" 
                         w="full" 
@@ -330,7 +378,11 @@ const Navbar = () => {
                         Connexion
                       </Button>
                     </Link>
-                    <Link to="/register" onClick={onClose}>
+                    <Link 
+                      to="/register" 
+                      onClick={onClose}
+                      onMouseEnter={() => prefetchRoute('/register')}
+                    >
                       <Button 
                         colorScheme="blue" 
                         w="full"
