@@ -194,8 +194,9 @@ const Footer: React.FC = () => {
           {/* Copyright */}
           <Text 
             fontSize="sm" 
-            color="gray.300"
+            color="white"
             fontWeight="medium"
+            opacity={0.9}
           >
             © {currentYear} Kaïrox. Tous droits réservés.
           </Text>
@@ -212,42 +213,45 @@ const Footer: React.FC = () => {
             >
               <Text
                 as="span"
-                color="gray.300"
+                color="white"
                 fontWeight="medium"
-                _hover={{ color: 'white', textDecoration: 'underline' }}
-                transition="color 0.2s"
+                opacity={0.9}
+                _hover={{ color: 'blue.300', textDecoration: 'underline', opacity: 1 }}
+                transition="all 0.2s"
                 cursor="pointer"
               >
                 Mentions légales
               </Text>
             </RouterLink>
-            <Text color="gray.500" fontWeight="bold">•</Text>
+            <Text color="white" fontWeight="bold" opacity={0.6}>•</Text>
             <RouterLink 
               to="/legal/politique-confidentialite"
               style={{ textDecoration: 'none' }}
             >
               <Text
                 as="span"
-                color="gray.300"
+                color="white"
                 fontWeight="medium"
-                _hover={{ color: 'white', textDecoration: 'underline' }}
-                transition="color 0.2s"
+                opacity={0.9}
+                _hover={{ color: 'blue.300', textDecoration: 'underline', opacity: 1 }}
+                transition="all 0.2s"
                 cursor="pointer"
               >
                 Politique de confidentialité
               </Text>
             </RouterLink>
-            <Text color="gray.500" fontWeight="bold">•</Text>
+            <Text color="white" fontWeight="bold" opacity={0.6}>•</Text>
             <RouterLink 
               to="/legal/cgu"
               style={{ textDecoration: 'none' }}
             >
               <Text
                 as="span"
-                color="gray.300"
+                color="white"
                 fontWeight="medium"
-                _hover={{ color: 'white', textDecoration: 'underline' }}
-                transition="color 0.2s"
+                opacity={0.9}
+                _hover={{ color: 'blue.300', textDecoration: 'underline', opacity: 1 }}
+                transition="all 0.2s"
                 cursor="pointer"
               >
                 CGU
