@@ -4,7 +4,7 @@
 import { Box, Container, Heading, Text, Button, VStack, HStack, SimpleGrid, Badge, Icon, Flex, Card, CardBody, Image, Divider, Skeleton, SkeletonText } from '@chakra-ui/react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { FiTarget, FiCpu, FiEye, FiZap, FiUsers, FiAward, FiArrowRight, FiPlay, FiBook, FiCheck, FiTrendingUp, FiClock } from 'react-icons/fi'
+import { FiTarget, FiCpu, FiEye, FiZap, FiUsers, FiAward, FiArrowRight, FiPlay, FiBook, FiCheck, FiTrendingUp, FiClock, FiChevronDown, FiStar, FiMessageCircle, FiCode, FiBarChart } from 'react-icons/fi'
 import { AnimatedBox } from '../components/AnimatedBox'
 import { useQuery } from 'react-query'
 import api from '../services/api'
@@ -686,7 +686,202 @@ const Home = () => {
         </Container>
       </Box>
 
-      {/* CTA Section finale - Design premium */}
+      {/* Section FAQ - Nouvelle */}
+      <Box bg="white" py={{ base: 12, md: 20 }}>
+        <Container maxW="900px">
+          <VStack spacing={6} mb={12}>
+            <Badge 
+              fontSize={{ base: 'sm', md: 'md' }} 
+              px={4} 
+              py={2} 
+              borderRadius="full"
+              bgGradient="linear(to-r, blue.500, purple.500)"
+              color="white"
+              fontWeight="700"
+            >
+              Questions Fréquentes
+            </Badge>
+            <Heading 
+              size={{ base: 'xl', md: '2xl', lg: '3xl' }} 
+              textAlign="center" 
+              color="gray.900"
+              fontWeight="800"
+            >
+              Tout ce que vous devez savoir
+            </Heading>
+          </VStack>
+
+          <VStack spacing={4} align="stretch">
+            {[
+              {
+                question: 'Comment fonctionne Kaïrox ?',
+                answer: 'Kaïrox utilise un modèle OpenAI intelligent pour générer automatiquement des contenus pédagogiques interactifs, des simulations 3D dynamiques et une gamification adaptative. Choisissez un module, apprenez avec notre tuteur IA, et testez vos connaissances avec des quiz interactifs.',
+              },
+              {
+                question: 'Quelles matières sont disponibles ?',
+                answer: 'Nous couvrons Mathématiques, Informatique & IA, Physique, Chimie, Biologie, Géographie, Économie et Histoire. Toutes les matières incluent des visualisations 3D interactives et un tutorat IA personnalisé.',
+              },
+              {
+                question: 'Est-ce vraiment gratuit ?',
+                answer: 'Oui ! L\'inscription et l\'accès aux modules de base sont entièrement gratuits. Créez votre compte pour commencer à apprendre dès aujourd\'hui.',
+              },
+              {
+                question: 'Puis-je utiliser Kaïrox sur mobile ?',
+                answer: 'Absolument ! Kaïrox est entièrement responsive et optimisé pour tous les appareils : smartphones, tablettes et ordinateurs.',
+              },
+              {
+                question: 'Comment le tuteur IA s\'adapte à mon niveau ?',
+                answer: 'Notre IA analyse votre progression, vos réponses et vos erreurs pour adapter automatiquement la difficulté et le style d\'explication à votre niveau d\'apprentissage.',
+              },
+            ].map((faq, idx) => (
+              <AnimatedBox key={idx} animation="fadeInUp" delay={idx * 0.1}>
+                <Card
+                  border="2px solid"
+                  borderColor="gray.100"
+                  borderRadius="xl"
+                  bg="white"
+                  _hover={{
+                    borderColor: 'blue.300',
+                    boxShadow: 'md',
+                  }}
+                  transition="all 0.3s"
+                >
+                  <CardBody p={6}>
+                    <VStack spacing={3} align="stretch">
+                      <Heading size="sm" color="gray.900" fontWeight="700">
+                        {faq.question}
+                      </Heading>
+                      <Text color="gray.700" lineHeight="1.8" fontSize="md">
+                        {faq.answer}
+                      </Text>
+                    </VStack>
+                  </CardBody>
+                </Card>
+              </AnimatedBox>
+            ))}
+          </VStack>
+        </Container>
+      </Box>
+
+      {/* Section Démonstration / Exemples - Nouvelle */}
+      <Box bgGradient="linear-gradient(180deg, gray.50 0%, white 100%)" py={{ base: 12, md: 20 }}>
+        <Container maxW="1200px">
+          <VStack spacing={6} mb={12}>
+            <Badge 
+              fontSize={{ base: 'sm', md: 'md' }} 
+              px={4} 
+              py={2} 
+              borderRadius="full"
+              bgGradient="linear(to-r, blue.500, purple.500)"
+              color="white"
+              fontWeight="700"
+            >
+              Découvrez Kaïrox
+            </Badge>
+            <Heading 
+              size={{ base: 'xl', md: '2xl', lg: '3xl' }} 
+              textAlign="center" 
+              color="gray.900"
+              fontWeight="800"
+            >
+              Une expérience d'apprentissage unique
+            </Heading>
+            <Text 
+              fontSize={{ base: 'md', md: 'lg' }} 
+              color="gray.600" 
+              textAlign="center" 
+              maxW="800px"
+              lineHeight="1.8"
+            >
+              Voyez par vous-même ce qui rend Kaïrox spécial : visualisations 3D interactives, tutorat IA intelligent, et gamification motivante.
+            </Text>
+          </VStack>
+
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+            {[
+              {
+                icon: FiCode,
+                title: 'Visualisations 3D Réalistes',
+                description: 'Explorez des concepts complexes avec des simulations 3D générées par IA, ultra-réalistes et interactives.',
+                color: 'blue',
+                gradient: 'linear(to-br, blue.100, blue.200)',
+              },
+              {
+                icon: FiMessageCircle,
+                title: 'Tutorat IA Personnalisé',
+                description: 'Posez vos questions à notre tuteur IA qui s\'adapte à votre niveau et style d\'apprentissage.',
+                color: 'purple',
+                gradient: 'linear(to-br, purple.100, purple.200)',
+              },
+              {
+                icon: FiBarChart,
+                title: 'Suivi de Progression Détaillé',
+                description: 'Visualisez votre progression avec des graphiques et statistiques générées par IA.',
+                color: 'pink',
+                gradient: 'linear(to-br, pink.100, pink.200)',
+              },
+              {
+                icon: FiAward,
+                title: 'Gamification Intelligente',
+                description: 'Gagnez des badges, complétez des quêtes et montez dans les classements avec un système de gamification adaptatif.',
+                color: 'orange',
+                gradient: 'linear(to-br, orange.100, orange.200)',
+              },
+              {
+                icon: FiTarget,
+                title: 'Évaluations Adaptatives',
+                description: 'Testez vos connaissances avec des quiz qui s\'adaptent à votre niveau et fournissent un feedback détaillé.',
+                color: 'green',
+                gradient: 'linear(to-br, green.100, green.200)',
+              },
+              {
+                icon: FiTrendingUp,
+                title: 'Recommandations IA',
+                description: 'Recevez des recommandations personnalisées de modules et exercices basées sur votre profil d\'apprentissage.',
+                color: 'cyan',
+                gradient: 'linear(to-br, cyan.100, cyan.200)',
+              },
+            ].map((feature, idx) => (
+              <AnimatedBox key={idx} animation="fadeInUp" delay={idx * 0.1}>
+                <Card
+                  _hover={{ 
+                    transform: 'translateY(-4px)', 
+                    boxShadow: 'lg',
+                    borderColor: `${feature.color}.300`,
+                  }}
+                  transition="all 0.3s"
+                  border="2px solid"
+                  borderColor="gray.100"
+                  borderRadius="xl"
+                  bg="white"
+                  height="100%"
+                >
+                  <CardBody p={6}>
+                    <VStack spacing={4} align="start">
+                      <Box
+                        p={4}
+                        bgGradient={feature.gradient}
+                        borderRadius="xl"
+                        boxShadow="md"
+                      >
+                        <Icon as={feature.icon} boxSize={6} color={`${feature.color}.600`} />
+                      </Box>
+                      <Heading size="sm" color="gray.900" fontWeight="700">
+                        {feature.title}
+                      </Heading>
+                      <Text color="gray.700" lineHeight="1.7" fontSize="sm">
+                        {feature.description}
+                      </Text>
+                    </VStack>
+                  </CardBody>
+                </Card>
+              </AnimatedBox>
+            ))}
+          </SimpleGrid>
+        </Container>
+      </Box>
+
+      {/* CTA Section finale - Design premium amélioré */}
       <Box 
         bgGradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
         py={{ base: 16, md: 24 }}
@@ -731,15 +926,20 @@ const Home = () => {
                     boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
                     bg: 'whiteAlpha.95',
                   }}
+                  _active={{
+                    transform: 'translateY(-2px) scale(1.02)',
+                  }}
                   transition="all 0.4s"
                   fontWeight="bold"
-                  px={8}
-                  py={6}
+                  px={10}
+                  py={7}
                   boxShadow="0 10px 30px rgba(0, 0, 0, 0.2)"
                   rightIcon={<FiArrowRight />}
                   borderRadius="xl"
+                  fontSize={{ base: 'lg', md: 'xl' }}
+                  aria-label="Créer un compte gratuit sur Kaïrox - Inscription"
                 >
-                  Créer un compte gratuit
+                  🚀 Créer un compte gratuit
                 </Button>
               </Link>
               <Button
@@ -753,15 +953,21 @@ const Home = () => {
                   transform: 'translateY(-4px) scale(1.05)',
                   bg: 'whiteAlpha.200',
                   borderColor: 'white',
+                  boxShadow: '0 10px 30px rgba(255, 255, 255, 0.3)',
+                }}
+                _active={{
+                  transform: 'translateY(-2px) scale(1.02)',
                 }}
                 transition="all 0.4s"
                 fontWeight="semibold"
-                px={8}
-                py={6}
+                px={10}
+                py={7}
                 leftIcon={<FiPlay />}
                 borderRadius="xl"
+                fontSize={{ base: 'lg', md: 'xl' }}
+                aria-label="Explorer les modules et visualisations disponibles"
               >
-                Explorer les modules
+                👁️ Découvrir les modules
               </Button>
             </HStack>
           </VStack>
