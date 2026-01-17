@@ -48,11 +48,30 @@ const Modules = () => {
   })
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null)
 
+  // IMPORTANT: Tous les hooks doivent être appelés AVANT toute vérification conditionnelle
+  // pour respecter les règles des hooks React
+  
   // Vérification CRITIQUE: Si on est sur /modules/:id, NE PAS RENDRE ce composant du tout
   // Cela évite que ModuleCard se rendent et déclenchent des navigations multiples
+  // DOIT être après tous les hooks pour respecter les règles React
   const pathname = window.location.pathname
-  if (pathname.match(/^\/modules\/[^/]+$/)) {
-    // Si on est sur une route /modules/:id, retourner null immédiatement
+  const isOnModuleDetailPage = pathname.match(/^\/modules\/[^/]+$/)
+  
+  // Charger les modules même si on est sur /modules/:id (pour éviter les warnings)
+  // mais ne pas les utiliser dans le rendu
+  const { modules, groupedModules, isLoading, totalCount } = useModules(filters)
+
+  // Synchroniser selectedSubject avec filters.subject (toujours exécuter pour respecter les hooks)
+  useEffect(() => {
+    if (filters.subject && filters.subject !== selectedSubject) {
+      setSelectedSubject(filters.subject)
+    } else if (!filters.subject && selectedSubject) {
+      setSelectedSubject(null)
+    }
+  }, [filters.subject, selectedSubject])
+
+  // Si on est sur /modules/:id, retourner null APRÈS tous les hooks
+  if (isOnModuleDetailPage) {
     // React Router ne devrait pas rendre ce composant, mais si cela arrive,
     // on ne rendons rien pour éviter les problèmes
     return null
