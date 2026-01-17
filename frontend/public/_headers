@@ -1,0 +1,16 @@
+# Headers pour Render.com - Forcer les bons MIME types
+/assets/*
+  Content-Type: application/javascript
+  X-Content-Type-Options: nosniff
+
+/*.js
+  Content-Type: application/javascript
+  X-Content-Type-Options: nosniff
+
+/*.css
+  Content-Type: text/css
+  X-Content-Type-Options: nosniff
+
+/*.json
+  Content-Type: application/json
+  X-Content-Type-Options: nosniff

@@ -17,44 +17,57 @@ if (!fs.existsSync(distDir)) {
 
 // 1. Créer le fichier _redirects dans dist/
 const redirectsFile = path.join(distDir, '_redirects');
-const redirectsContent = `# Configuration pour Render.com
-# IMPORTANT: Les fichiers statiques doivent être servis AVANT la règle catch-all
+const redirectsContent = `# Configuration Render.com pour SPA
+# IMPORTANT: L'ordre des règles est crucial
+# Les règles spécifiques doivent être AVANT la règle catch-all
 
-# Servir les fichiers dans /assets/ directement (pas de redirection)
-/assets/*  200
+# Ne PAS rediriger les fichiers statiques - ils doivent être servis directement
+/assets/*  /assets/:splat  200
+/*.js      /:splat.js      200
+/*.css     /:splat.css     200
+/*.json    /:splat.json    200
+/*.png     /:splat.png     200
+/*.jpg     /:splat.jpg   200
+/*.jpeg    /:splat.jpeg    200
+/*.gif     /:splat.gif     200
+/*.svg     /:splat.svg     200
+/*.ico     /:splat.ico     200
+/*.woff    /:splat.woff    200
+/*.woff2   /:splat.woff2   200
+/*.ttf     /:splat.ttf     200
+/*.eot     /:splat.eot     200
+/*.map     /:splat.map     200
 
-# Servir les fichiers JavaScript directement
-/*.js      200
-
-# Servir les fichiers CSS directement
-/*.css     200
-
-# Servir les autres fichiers statiques directement
-/*.json    200
-/*.png     200
-/*.jpg     200
-/*.jpeg    200
-/*.gif     200
-/*.svg     200
-/*.ico     200
-/*.woff    200
-/*.woff2   200
-/*.ttf     200
-/*.eot     200
-/*.map     200
-
-# Rediriger toutes les autres routes vers index.html (SPA routing)
-# Cette règle doit être EN DERNIER pour ne pas intercepter les fichiers statiques
-/*    /index.html   200
+# Rediriger toutes les autres routes (routes SPA) vers index.html
+# Cette règle doit être EN DERNIER
+/*         /index.html     200
 `;
+
+// Copier aussi le fichier _headers si il existe
+const publicHeaders = path.join(publicDir, '_headers');
+const distHeaders = path.join(distDir, '_headers');
+if (fs.existsSync(publicHeaders)) {
+  fs.copyFileSync(publicHeaders, distHeaders);
+  console.log('✅ Fichier _headers copié dans dist/');
+}
 fs.writeFileSync(redirectsFile, redirectsContent, 'utf8');
 console.log('✅ Fichier _redirects créé dans dist/');
 
-// 2. Copier aussi le fichier _redirects depuis public/ si il existe
+// 2. Copier aussi le fichier _redirects depuis public/ si il existe (mais utiliser notre contenu par défaut)
 const publicRedirects = path.join(publicDir, '_redirects');
 if (fs.existsSync(publicRedirects)) {
-  fs.copyFileSync(publicRedirects, redirectsFile);
-  console.log('✅ Fichier _redirects copié depuis public/');
+  // Utiliser le fichier public s'il existe, sinon utiliser le contenu par défaut
+  const publicContent = fs.readFileSync(publicRedirects, 'utf8');
+  if (publicContent.trim().length > 0) {
+    fs.writeFileSync(redirectsFile, publicContent, 'utf8');
+    console.log('✅ Fichier _redirects copié depuis public/');
+  } else {
+    fs.writeFileSync(redirectsFile, redirectsContent, 'utf8');
+    console.log('✅ Fichier _redirects créé avec contenu par défaut');
+  }
+} else {
+  fs.writeFileSync(redirectsFile, redirectsContent, 'utf8');
+  console.log('✅ Fichier _redirects créé avec contenu par défaut');
 }
 
 // 3. Créer aussi un fichier .htaccess pour Apache (si nécessaire)
