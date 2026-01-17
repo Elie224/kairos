@@ -49,42 +49,73 @@ function App() {
 
   // Restaurer le scroll en haut de page lors de la navigation ET du rechargement (optimisé)
   useEffect(() => {
-    // Utiliser requestAnimationFrame et un léger délai pour s'assurer que le DOM est prêt
+    // Fonction robuste pour forcer le scroll en haut
     const scrollToTop = () => {
-      // Forcer le scroll en haut immédiatement
-      window.scrollTo({ top: 0, behavior: 'instant' })
-      // S'assurer que le body et html sont aussi en haut
-      document.documentElement.scrollTop = 0
-      document.body.scrollTop = 0
+      try {
+        // Méthode 1: window.scrollTo
+        window.scrollTo(0, 0)
+        // Méthode 2: documentElement
+        if (document.documentElement) {
+          document.documentElement.scrollTop = 0
+          document.documentElement.scrollLeft = 0
+        }
+        // Méthode 3: body
+        if (document.body) {
+          document.body.scrollTop = 0
+          document.body.scrollLeft = 0
+        }
+        // Méthode 4: window.scroll avec behavior
+        window.scroll({ top: 0, left: 0, behavior: 'instant' })
+      } catch (e) {
+        // Fallback silencieux
+      }
     }
     
     // Scroll immédiat
     scrollToTop()
     
-    // Scroll après que le DOM soit complètement chargé
-    requestAnimationFrame(() => {
+    // Scroll après que le DOM soit prêt
+    const rafId = requestAnimationFrame(() => {
       scrollToTop()
-      // Double vérification après un court délai
-      setTimeout(scrollToTop, 0)
+      // Double vérification
+      setTimeout(scrollToTop, 10)
+      setTimeout(scrollToTop, 50)
     })
+    
+    return () => cancelAnimationFrame(rafId)
   }, [location.pathname])
   
-  // S'assurer que le scroll est en haut lors du chargement initial de la page
+  // S'assurer que le scroll est en haut lors du chargement initial
   useEffect(() => {
-    // Ne s'exécute qu'une fois au montage du composant
-    const handleLoad = () => {
-      window.scrollTo({ top: 0, behavior: 'instant' })
-      document.documentElement.scrollTop = 0
-      document.body.scrollTop = 0
+    const scrollToTop = () => {
+      try {
+        window.scrollTo(0, 0)
+        if (document.documentElement) {
+          document.documentElement.scrollTop = 0
+        }
+        if (document.body) {
+          document.body.scrollTop = 0
+        }
+      } catch (e) {
+        // Fallback silencieux
+      }
     }
     
     // Si la page est déjà chargée
-    if (document.readyState === 'complete') {
-      handleLoad()
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      scrollToTop()
+      setTimeout(scrollToTop, 100)
     } else {
-      // Sinon attendre le chargement complet
+      const handleLoad = () => {
+        scrollToTop()
+        setTimeout(scrollToTop, 100)
+      }
+      document.addEventListener('DOMContentLoaded', handleLoad)
       window.addEventListener('load', handleLoad)
-      return () => window.removeEventListener('load', handleLoad)
+      return () => {
+        document.removeEventListener('DOMContentLoaded', handleLoad)
+        window.removeEventListener('load', handleLoad)
+      }
     }
   }, [])
 
