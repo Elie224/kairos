@@ -62,9 +62,12 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   // S'assurer que les enfants sont rendus avec une clé unique pour forcer le re-render
-  // Utiliser une clé basée sur le pathname pour forcer le re-render lors de la navigation
-  // Utiliser React.Fragment avec une clé unique pour forcer le remount complet
-  return <React.Fragment key={`route-${location.pathname}`}>{children}</React.Fragment>
+  // Utiliser une Box avec key basée sur le pathname pour forcer le remount complet lors de la navigation
+  return (
+    <Box key={`protected-route-${location.pathname}`} w="100%" minH="100%">
+      {children}
+    </Box>
+  )
 }
 
 export default ProtectedRoute

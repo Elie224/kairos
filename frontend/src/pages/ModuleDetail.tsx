@@ -34,18 +34,27 @@ const ModuleDetail = () => {
   // Log pour déboguer le rendu du composant - FORCER le log immédiatement
   useEffect(() => {
     const pathname = window.location.pathname
+    const urlParams = new URLSearchParams(window.location.search)
     logger.debug('ModuleDetail component mounted', { moduleId: id, pathname }, 'ModuleDetail')
-    console.log('🔵 ModuleDetail RENDERED', { id, pathname, timestamp: new Date().toISOString() })
+    console.log('🔵 ====== ModuleDetail RENDERED ======', { 
+      id, 
+      pathname, 
+      timestamp: new Date().toISOString(),
+      urlParams: urlParams.toString()
+    })
     console.log('🔵 useParams id:', id)
     console.log('🔵 window.location.pathname:', pathname)
+    console.log('🔵 window.location.href:', window.location.href)
     
     // Vérifier que l'ID est bien présent
     if (!id) {
       logger.error('ModuleDetail: ID manquant dans les params', { pathname }, 'ModuleDetail')
       console.error('❌ ModuleDetail: ID manquant!', { pathname })
       console.error('❌ Cela signifie que React Router ne passe pas correctement le paramètre :id')
+      console.error('❌ Vérifier la configuration des routes dans App.tsx')
     } else {
       console.log('✅ ModuleDetail: ID présent, composant devrait s\'afficher correctement', { id })
+      console.log('✅ Le composant va maintenant charger les données du module')
     }
   }, [id])
   

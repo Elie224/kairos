@@ -135,31 +135,30 @@ function App() {
         tabIndex={-1}
         aria-label="Contenu principal"
       >
-        <Routes location={location} key={location.pathname}>
-          <Route path="/login" element={<Login key="login" />} />
-          <Route path="/register" element={<Register key="register" />} />
-          <Route path="/" element={<Home key="home" />} />
-          <Route path="/index.html" element={<Home key="home-index" />} />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/index.html" element={<Home />} />
           {/* Pages légales - Accessibles sans authentification (avant les routes protégées) */}
-          <Route path="/legal/mentions-legales" element={<LegalMentions key="legal-mentions" />} />
-          <Route path="/legal/politique-confidentialite" element={<LegalPrivacy key="legal-privacy" />} />
-          <Route path="/legal/cgu" element={<LegalCGU key="legal-cgu" />} />
-          {/* Routes protégées - Routes exactes en premier pour éviter les conflits */}
-          {/* IMPORTANT: Les routes paramétrées doivent être AVANT les routes exactes pour React Router v6 */}
-          <Route path="/modules/:moduleId/exam" element={<ProtectedRoute><ExamDetail key={`exam-${location.pathname}`} /></ProtectedRoute>} />
-          <Route path="/modules/:id" element={<ProtectedRoute><ModuleDetail key={`module-detail-${location.pathname}`} /></ProtectedRoute>} />
-          <Route path="/modules" element={<ProtectedRoute><Modules key="modules" /></ProtectedRoute>} />
-          <Route path="/exams" element={<ProtectedRoute><Exams key="exams" /></ProtectedRoute>} />
+          <Route path="/legal/mentions-legales" element={<LegalMentions />} />
+          <Route path="/legal/politique-confidentialite" element={<LegalPrivacy />} />
+          <Route path="/legal/cgu" element={<LegalCGU />} />
+          {/* Routes protégées - IMPORTANT: Routes paramétrées AVANT routes exactes pour React Router v6 */}
+          <Route path="/modules/:moduleId/exam" element={<ProtectedRoute><ExamDetail /></ProtectedRoute>} />
+          <Route path="/modules/:id" element={<ProtectedRoute><ModuleDetail /></ProtectedRoute>} />
+          <Route path="/modules" element={<ProtectedRoute><Modules /></ProtectedRoute>} />
+          <Route path="/exams" element={<ProtectedRoute><Exams /></ProtectedRoute>} />
           {/* Redirection des anciennes routes /exams/:subject vers /exams */}
           <Route path="/exams/:subject" element={<Navigate to="/exams" replace />} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard key="dashboard" /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><Profile key="profile" /></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute><Settings key="settings" /></ProtectedRoute>} />
-          <Route path="/support" element={<ProtectedRoute><Support key="support" /></ProtectedRoute>} />
-          <Route path="/feedback" element={<ProtectedRoute><Feedback key="feedback" /></ProtectedRoute>} />
-          <Route path="/admin" element={<ProtectedAdminRoute><Admin key="admin" /></ProtectedAdminRoute>} />
-          <Route path="/gamification" element={<ProtectedRoute><Gamification key="gamification" /></ProtectedRoute>} />
-          <Route path="/visualizations" element={<ProtectedRoute><Visualizations key="visualizations" /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          <Route path="/support" element={<ProtectedRoute><Support /></ProtectedRoute>} />
+          <Route path="/feedback" element={<ProtectedRoute><Feedback /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedAdminRoute><Admin /></ProtectedAdminRoute>} />
+          <Route path="/gamification" element={<ProtectedRoute><Gamification /></ProtectedRoute>} />
+          <Route path="/visualizations" element={<ProtectedRoute><Visualizations /></ProtectedRoute>} />
         </Routes>
       </Box>
       {!isAuthPage && <Footer />}

@@ -32,12 +32,16 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
 
   const handleStartLearning = (e: React.MouseEvent) => {
     e.stopPropagation() // Empêcher le déclenchement du onClick du Card parent
+    e.preventDefault() // Empêcher tout comportement par défaut
     if (module.id) {
-      // Utiliser navigate avec replace pour une navigation plus fluide
-      navigate(`/modules/${module.id}`, { replace: false })
+      console.log('🟢 Navigation vers module:', module.id, module.title)
+      logger.debug('Navigation vers module', { moduleId: module.id, moduleTitle: module.title }, 'ModuleCard')
+      // Utiliser navigate avec replace: false pour permettre le retour en arrière
+      navigate(`/modules/${module.id}`, { replace: false, state: { from: 'modules-list' } })
     } else {
       // Logger l'erreur si module.id n'existe pas
       logger.error('Module ID manquant pour la navigation', { module }, 'ModuleCard')
+      console.error('❌ Module ID manquant pour la navigation', module)
     }
   }
 
