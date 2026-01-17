@@ -515,7 +515,325 @@ const DefaultScene = () => {
   )
 }
 
-// Visualisation interactive pour informatique (algorithmes, structures de données)
+// Simulation 3D pour les mathématiques
+const MathematicsSimulation3D = ({ visualizationData }: { visualizationData?: any }) => {
+  const graphRef = useRef<THREE.Group>(null)
+  const [animationProgress, setAnimationProgress] = useState(0)
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAnimationProgress((prev) => (prev + 0.02) % (Math.PI * 2))
+    }, 50)
+    return () => clearInterval(interval)
+  }, [])
+  
+  return (
+    <>
+      <gridHelper args={[10, 10, '#888888', '#444444']} />
+      <axesHelper args={[5]} />
+      
+      {/* Graphique 3D d'une fonction mathématique */}
+      <group ref={graphRef}>
+        {Array.from({ length: 50 }).map((_, i) => {
+          const x = (i / 50) * 4 - 2
+          const y = Math.sin(x * 2 + animationProgress) * 0.5
+          const z = Math.cos(x * 2 + animationProgress) * 0.3
+          
+          return (
+            <mesh key={i} position={[x, y, z]}>
+              <sphereGeometry args={[0.05, 8, 8]} />
+              <meshStandardMaterial color="#805AD5" />
+            </mesh>
+          )
+        })}
+        
+        {/* Courbe continue */}
+        <line>
+          <bufferGeometry>
+            <bufferAttribute
+              attach="attributes-position"
+              count={50}
+              array={new Float32Array(
+                Array.from({ length: 50 }).flatMap((_, i) => {
+                  const x = (i / 50) * 4 - 2
+                  const y = Math.sin(x * 2 + animationProgress) * 0.5
+                  const z = Math.cos(x * 2 + animationProgress) * 0.3
+                  return [x, y, z]
+                })
+              )}
+              itemSize={3}
+            />
+          </bufferGeometry>
+          <lineBasicMaterial color="#805AD5" linewidth={2} />
+        </line>
+      </group>
+      
+      {/* Formes géométriques */}
+      <mesh position={[-3, 1, 0]}>
+        <boxGeometry args={[0.8, 0.8, 0.8]} />
+        <meshStandardMaterial color="#E74C3C" />
+      </mesh>
+      
+      <mesh position={[3, 1, 0]}>
+        <sphereGeometry args={[0.6, 32, 32]} />
+        <meshStandardMaterial color="#3498DB" />
+      </mesh>
+    </>
+  )
+}
+
+// Simulation 3D pour l'informatique (algorithmes, structures de données)
+const ComputerScienceSimulation3D = ({ visualizationData }: { visualizationData?: any }) => {
+  const nodesRef = useRef<THREE.Group[]>([])
+  const [step, setStep] = useState(0)
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep((prev) => (prev + 1) % 6)
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
+  
+  const arrayData = [1, 2, 3, 4]
+  
+  return (
+    <>
+      <gridHelper args={[8, 8, '#888888', '#444444']} />
+      
+      {/* Représentation 3D d'un tableau */}
+      {arrayData.map((value, index) => {
+        const x = (index - 1.5) * 1.5
+        const y = Math.sin(step * 0.5 + index) * 0.2
+        const isActive = index === step % arrayData.length
+        
+        return (
+          <group key={index} position={[x, y, 0]}>
+            <mesh>
+              <boxGeometry args={[1, 1, 1]} />
+              <meshStandardMaterial 
+                color={isActive ? '#805AD5' : '#EDF2F7'} 
+                emissive={isActive ? '#805AD5' : '#000000'}
+                emissiveIntensity={isActive ? 0.3 : 0}
+              />
+            </mesh>
+            
+            <Text 
+              position={[0, 0, 0.6]} 
+              fontSize={0.3} 
+              color={isActive ? 'white' : 'black'}
+              anchorX="center"
+              anchorY="middle"
+            >
+              {value}
+            </Text>
+            
+            <Text 
+              position={[0, -0.8, 0]} 
+              fontSize={0.2} 
+              color="#718096"
+              anchorX="center"
+            >
+              [{index}]
+            </Text>
+          </group>
+        )
+      })}
+      
+      {/* Lignes de connexion */}
+      {Array.from({ length: arrayData.length - 1 }).map((_, i) => {
+        const startX = (i - 1.5) * 1.5 + 0.5
+        const endX = (i + 1 - 1.5) * 1.5 - 0.5
+        
+        return (
+          <line key={i}>
+            <bufferGeometry>
+              <bufferAttribute
+                attach="attributes-position"
+                count={2}
+                array={new Float32Array([startX, 0, 0, endX, 0, 0])}
+                itemSize={3}
+              />
+            </bufferGeometry>
+            <lineBasicMaterial color="#805AD5" linewidth={2} />
+          </line>
+        )
+      })}
+    </>
+  )
+}
+
+// Simulation 3D pour la biologie
+const BiologySimulation3D = ({ visualizationData }: { visualizationData?: any }) => {
+  return (
+    <>
+      <ambientLight intensity={0.8} />
+      <pointLight position={[5, 5, 5]} intensity={1} />
+      
+      {/* Cellule 3D */}
+      <mesh position={[0, 0, 0]}>
+        <sphereGeometry args={[1.5, 32, 32]} />
+        <meshStandardMaterial 
+          color="#4ECDC4" 
+          transparent 
+          opacity={0.7}
+        />
+      </mesh>
+      
+      {/* Noyau de la cellule */}
+      <mesh position={[0, 0, 0]}>
+        <sphereGeometry args={[0.6, 32, 32]} />
+        <meshStandardMaterial color="#E74C3C" />
+      </mesh>
+      
+      {/* Organites autour */}
+      {Array.from({ length: 6 }).map((_, i) => {
+        const angle = (i / 6) * Math.PI * 2
+        const radius = 1.2
+        const x = Math.cos(angle) * radius
+        const y = Math.sin(angle) * radius
+        const z = Math.sin(i) * 0.3
+        
+        return (
+          <mesh key={i} position={[x, y, z]}>
+            <sphereGeometry args={[0.15, 16, 16]} />
+            <meshStandardMaterial color="#2ECC71" />
+          </mesh>
+        )
+      })}
+    </>
+  )
+}
+
+// Simulation 3D pour la géographie
+const GeographySimulation3D = ({ visualizationData }: { visualizationData?: any }) => {
+  return (
+    <>
+      {/* Relief 3D */}
+      {Array.from({ length: 10 }).map((_, x) => {
+        return Array.from({ length: 10 }).map((_, z) => {
+          const y = Math.sin(x * 0.5) * Math.cos(z * 0.5) * 0.3
+          const color = y > 0 ? '#2ECC71' : '#3498DB'
+          
+          return (
+            <mesh key={`${x}-${z}`} position={[x - 4.5, y, z - 4.5]}>
+              <boxGeometry args={[0.9, 0.1, 0.9]} />
+              <meshStandardMaterial color={color} />
+            </mesh>
+          )
+        })
+      }).flat()}
+      
+      {/* Éléments géographiques */}
+      <mesh position={[0, 0.5, 0]}>
+        <coneGeometry args={[0.5, 1, 8]} />
+        <meshStandardMaterial color="#95A5A6" />
+      </mesh>
+    </>
+  )
+}
+
+// Simulation 3D pour l'économie
+const EconomicsSimulation3D = ({ visualizationData }: { visualizationData?: any }) => {
+  const [time, setTime] = useState(0)
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime((prev) => prev + 0.1)
+    }, 100)
+    return () => clearInterval(interval)
+  }, [])
+  
+  return (
+    <>
+      <gridHelper args={[10, 10, '#888888', '#444444']} />
+      
+      {/* Graphique 3D de courbe d'offre/demande */}
+      {Array.from({ length: 30 }).map((_, i) => {
+        const x = (i / 30) * 6 - 3
+        const supplyY = Math.sin(x * 0.5 + time) * 0.5 + 1.5
+        const demandY = -Math.sin(x * 0.5 + time) * 0.5 + 1.5
+        
+        return (
+          <group key={i}>
+            <mesh position={[x, supplyY, 0]}>
+              <sphereGeometry args={[0.08, 8, 8]} />
+              <meshStandardMaterial color="#2ECC71" />
+            </mesh>
+            <mesh position={[x, demandY, 0]}>
+              <sphereGeometry args={[0.08, 8, 8]} />
+              <meshStandardMaterial color="#E74C3C" />
+            </mesh>
+          </group>
+        )
+      })}
+      
+      {/* Légendes */}
+      <Text position={[-2, 2.5, 0]} fontSize={0.2} color="green" anchorX="center">
+        Offre
+      </Text>
+      <Text position={[-2, 0.5, 0]} fontSize={0.2} color="red" anchorX="center">
+        Demande
+      </Text>
+    </>
+  )
+}
+
+// Simulation 3D pour l'histoire (timeline 3D)
+const HistorySimulation3D = ({ visualizationData }: { visualizationData?: any }) => {
+  const events = [
+    { year: '1900', height: 0.5 },
+    { year: '1950', height: 1.0 },
+    { year: '2000', height: 1.5 },
+  ]
+  
+  return (
+    <>
+      <gridHelper args={[8, 8, '#888888', '#444444']} />
+      
+      {/* Timeline 3D */}
+      <line>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            count={3}
+            array={new Float32Array([
+              -3, 0, 0,
+              0, 0, 0,
+              3, 0, 0
+            ])}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <lineBasicMaterial color="#E74C3C" linewidth={3} />
+      </line>
+      
+      {/* Événements historiques */}
+      {events.map((event, index) => {
+        const x = (index - 1) * 3
+        
+        return (
+          <group key={index} position={[x, event.height / 2, 0]}>
+            <mesh>
+              <cylinderGeometry args={[0.2, 0.2, event.height, 8]} />
+              <meshStandardMaterial color="#E74C3C" />
+            </mesh>
+            
+            <Text 
+              position={[0, event.height / 2 + 0.3, 0]} 
+              fontSize={0.2} 
+              color="white"
+              anchorX="center"
+            >
+              {event.year}
+            </Text>
+          </group>
+        )
+      })}
+    </>
+  )
+}
+
+// Visualisation interactive pour informatique (algorithmes, structures de données) - 2D fallback
 const ComputerScienceVisualization = ({ visualizationData }: { visualizationData?: any }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [currentStep, setCurrentStep] = useState(0)
