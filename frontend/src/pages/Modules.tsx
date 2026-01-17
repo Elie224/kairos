@@ -50,13 +50,13 @@ const Modules = () => {
   useEffect(() => {
     const pathname = window.location.pathname
     console.log('🟢 Modules component RENDERED', { pathname, timestamp: new Date().toISOString() })
-    // Si on est sur /modules/:id, on ne devrait PAS être ici
+    // Si on est sur /modules/:id, on ne devrait PAS être ici - rediriger immédiatement
     if (pathname.match(/^\/modules\/[^/]+$/)) {
       console.error('❌ ERREUR CRITIQUE: Modules component rendu sur une route /modules/:id!', { pathname })
-      console.error('❌ Cela signifie que React Router ne match pas correctement la route /modules/:id')
-      console.error('❌ Redirection forcée vers la bonne route...')
-      // Forcer une redirection vers la route correcte
+      console.error('❌ Redirection immédiate vers la bonne route...')
+      // Redirection immédiate vers la route correcte
       window.location.href = pathname
+      return
     }
   }, [])
 

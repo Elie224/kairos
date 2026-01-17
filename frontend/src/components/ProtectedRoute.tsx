@@ -62,9 +62,10 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   // S'assurer que les enfants sont rendus avec une clé unique pour forcer le re-render
-  // Utiliser une Box avec key basée sur le pathname pour forcer le remount complet lors de la navigation
+  // Utiliser une clé basée sur le pathname complet pour forcer le remount complet lors de la navigation
+  // IMPORTANT: Utiliser location.key (unique pour chaque navigation) au lieu de pathname pour garantir le remount
   return (
-    <Box key={`protected-route-${location.pathname}`} w="100%" minH="100%">
+    <Box key={`protected-route-${location.key || location.pathname}`} w="100%" minH="100%">
       {children}
     </Box>
   )

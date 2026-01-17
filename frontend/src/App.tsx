@@ -135,7 +135,7 @@ function App() {
         tabIndex={-1}
         aria-label="Contenu principal"
       >
-        <Routes>
+        <Routes key={location.pathname}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<Home />} />
@@ -145,6 +145,7 @@ function App() {
           <Route path="/legal/politique-confidentialite" element={<LegalPrivacy />} />
           <Route path="/legal/cgu" element={<LegalCGU />} />
           {/* Routes protégées - IMPORTANT: Routes paramétrées AVANT routes exactes pour React Router v6 */}
+          {/* L'ordre est CRITIQUE: React Router v6 match la première route qui correspond */}
           <Route path="/modules/:moduleId/exam" element={<ProtectedRoute><ExamDetail /></ProtectedRoute>} />
           <Route path="/modules/:id" element={<ProtectedRoute><ModuleDetail /></ProtectedRoute>} />
           <Route path="/modules" element={<ProtectedRoute><Modules /></ProtectedRoute>} />
