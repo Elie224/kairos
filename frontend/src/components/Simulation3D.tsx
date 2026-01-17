@@ -501,9 +501,181 @@ const DefaultScene = () => {
   )
 }
 
+// Visualisation interactive pour informatique (algorithmes, structures de données)
+const ComputerScienceVisualization = ({ visualizationData }: { visualizationData?: any }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [currentStep, setCurrentStep] = useState(0)
+  
+  const algorithmData = useMemo(() => {
+    if (visualizationData?.data_flow?.steps) {
+      return visualizationData.data_flow.steps
+    }
+    if (visualizationData?.step_by_step_execution?.steps) {
+      return visualizationData.step_by_step_execution.steps
+    }
+    // Données par défaut pour un tri
+    return [
+      { step: 1, action: 'Comparer les éléments', result: '[3, 1, 4, 2] → Comparer 3 et 1' },
+      { step: 2, action: 'Échanger si nécessaire', result: '[1, 3, 4, 2] → Échanger 3 et 1' },
+      { step: 3, action: 'Continuer la comparaison', result: '[1, 3, 4, 2] → Comparer 3 et 4' },
+      { step: 4, action: 'Comparer avec l\'élément suivant', result: '[1, 3, 4, 2] → Comparer 4 et 2' },
+      { step: 5, action: 'Échanger', result: '[1, 3, 2, 4] → Échanger 4 et 2' },
+      { step: 6, action: 'Résultat final', result: '[1, 2, 3, 4] → Tri terminé' }
+    ]
+  }, [visualizationData])
+  
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    
+    // Nettoyer le canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    
+    // Dessiner la structure de données (tableau)
+    const arrayData = visualizationData?.step_by_step_execution?.input || 
+                     visualizationData?.data_flow?.steps?.[currentStep]?.result || 
+                     [3, 1, 4, 2]
+    const isArray = Array.isArray(arrayData)
+    const data = isArray ? arrayData : [1, 2, 3, 4]
+    
+    const cellWidth = 60
+    const cellHeight = 40
+    const startX = (canvas.width - (data.length * cellWidth + (data.length - 1) * 10)) / 2
+    const startY = canvas.height / 2 - cellHeight / 2
+    
+    data.forEach((value: number, index: number) => {
+      const x = startX + index * (cellWidth + 10)
+      const y = startY
+      
+      // Rectangle pour la cellule
+      ctx.fillStyle = index === currentStep % data.length ? '#805AD5' : '#EDF2F7'
+      ctx.fillRect(x, y, cellWidth, cellHeight)
+      
+      // Bordure
+      ctx.strokeStyle = '#CBD5E0'
+      ctx.lineWidth = 2
+      ctx.strokeRect(x, y, cellWidth, cellHeight)
+      
+      // Valeur
+      ctx.fillStyle = index === currentStep % data.length ? 'white' : '#2D3748'
+      ctx.font = 'bold 16px Arial'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText(String(value), x + cellWidth / 2, y + cellHeight / 2)
+      
+      // Index
+      ctx.fillStyle = '#718096'
+      ctx.font = '12px Arial'
+      ctx.fillText(`[${index}]`, x + cellWidth / 2, y + cellHeight + 15)
+    })
+    
+    // Dessiner les flèches entre les étapes si on est en train d'animer
+    if (currentStep > 0 && currentStep < algorithmData.length) {
+      const arrowX = startX + ((currentStep - 1) % data.length) * (cellWidth + 10) + cellWidth
+      const arrowY = startY + cellHeight / 2
+      
+      ctx.strokeStyle = '#805AD5'
+      ctx.lineWidth = 3
+      ctx.beginPath()
+      ctx.moveTo(arrowX, arrowY)
+      ctx.lineTo(arrowX + 10, arrowY)
+      ctx.stroke()
+      
+      // Pointe de flèche
+      ctx.fillStyle = '#805AD5'
+      ctx.beginPath()
+      ctx.moveTo(arrowX + 10, arrowY)
+      ctx.lineTo(arrowX + 5, arrowY - 5)
+      ctx.lineTo(arrowX + 5, arrowY + 5)
+      ctx.closePath()
+      ctx.fill()
+    }
+  }, [currentStep, visualizationData, algorithmData])
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentStep((prev) => (prev + 1) % algorithmData.length)
+    }, 1500)
+    return () => clearInterval(interval)
+  }, [algorithmData.length])
+  
+  return (
+    <VStack spacing={4} p={6} h="100%" w="100%" bg="gray.50">
+      <Box w="100%" textAlign="center">
+        <ChakraText fontSize="lg" fontWeight="bold" color="gray.800" mb={2}>
+          {visualizationData?.algorithm || visualizationData?.concept || 'Algorithme de tri'}
+        </ChakraText>
+        {visualizationData?.explanation && (
+          <ChakraText fontSize="sm" color="gray.600" mb={4}>
+            {visualizationData.explanation}
+          </ChakraText>
+        )}
+      </Box>
+      
+      <Box 
+        bg="white" 
+        p={4} 
+        borderRadius="lg" 
+        boxShadow="md"
+        w="100%"
+        flex={1}
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <canvas
+          ref={canvasRef}
+          width={400}
+          height={200}
+          style={{ maxWidth: '100%', height: 'auto' }}
+        />
+      </Box>
+      
+      <VStack spacing={2} w="100%">
+        <HStack w="100%" justify="space-between">
+          <ChakraText fontSize="sm" color="gray.700" fontWeight="medium">
+            Étape {currentStep + 1} / {algorithmData.length}
+          </ChakraText>
+          <Badge colorScheme="purple" fontSize="xs">
+            {algorithmData[currentStep]?.action || 'Exécution...'}
+          </Badge>
+        </HStack>
+        <Progress 
+          value={((currentStep + 1) / algorithmData.length) * 100} 
+          colorScheme="purple" 
+          size="sm"
+          w="100%"
+          borderRadius="full"
+        />
+        <Box 
+          bg="purple.50" 
+          p={3} 
+          borderRadius="md" 
+          w="100%"
+          border="1px solid"
+          borderColor="purple.200"
+        >
+          <ChakraText fontSize="xs" color="gray.700" fontFamily="mono">
+            {algorithmData[currentStep]?.result || 'En cours...'}
+          </ChakraText>
+        </Box>
+      </VStack>
+    </VStack>
+  )
+}
+
 // Visualisation 2D pour les autres matières
 const Visualization2D = ({ module, visualizationData }: { module: Module, visualizationData?: any }) => {
   const subject = module.subject?.toLowerCase()
+  
+  // Pour computer_science, utiliser une visualisation interactive spéciale
+  if (subject === 'computer_science') {
+    return <ComputerScienceVisualization visualizationData={visualizationData} />
+  }
   
   const getVisualizationContent = () => {
     switch (subject) {
