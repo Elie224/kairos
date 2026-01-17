@@ -22,7 +22,6 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { isAuthenticated, isLoading, checkAuth } = useAuthStore()
   const location = useLocation()
-  const location = useLocation()
 
   // Vérifier l'authentification au montage (seulement si nécessaire)
   useEffect(() => {
