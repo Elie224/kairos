@@ -12,8 +12,8 @@ const LegalCGU = () => {
   }, [])
 
   return (
-    <Box py={{ base: 8, md: 12 }} minH="80vh" w="100%">
-      <Container maxW="900px">
+    <Box py={{ base: 8, md: 12 }} minH="80vh" w="100%" bg="gray.50">
+      <Container maxW="900px" px={{ base: 4, md: 6 }}>
         <VStack spacing={8} align="stretch">
           <VStack spacing={4} align="start">
             <Heading size="2xl" color="gray.900" fontWeight="800">

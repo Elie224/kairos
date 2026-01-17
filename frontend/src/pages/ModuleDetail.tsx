@@ -4,6 +4,7 @@ import { useQuery } from 'react-query'
 import { Container, Box, VStack, Heading, Text, Badge, Button, Tabs, TabList, TabPanels, Tab, TabPanel, Card, CardBody, Spinner, HStack } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import api from '../services/api'
+import { API_TIMEOUTS } from '../constants/api'
 import ImmersiveExperience from '../components/ImmersiveExperience'
 import AITutor from '../components/AITutor'
 import Quiz from '../components/Quiz'
@@ -12,6 +13,7 @@ import TPList from '../components/TPList'
 import ResourceList from '../components/ResourceList'
 import { useProgressTracker } from '../hooks/useProgressTracker'
 import { ModuleContent, Lesson, Section } from '../types/moduleContent'
+import logger from '../utils/logger'
 
 interface Module {
   id: string
