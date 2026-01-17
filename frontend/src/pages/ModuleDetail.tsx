@@ -223,20 +223,6 @@ const ModuleDetail = () => {
     )
   }
 
-  // Log pour vérifier que le module est bien chargé
-  useEffect(() => {
-    if (module) {
-      console.log('✅ Module chargé et prêt à être affiché', {
-        moduleId: module.id,
-        moduleTitle: module.title,
-        hasContent: !!module.content,
-        hasLessons: !!module.content?.lessons,
-        lessonsCount: module.content?.lessons?.length || 0,
-        hasText: !!module.content?.text
-      })
-    }
-  }, [module])
-
   // Vérifier si le module permet les simulations (physique, chimie, biologie)
   const hasSimulation = ['physics', 'chemistry', 'biology'].includes(module.subject?.toLowerCase() || '')
   // Vérifier si le module ne doit pas avoir de TP (mathématiques, histoire, géographie, économie)
