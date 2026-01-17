@@ -17,10 +17,19 @@ if (!fs.existsSync(distDir)) {
 
 // 1. Créer le fichier _redirects dans dist/
 const redirectsFile = path.join(distDir, '_redirects');
-const redirectsContent = `# Rediriger toutes les routes SPA vers index.html, mais exclure les fichiers statiques
+const redirectsContent = `# Configuration pour Render.com
+# IMPORTANT: Les fichiers statiques doivent être servis AVANT la règle catch-all
+
+# Servir les fichiers dans /assets/ directement (pas de redirection)
 /assets/*  200
+
+# Servir les fichiers JavaScript directement
 /*.js      200
+
+# Servir les fichiers CSS directement
 /*.css     200
+
+# Servir les autres fichiers statiques directement
 /*.json    200
 /*.png     200
 /*.jpg     200
@@ -33,6 +42,9 @@ const redirectsContent = `# Rediriger toutes les routes SPA vers index.html, mai
 /*.ttf     200
 /*.eot     200
 /*.map     200
+
+# Rediriger toutes les autres routes vers index.html (SPA routing)
+# Cette règle doit être EN DERNIER pour ne pas intercepter les fichiers statiques
 /*    /index.html   200
 `;
 fs.writeFileSync(redirectsFile, redirectsContent, 'utf8');
