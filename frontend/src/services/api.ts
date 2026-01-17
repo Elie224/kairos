@@ -1,9 +1,25 @@
+/**
+ * Configuration et instance Axios pour les appels API
+ * 
+ * Gère :
+ * - Configuration de base URL (dev/prod)
+ * - Authentification automatique via tokens
+ * - Intercepteurs pour erreurs et retry
+ * - Gestion des timeouts adaptatifs
+ * 
+ * @module services/api
+ */
 import axios, { AxiosError } from 'axios'
 
-// Déterminer l'URL de base de l'API
-// En production (Render Static Site), utiliser VITE_API_URL directement
-// En développement local, utiliser le proxy Vite (/api) pour éviter les problèmes CORS
-const getBaseURL = () => {
+/**
+ * Détermine l'URL de base de l'API selon l'environnement
+ * 
+ * - En développement : utilise le proxy Vite (/api) pour éviter CORS
+ * - En production : utilise VITE_API_URL ou le backend Render par défaut
+ * 
+ * @returns {string} URL de base de l'API
+ */
+const getBaseURL = (): string => {
   // En développement local (npm run dev), utiliser le proxy Vite qui contourne CORS
   // Le proxy Vite redirige /api vers le backend Render configuré dans vite.config.ts
   if (import.meta.env.DEV) {
@@ -22,19 +38,35 @@ const getBaseURL = () => {
 
 import { API_TIMEOUTS } from '../constants/api'
 
+/**
+ * Instance Axios configurée pour l'application Kaïrox
+ * 
+ * Configuration :
+ * - baseURL : Déterminé automatiquement selon l'environnement
+ * - timeout : 30 secondes par défaut (configurable par requête)
+ * - headers : Content-Type application/json par défaut
+ */
 const api = axios.create({
   baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: API_TIMEOUTS.DEFAULT, // Timeout par défaut (30 secondes)
+  timeout: API_TIMEOUTS.STANDARD, // 15 secondes par défaut (timeout standard)
 })
 
-// Timeout pour les uploads de fichiers
-const FILE_UPLOAD_TIMEOUT = API_TIMEOUTS.FILE_UPLOAD // 2 minutes pour les uploads
+/**
+ * Timeout spécifique pour les uploads de fichiers (2 minutes)
+ * Les fichiers peuvent être volumineux et nécessiter plus de temps
+ */
+const FILE_UPLOAD_TIMEOUT = API_TIMEOUTS.FILE_UPLOAD // 120 secondes pour les uploads
 
-// Initialiser l'authentification depuis le localStorage
-const initializeAuth = () => {
+/**
+ * Initialise l'authentification depuis le localStorage
+ * 
+ * Récupère le token stocké et l'ajoute aux headers par défaut de Axios
+ * Appelé une seule fois au chargement du module
+ */
+const initializeAuth = (): void => {
   const authData = localStorage.getItem('kairos-auth')
   if (authData) {
     try {
@@ -50,7 +82,14 @@ const initializeAuth = () => {
 
 initializeAuth()
 
-// Intercepteur pour gérer les requêtes et supprimer Content-Type pour FormData
+/**
+ * Intercepteur de requête Axios
+ * 
+ * Gère :
+ * - Suppression automatique de Content-Type pour FormData (laisser le navigateur le définir)
+ * - Application du timeout FILE_UPLOAD_TIMEOUT pour les uploads
+ * - Préservation de Content-Type pour URLSearchParams
+ */
 api.interceptors.request.use(
   (config) => {
     // Si la donnée est une instance FormData, supprimer le Content-Type
@@ -85,7 +124,19 @@ api.interceptors.request.use(
   }
 )
 
-// Intercepteur pour gérer les erreurs
+/**
+ * Intercepteur de réponse Axios pour la gestion des erreurs
+ * 
+ * Gère :
+ * - Erreurs 401 (non autorisé) : déconnexion et redirection vers login
+ * - Erreurs réseau/timeout : retry automatique pour les requêtes GET
+ * - Erreurs 429 (rate limiting) : retry après délai défini dans Retry-After
+ * - Erreurs 503 (service indisponible) : retry après 3 secondes
+ * 
+ * @param {any} response - Réponse réussie (passée telle quelle)
+ * @param {AxiosError} error - Erreur à traiter
+ * @returns {Promise} Réponse ou rejet avec erreur gérée
+ */
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {

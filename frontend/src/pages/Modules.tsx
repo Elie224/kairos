@@ -1,5 +1,16 @@
 /**
- * Page des modules d'apprentissage - Design amélioré
+ * Page des modules d'apprentissage
+ * 
+ * Affiche tous les modules disponibles organisés par matière :
+ * - Grille de sélection de matière (Mathématiques, Physique, Chimie, etc.)
+ * - Liste filtrée des modules par matière sélectionnée
+ * - Barre de recherche avancée pour filtrer les modules
+ * - Filtres par niveau et difficulté
+ * 
+ * L'utilisateur peut cliquer sur une matière pour voir ses modules,
+ * ou utiliser la recherche pour trouver un module spécifique
+ * 
+ * @module pages/Modules
  */
 import { useState, useEffect } from 'react'
 import {

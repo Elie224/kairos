@@ -40,6 +40,7 @@ import { PasswordStrength } from '../components/PasswordStrength'
 import { AnimatedBox } from '../components/AnimatedBox'
 import { Onboarding } from '../components/Onboarding'
 import { countries } from '../constants/countries'
+import logger from '../utils/logger'
 
 const Register = () => {
   const { t } = useTranslation()
@@ -92,12 +93,23 @@ const Register = () => {
     }
   }, [isAuthenticated, navigate])
 
-  const handleBlur = (field: string) => {
+  /**
+   * Handler appelé quand un champ perd le focus
+   * Marque le champ comme "touché" et lance sa validation
+   * @param {string} field - Nom du champ
+   */
+  const handleBlur = (field: string): void => {
     setTouched({ ...touched, [field]: true })
     validateField(field, formData[field as keyof typeof formData] as string)
   }
 
-  const validateField = (field: string, value: string) => {
+  /**
+   * Valide un champ spécifique du formulaire
+   * @param {string} field - Nom du champ à valider
+   * @param {string} value - Valeur du champ
+   * @returns {boolean} true si le champ est valide, false sinon
+   */
+  const validateField = (field: string, value: string): boolean => {
     let validation: { isValid: boolean; error?: string } = { isValid: true }
 
     switch (field) {
@@ -128,7 +140,12 @@ const Register = () => {
     return validation.isValid
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  /**
+   * Handler appelé à chaque modification d'un champ du formulaire
+   * Met à jour la valeur du champ et valide en temps réel si nécessaire
+   * @param {React.ChangeEvent<HTMLInputElement | HTMLSelectElement>} e - Événement de changement
+   */
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value } = e.target
     setFormData({
       ...formData,
@@ -162,7 +179,12 @@ const Register = () => {
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  /**
+   * Handler pour la soumission du formulaire d'inscription
+   * Valide tous les champs, puis envoie les données au backend
+   * @param {React.FormEvent} e - Événement de soumission du formulaire
+   */
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()
     setError('')
 
@@ -198,7 +220,7 @@ const Register = () => {
       showNotification('Inscription réussie ! Connectez-vous maintenant.', 'success')
       navigate('/login', { state: { message: 'Inscription réussie ! Connectez-vous maintenant.' } })
     } catch (err: any) {
-      console.error('Erreur lors de l\'inscription:', err)
+      logger.error('Erreur lors de l\'inscription', err, 'Register')
       const errorMessage = err.response?.data?.detail || 
         err.message || 
         'Erreur lors de l\'inscription'

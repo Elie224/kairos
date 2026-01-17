@@ -188,7 +188,7 @@ const AITutor = ({ moduleId }: AITutorProps) => {
             setError(null) // Effacer les erreurs précédentes en cas de succès
           },
           onError: (error) => {
-            console.error('Erreur chat:', error)
+            logger.error('Erreur chat', error, 'AITutor')
             setError(error instanceof Error ? error.message : 'Une erreur est survenue lors de la communication avec Kaïrox')
             setIsStreaming(false)
             setCurrentStreamingMessage('')

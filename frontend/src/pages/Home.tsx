@@ -1,5 +1,17 @@
 /**
- * Page d'accueil - Design moderne et professionnel amélioré
+ * Page d'accueil de Kaïrox
+ * 
+ * Affiche :
+ * - Section Hero avec CTA pour inscription
+ * - Liste des matières disponibles avec descriptions
+ * - Fonctionnalités principales (IA, visualisations 3D, gamification)
+ * - Section "Comment ça marche" (3 étapes)
+ * - FAQ (5 questions fréquentes)
+ * - Section démonstration (6 fonctionnalités clés)
+ * - CTA final pour inscription
+ * 
+ * La page est accessible sans authentification pour permettre la découverte
+ * Les statistiques sont chargées uniquement si l'utilisateur est authentifié
  */
 import { Box, Container, Heading, Text, Button, VStack, HStack, SimpleGrid, Badge, Icon, Flex, Card, CardBody, Image, Divider, Skeleton, SkeletonText } from '@chakra-ui/react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -24,17 +36,22 @@ const Home = () => {
     keywords: 'apprentissage, éducation, IA, visualisations 3D, gamification, tutorat intelligent, mathématiques, physique, chimie, informatique',
   })
 
-  // Charger les statistiques dynamiques
+  /**
+   * Chargement des statistiques dynamiques pour la page d'accueil
+   * Affiche le nombre d'utilisateurs, modules et utilisateurs actifs si disponibles
+   * Ces stats ne sont chargées que si l'utilisateur est authentifié
+   */
   const { data: stats, isLoading: statsLoading } = useQuery(
     'home-stats',
     async () => {
-          try {
-            const response = await api.get('/auth/stats', {
-              timeout: API_TIMEOUTS.SIMPLE, // 10 secondes pour les stats home
-            })
-            return response.data
-          } catch {
-        // Si l'utilisateur n'est pas admin, retourner des stats par défaut
+      try {
+        const response = await api.get('/auth/stats', {
+          timeout: API_TIMEOUTS.SIMPLE, // 10 secondes pour les stats home
+        })
+        return response.data
+      } catch {
+        // Si l'utilisateur n'est pas admin ou s'il y a une erreur,
+        // retourner null pour utiliser les stats par défaut affichées dans l'UI
         return null
       }
     },
@@ -47,6 +64,10 @@ const Home = () => {
     }
   )
 
+  /**
+   * Handler pour le bouton "Explorer les modules"
+   * Redirige l'utilisateur vers la page des modules
+   */
   const handleExploreModules = () => {
     navigate('/modules')
   }

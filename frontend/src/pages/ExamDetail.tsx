@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next'
 import api from '../services/api'
 import Exam from '../components/Exam'
 import { FiArrowLeft, FiDownload, FiEye } from 'react-icons/fi'
+import { API_TIMEOUTS } from '../constants/api'
+import logger from '../utils/logger'
 
 const ExamDetail = () => {
   const { moduleId } = useParams<{ moduleId: string }>()
@@ -27,7 +29,7 @@ const ExamDetail = () => {
         })
         setPrerequisites(response.data)
       } catch (error) {
-        console.error('Erreur lors de la vérification des prérequis:', error)
+        logger.error('Erreur lors de la vérification des prérequis', error, 'ExamDetail')
       } finally {
         setLoadingPrerequisites(false)
       }
@@ -40,7 +42,7 @@ const ExamDetail = () => {
     async () => {
       if (!moduleId) return null
       const response = await api.get(`/exams/module/${moduleId}`, {
-        timeout: 1000, // Timeout de 1 seconde
+        timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour le chargement de l'examen
       })
       return response.data
     },
@@ -81,7 +83,7 @@ const ExamDetail = () => {
     try {
       const response = await api.get(`/exams/module/${moduleId}/pdf`, {
         responseType: 'blob',
-        timeout: 1000, // Timeout de 1 seconde
+        timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour le chargement de l'examen
         headers: {
           'Accept': 'application/pdf',
         },
@@ -107,7 +109,7 @@ const ExamDetail = () => {
         isClosable: true,
       })
     } catch (error: any) {
-      console.error('Erreur lors du téléchargement du PDF:', error)
+      logger.error('Erreur lors du téléchargement du PDF', error, 'ExamDetail')
       toast({
         title: 'Erreur de téléchargement',
         description: error.response?.data?.detail || 'Impossible de télécharger le PDF',
@@ -124,7 +126,7 @@ const ExamDetail = () => {
     try {
       const response = await api.get(`/exams/module/${moduleId}/pdf`, {
         responseType: 'blob',
-        timeout: 1000, // Timeout de 1 seconde
+        timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour le chargement de l'examen
       })
       
       const blob = new Blob([response.data], { type: 'application/pdf' })
@@ -132,7 +134,7 @@ const ExamDetail = () => {
       setSelectedPdfUrl(url)
       onOpen()
     } catch (error: any) {
-      console.error('Erreur lors du chargement du PDF:', error)
+      logger.error('Erreur lors du chargement du PDF', error, 'ExamDetail')
       toast({
         title: 'Erreur de chargement',
         description: error.response?.data?.detail || 'Impossible de charger le PDF',

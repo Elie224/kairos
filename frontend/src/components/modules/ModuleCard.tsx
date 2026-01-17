@@ -1,5 +1,15 @@
 /**
- * Composant de carte de module réutilisable - Design amélioré
+ * Composant de carte de module réutilisable
+ * 
+ * Affiche une carte pour un module avec :
+ * - Titre et description du module
+ * - Badge de difficulté avec couleur adaptée
+ * - Bouton "Commencer l'apprentissage" pour naviguer vers le module
+ * - Affichage du sujet (matière) avec couleur associée
+ * 
+ * Le composant est mémorisé (memo) pour éviter les re-renders inutiles
+ * 
+ * @module components/modules/ModuleCard
  */
 import { memo } from 'react'
 import { Card, CardBody, VStack, HStack, Badge, Heading, Text, Button, Box, Icon } from '@chakra-ui/react'

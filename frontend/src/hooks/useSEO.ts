@@ -1,5 +1,19 @@
 /**
- * Hook pour gérer le SEO des pages
+ * Hook React pour gérer le SEO des pages
+ * 
+ * Met automatiquement à jour les balises meta (title, description, Open Graph, Twitter Card)
+ * quand la route change ou quand les options SEO sont mises à jour
+ * 
+ * @example
+ * ```tsx
+ * useSEO({
+ *   title: 'Titre de la page',
+ *   description: 'Description pour le SEO',
+ *   keywords: 'mots-clés, SEO',
+ * })
+ * ```
+ * 
+ * @module hooks/useSEO
  */
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'

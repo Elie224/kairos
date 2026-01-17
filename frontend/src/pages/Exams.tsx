@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import api from '../services/api'
 import { FiBook, FiCheckCircle, FiArrowRight } from 'react-icons/fi'
+import { API_TIMEOUTS } from '../constants/api'
+import logger from '../utils/logger'
 
 interface Module {
   id: string
@@ -50,7 +52,7 @@ const Exams = () => {
       retry: 1, // Réessayer une seule fois
       retryDelay: 1000,
       onError: (error) => {
-        console.error('Erreur lors du chargement des modules:', error)
+        logger.error('Erreur lors du chargement des modules', error, 'Exams')
       },
     }
   )
@@ -71,7 +73,7 @@ const Exams = () => {
       retry: 1,
       retryDelay: 1000,
       onError: (error) => {
-        console.error('Erreur lors du chargement des validations:', error)
+        logger.error('Erreur lors du chargement des validations', error, 'Exams')
       },
     }
   )
@@ -93,7 +95,7 @@ const Exams = () => {
       retry: 1,
       retryDelay: 1000,
       onError: (error) => {
-        console.error('Erreur lors du chargement des tentatives d\'examen:', error)
+        logger.error('Erreur lors du chargement des tentatives d\'examen', error, 'Exams')
       },
     }
   )

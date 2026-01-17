@@ -1,9 +1,21 @@
+/**
+ * Composant pour protéger les routes nécessitant une authentification
+ * 
+ * Vérifie si l'utilisateur est authentifié avant de rendre les enfants.
+ * Si non authentifié, redirige vers la page de connexion.
+ * 
+ * @module components/ProtectedRoute
+ */
 import React, { useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import { Box, Spinner, Container, VStack, Text } from '@chakra-ui/react'
 
+/**
+ * Props du composant ProtectedRoute
+ */
 interface ProtectedRouteProps {
+  /** Composants enfants à afficher si l'utilisateur est authentifié */
   children: React.ReactNode
 }
 

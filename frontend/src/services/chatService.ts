@@ -387,9 +387,7 @@ class ChatService {
                 options.onChunk?.(parsed.content)
               }
             } catch (e) {
-              if (import.meta.env.DEV) {
-                console.warn('Erreur de parsing SSE:', e, 'Data:', data)
-              }
+              logger.warn('Erreur de parsing SSE', { error: e, data }, 'ChatService')
             }
           }
         }

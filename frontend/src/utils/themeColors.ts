@@ -169,7 +169,7 @@ export const getThemeConfig = (): ThemeColorConfig => {
       }
     }
   } catch (e) {
-    console.error('Erreur lors de la récupération du thème:', e)
+    logger.error('Erreur lors de la récupération du thème', e, 'ThemeColors')
   }
   
   // Par défaut, utiliser Bleu pour Kaïrox (plateforme éducative high-tech)
@@ -190,7 +190,7 @@ export const setThemeColor = (colorKey: keyof typeof THEME_COLORS): void => {
       appliedAt: new Date().toISOString()
     }))
   } catch (e) {
-    console.error('Erreur lors de la sauvegarde du thème:', e)
+    logger.error('Erreur lors de la sauvegarde du thème', e, 'ThemeColors')
   }
 }
 

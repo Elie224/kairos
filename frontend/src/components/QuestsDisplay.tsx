@@ -22,6 +22,8 @@ import {
 import { FiTarget, FiClock, FiAward, FiCheckCircle } from 'react-icons/fi'
 import api from '../services/api'
 import { useAuthStore } from '../store/authStore'
+import { API_TIMEOUTS } from '../constants/api'
+import logger from '../utils/logger'
 
 interface QuestRequirement {
   type: string
@@ -54,7 +56,7 @@ export const QuestsDisplay = ({ limit = 5 }: { limit?: number }) => {
         })
         return response.data || []
       } catch (error) {
-        console.error('Erreur lors de la récupération des quêtes:', error)
+        logger.error('Erreur lors de la récupération des quêtes', error, 'QuestsDisplay')
         return []
       }
     },

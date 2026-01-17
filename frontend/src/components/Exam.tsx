@@ -4,6 +4,8 @@ import { useMutation } from 'react-query'
 import { useTranslation } from 'react-i18next'
 import api from '../services/api'
 import { useQueryClient } from 'react-query'
+import { API_TIMEOUTS } from '../constants/api'
+import logger from '../utils/logger'
 
 interface ExamProps {
   examId: string
@@ -79,7 +81,7 @@ const Exam = ({ examId, moduleId }: ExamProps) => {
         })
         setExam(response.data)
       } catch (error: any) {
-        console.error('Erreur lors du chargement de l\'examen:', error)
+        logger.error('Erreur lors du chargement de l\'examen', error, 'Exam')
       }
     }
     if (moduleId) {
@@ -154,7 +156,7 @@ const Exam = ({ examId, moduleId }: ExamProps) => {
       queryClient.invalidateQueries('exam-attempts')
       queryClient.invalidateQueries('validations')
     } catch (error: any) {
-      console.error('Erreur lors de la soumission:', error)
+      logger.error('Erreur lors de la soumission de l\'examen', error, 'Exam')
     }
   }
 

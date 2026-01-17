@@ -28,6 +28,8 @@ import { FiAward, FiTrendingUp, FiStar } from 'react-icons/fi'
 import { FaTrophy, FaMedal } from 'react-icons/fa'
 import api from '../services/api'
 import { useAuthStore } from '../store/authStore'
+import { API_TIMEOUTS } from '../constants/api'
+import logger from '../utils/logger'
 
 interface LeaderboardEntry {
   user_id: string
@@ -54,7 +56,7 @@ export const LeaderboardDisplay = ({ limit = 10 }: { limit?: number }) => {
         })
         return response.data || []
       } catch (error) {
-        console.error('Erreur lors de la récupération du classement:', error)
+        logger.error('Erreur lors de la récupération du classement', error, 'LeaderboardDisplay')
         return []
       }
     },

@@ -1,5 +1,10 @@
 /**
  * Utilitaires SEO pour gérer les méta descriptions dynamiques
+ * 
+ * Permet de mettre à jour les balises meta HTML (title, description, Open Graph, Twitter Card)
+ * pour optimiser le référencement et le partage sur les réseaux sociaux
+ * 
+ * @module utils/seo
  */
 interface SEOData {
   title: string
