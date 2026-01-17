@@ -53,8 +53,10 @@ const Modules = () => {
     // Si on est sur /modules/:id, on ne devrait PAS être ici - rediriger immédiatement
     if (pathname.match(/^\/modules\/[^/]+$/)) {
       console.error('❌ ERREUR CRITIQUE: Modules component rendu sur une route /modules/:id!', { pathname })
+      console.error('❌ Cela indique que React Router n\'a pas matché correctement la route /modules/:id')
       console.error('❌ Redirection immédiate vers la bonne route...')
-      // Redirection immédiate vers la route correcte
+      // Utiliser window.location.href pour forcer un rechargement complet et le bon matching
+      // car React Router a clairement échoué à matcher la route
       window.location.href = pathname
       return
     }

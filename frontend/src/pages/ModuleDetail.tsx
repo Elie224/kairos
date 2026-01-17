@@ -51,29 +51,40 @@ const ModuleDetail = () => {
       console.error('❌ ERREUR: ModuleDetail rendu sur une mauvaise route!', { pathname })
       // Si on est sur /modules (sans ID), rediriger vers /modules
       if (pathname === '/modules') {
+        console.error('❌ Redirection vers /modules car on est sur /modules sans ID')
         window.location.href = '/modules'
         return
       }
+      // Si on est sur une autre route, ne rien faire (laisser React Router gérer)
+      return
     }
     
     // Vérifier que l'ID est bien présent
     if (!id) {
       logger.error('ModuleDetail: ID manquant dans les params', { pathname }, 'ModuleDetail')
-      console.error('❌ ModuleDetail: ID manquant!', { pathname })
+      console.error('❌ ModuleDetail: ID manquant dans useParams!', { pathname })
       console.error('❌ Cela signifie que React Router ne passe pas correctement le paramètre :id')
       console.error('❌ Vérifier la configuration des routes dans App.tsx')
       
       // Essayer d'extraire l'ID depuis l'URL directement
       const match = pathname.match(/^\/modules\/([^/]+)/)
       if (match && match[1]) {
-        console.warn('⚠️ ID trouvé dans l\'URL mais pas dans useParams:', match[1])
+        const extractedId = match[1]
+        console.warn('⚠️ ID trouvé dans l\'URL mais pas dans useParams:', extractedId)
         console.warn('⚠️ Cela indique un problème de routing React Router')
-        // Forcer un rechargement avec l'ID extrait
-        window.location.href = `/modules/${match[1]}`
+        console.warn('⚠️ Tentative de rechargement avec l\'ID extrait...')
+        // Attendre un peu pour voir si React Router se corrige
+        setTimeout(() => {
+          // Vérifier si l'ID est maintenant présent
+          if (!id) {
+            console.error('❌ ID toujours manquant après délai, rechargement forcé')
+            window.location.href = `/modules/${extractedId}`
+          }
+        }, 200)
         return
       } else {
         // Pas d'ID trouvé, rediriger vers /modules
-        console.error('❌ Aucun ID trouvé, redirection vers /modules')
+        console.error('❌ Aucun ID trouvé dans l\'URL, redirection vers /modules')
         window.location.href = '/modules'
         return
       }

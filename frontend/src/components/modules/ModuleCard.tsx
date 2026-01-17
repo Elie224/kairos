@@ -14,6 +14,7 @@
 import { memo } from 'react'
 import { Card, CardBody, VStack, HStack, Badge, Heading, Text, Button, Box, Icon } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { FiClock, FiBookOpen } from 'react-icons/fi'
 import { Module } from '../../types/module'
 import { DIFFICULTY_COLORS } from '../../constants/modules'
@@ -27,6 +28,7 @@ interface ModuleCardProps {
 
 export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCardProps) => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
   const handleStartLearning = (e: React.MouseEvent) => {
     e.stopPropagation() // Empêcher le déclenchement du onClick du Card parent
@@ -37,10 +39,21 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
       console.log('🟢 URL cible:', targetPath)
       logger.debug('Navigation vers module', { moduleId: module.id, moduleTitle: module.title, targetPath }, 'ModuleCard')
       
-      // SOLUTION DÉFINITIVE: Utiliser window.location.href directement
-      // React Router a des problèmes de matching avec les routes paramétrées dans certains cas
-      // window.location.href garantit un rechargement complet et le bon matching de la route
-      window.location.href = targetPath
+      // Utiliser navigate de React Router pour une navigation SPA correcte
+      // Si la navigation échoue (par exemple si React Router ne match pas), fallback sur window.location.href
+      try {
+        navigate(targetPath, { replace: false })
+        // Vérifier après un court délai si la navigation a réussi
+        setTimeout(() => {
+          if (window.location.pathname !== targetPath) {
+            console.warn('⚠️ Navigation React Router échouée, utilisation de window.location.href')
+            window.location.href = targetPath
+          }
+        }, 100)
+      } catch (error) {
+        console.error('❌ Erreur lors de la navigation React Router, utilisation de window.location.href', error)
+        window.location.href = targetPath
+      }
     } else {
       // Logger l'erreur si module.id n'existe pas
       logger.error('Module ID manquant pour la navigation', { module }, 'ModuleCard')
@@ -54,8 +67,20 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
       return // Le bouton gère sa propre navigation
     }
     if (module.id) {
-      // Utiliser window.location.href pour garantir la navigation
-      window.location.href = `/modules/${module.id}`
+      const targetPath = `/modules/${module.id}`
+      try {
+        navigate(targetPath, { replace: false })
+        // Vérifier après un court délai si la navigation a réussi
+        setTimeout(() => {
+          if (window.location.pathname !== targetPath) {
+            console.warn('⚠️ Navigation React Router échouée, utilisation de window.location.href')
+            window.location.href = targetPath
+          }
+        }, 100)
+      } catch (error) {
+        console.error('❌ Erreur lors de la navigation React Router, utilisation de window.location.href', error)
+        window.location.href = targetPath
+      }
     }
   }
 
@@ -94,8 +119,20 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
           if (module.id) {
-            // Utiliser window.location.href pour garantir la navigation
-            window.location.href = `/modules/${module.id}`
+            const targetPath = `/modules/${module.id}`
+            try {
+              navigate(targetPath, { replace: false })
+              // Vérifier après un court délai si la navigation a réussi
+              setTimeout(() => {
+                if (window.location.pathname !== targetPath) {
+                  console.warn('⚠️ Navigation React Router échouée, utilisation de window.location.href')
+                  window.location.href = targetPath
+                }
+              }, 100)
+            } catch (error) {
+              console.error('❌ Erreur lors de la navigation React Router, utilisation de window.location.href', error)
+              window.location.href = targetPath
+            }
           }
         }
       }}
