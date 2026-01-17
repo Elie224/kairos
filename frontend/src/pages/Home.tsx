@@ -35,6 +35,7 @@ const Home = () => {
       cacheTime: 10 * 60 * 1000,
       enabled: isAuthenticated,
       retry: false,
+      // Ne pas bloquer l'affichage si non authentifié
     }
   )
 

@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react'
 import { FiPhone, FiArrowUp } from 'react-icons/fi'
 import { FaFacebook, FaWhatsapp } from 'react-icons/fa'
+import { Link as RouterLink } from 'react-router-dom'
 
 /**
  * Footer component - Design professionnel et moderne
@@ -62,7 +63,7 @@ const Footer: React.FC = () => {
                 fontWeight="bold"
                 letterSpacing="tight"
               >
-                Kairós
+                Kaïrox
               </Heading>
               <Text 
                 fontSize="xs" 
@@ -195,7 +196,7 @@ const Footer: React.FC = () => {
             fontSize="sm" 
             color="gray.500"
           >
-            © {currentYear} Kairós. Tous droits réservés.
+            © {currentYear} Kaïrox. Tous droits réservés.
           </Text>
 
           {/* Legal Links */}
@@ -205,29 +206,47 @@ const Footer: React.FC = () => {
             color="gray.500"
             flexWrap="wrap"
           >
-            <Link 
-              href="#" 
-              _hover={{ color: 'white', textDecoration: 'none' }}
-              transition="color 0.2s"
+            <RouterLink 
+              to="/legal/mentions-legales"
+              style={{ color: 'inherit', textDecoration: 'none' }}
             >
-              Mentions légales
-            </Link>
+              <Text
+                as="span"
+                _hover={{ color: 'white', textDecoration: 'none' }}
+                transition="color 0.2s"
+                cursor="pointer"
+              >
+                Mentions légales
+              </Text>
+            </RouterLink>
             <Text color="gray.700">•</Text>
-            <Link 
-              href="#" 
-              _hover={{ color: 'white', textDecoration: 'none' }}
-              transition="color 0.2s"
+            <RouterLink 
+              to="/legal/politique-confidentialite"
+              style={{ color: 'inherit', textDecoration: 'none' }}
             >
-              Politique de confidentialité
-            </Link>
+              <Text
+                as="span"
+                _hover={{ color: 'white', textDecoration: 'none' }}
+                transition="color 0.2s"
+                cursor="pointer"
+              >
+                Politique de confidentialité
+              </Text>
+            </RouterLink>
             <Text color="gray.700">•</Text>
-            <Link 
-              href="#" 
-              _hover={{ color: 'white', textDecoration: 'none' }}
-              transition="color 0.2s"
+            <RouterLink 
+              to="/legal/cgu"
+              style={{ color: 'inherit', textDecoration: 'none' }}
             >
-              CGU
-            </Link>
+              <Text
+                as="span"
+                _hover={{ color: 'white', textDecoration: 'none' }}
+                transition="color 0.2s"
+                cursor="pointer"
+              >
+                CGU
+              </Text>
+            </RouterLink>
           </HStack>
 
           {/* Back to top */}

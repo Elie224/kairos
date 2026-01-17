@@ -24,6 +24,9 @@ const Exams = lazy(() => import('./pages/Exams'))
 const ExamDetail = lazy(() => import('./pages/ExamDetail'))
 const Gamification = lazy(() => import('./pages/Gamification'))
 const Visualizations = lazy(() => import('./pages/Visualizations'))
+const LegalMentions = lazy(() => import('./pages/LegalMentions'))
+const LegalPrivacy = lazy(() => import('./pages/LegalPrivacy'))
+const LegalCGU = lazy(() => import('./pages/LegalCGU'))
 
 // Composant de chargement optimisé pour la navigation
 const PageLoader = () => (
@@ -104,7 +107,7 @@ function App() {
           <Routes location={location}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path="/" element={<Home />} />
           <Route path="/modules" element={<ProtectedRoute><Modules /></ProtectedRoute>} />
           <Route path="/modules/:id" element={<ProtectedRoute><ModuleDetail /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
@@ -119,6 +122,10 @@ function App() {
           <Route path="/modules/:moduleId/exam" element={<ProtectedRoute><ExamDetail /></ProtectedRoute>} />
           <Route path="/gamification" element={<ProtectedRoute><Gamification /></ProtectedRoute>} />
           <Route path="/visualizations" element={<ProtectedRoute><Visualizations /></ProtectedRoute>} />
+          {/* Pages légales - Accessibles sans authentification */}
+          <Route path="/legal/mentions-legales" element={<LegalMentions />} />
+          <Route path="/legal/politique-confidentialite" element={<LegalPrivacy />} />
+          <Route path="/legal/cgu" element={<LegalCGU />} />
           </Routes>
         </Suspense>
       </Box>

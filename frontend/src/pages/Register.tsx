@@ -64,11 +64,22 @@ const Register = () => {
   const [error, setError] = useState('')
   const [showOnboarding, setShowOnboarding] = useState(false)
   
-  // Indicateur de progression du formulaire
+  // Indicateur de progression du formulaire - Amélioré pour compter tous les champs
   const formProgress = () => {
+    const allFields = ['email', 'username', 'password', 'confirmPassword', 'first_name', 'last_name', 'phone', 'country']
     const requiredFields = ['email', 'username', 'password', 'confirmPassword']
-    const filledFields = requiredFields.filter(field => formData[field as keyof typeof formData])
-    return (filledFields.length / requiredFields.length) * 100
+    const filledRequiredFields = requiredFields.filter(field => {
+      const value = formData[field as keyof typeof formData]
+      return value && value.trim().length > 0
+    })
+    const filledOptionalFields = ['first_name', 'last_name', 'phone', 'country'].filter(field => {
+      const value = formData[field as keyof typeof formData]
+      return value && value.trim().length > 0
+    })
+    // Calcul : 60% pour les champs requis, 40% pour les champs optionnels
+    const requiredProgress = (filledRequiredFields.length / requiredFields.length) * 60
+    const optionalProgress = (filledOptionalFields.length / 4) * 40
+    return Math.min(100, Math.round(requiredProgress + optionalProgress))
   }
 
   const bgColor = useColorModeValue('white', 'gray.800')
