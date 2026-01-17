@@ -45,42 +45,24 @@ const queryClient = new QueryClient({
   },
 })
 
-// S'assurer que le scroll est en haut lors du chargement initial
+// Scroll restoration simplifié - ne pas bloquer le rendu initial
 if (typeof window !== 'undefined') {
-  const scrollToTop = () => {
-    try {
-      window.scrollTo(0, 0)
-      if (document.documentElement) {
-        document.documentElement.scrollTop = 0
-        document.documentElement.scrollLeft = 0
-      }
-      if (document.body) {
-        document.body.scrollTop = 0
-        document.body.scrollLeft = 0
-      }
-    } catch (e) {
-      // Fallback silencieux
-    }
-  }
-  
-  // Scroll immédiat
-  scrollToTop()
-  
-  // Écouter les événements de chargement
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', scrollToTop)
-  } else {
-    scrollToTop()
-    setTimeout(scrollToTop, 50)
-  }
-  
+  // Attendre que React soit monté avant de scroller
   window.addEventListener('load', () => {
-    scrollToTop()
-    setTimeout(scrollToTop, 100)
+    setTimeout(() => {
+      try {
+        window.scrollTo(0, 0)
+        if (document.documentElement) {
+          document.documentElement.scrollTop = 0
+        }
+        if (document.body) {
+          document.body.scrollTop = 0
+        }
+      } catch (e) {
+        // Ignorer les erreurs
+      }
+    }, 150)
   })
-  
-  // Forcer le scroll après un court délai
-  setTimeout(scrollToTop, 200)
 }
 
 // Wrapper pour AccessibilityProvider qui nécessite BrowserRouter
