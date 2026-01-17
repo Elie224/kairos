@@ -11,7 +11,7 @@
  * 
  * @module components/modules/ModuleCard
  */
-import { memo } from 'react'
+import { memo, useRef } from 'react'
 import { Card, CardBody, VStack, HStack, Badge, Heading, Text, Button, Box, Icon } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -29,6 +29,8 @@ interface ModuleCardProps {
 export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCardProps) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  // Garde pour empêcher les clics multiples et navigations simultanées
+  const isNavigatingRef = useRef(false)
 
   const handleStartLearning = (e: React.MouseEvent) => {
     // CRITIQUE: Arrêter la propagation AVANT toute autre opération
@@ -36,23 +38,34 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
     e.preventDefault()
     e.nativeEvent.stopImmediatePropagation()
     
+    // Vérifier si une navigation est déjà en cours
+    if (isNavigatingRef.current) {
+      console.warn('⚠️ Navigation déjà en cours, ignoré')
+      return
+    }
+    
     if (!module.id) {
       logger.error('Module ID manquant pour la navigation', { module }, 'ModuleCard')
       console.error('❌ Module ID manquant pour la navigation', module)
       return
     }
     
+    // Marquer la navigation comme en cours
+    isNavigatingRef.current = true
+    
     const targetPath = `/modules/${module.id}`
     console.log('🟢 Navigation vers module:', module.id, module.title)
     console.log('🟢 URL cible:', targetPath)
     logger.debug('Navigation vers module', { moduleId: module.id, moduleTitle: module.title, targetPath }, 'ModuleCard')
     
-    // Utiliser navigate() avec un petit délai pour s'assurer que l'événement est bien traité
-    // Cela évite les problèmes de propagation d'événements avec les filtres
+    // Navigation immédiate sans setTimeout pour éviter les problèmes
+    navigate(targetPath, { replace: false })
+    console.log('✅ Navigation React Router déclenchée vers:', targetPath)
+    
+    // Réinitialiser le garde après un court délai
     setTimeout(() => {
-      navigate(targetPath, { replace: false })
-      console.log('✅ Navigation React Router déclenchée vers:', targetPath)
-    }, 0)
+      isNavigatingRef.current = false
+    }, 1000)
   }
 
   const handleCardClick = (e: React.MouseEvent) => {

@@ -32,7 +32,7 @@ const ModuleDetail = () => {
   const navigate = useNavigate()
   const [tabIndex, setTabIndex] = useState(0)
   
-  // Log pour déboguer le rendu du composant - FORCER le log immédiatement
+  // Log pour déboguer le rendu du composant - Vérification immédiate avec window.location
   useEffect(() => {
     const pathname = window.location.pathname
     const urlParams = new URLSearchParams(window.location.search)
@@ -46,6 +46,24 @@ const ModuleDetail = () => {
     console.log('🔵 useParams id:', id)
     console.log('🔵 window.location.pathname:', pathname)
     
+    // PRIORITÉ 1: Vérifier window.location.pathname d'abord (plus fiable pour routing direct)
+    const pathMatch = pathname.match(/^\/modules\/([^/]+)/)
+    const extractedIdFromPath = pathMatch ? pathMatch[1] : null
+    
+    // Si on est sur /modules/:id mais que useParams n'a pas encore l'ID, attendre un peu
+    if (pathMatch && !id && extractedIdFromPath) {
+      console.warn('⚠️ Route /modules/:id détectée mais useParams pas encore mis à jour, attente...')
+      // Attendre que React Router mette à jour useParams
+      const timeoutId = setTimeout(() => {
+        // Si après 100ms l'ID n'est toujours pas présent, forcer la navigation
+        if (!id) {
+          console.warn('⚠️ ID toujours manquant après délai, navigation forcée')
+          navigate(`/modules/${extractedIdFromPath}`, { replace: true })
+        }
+      }, 100)
+      return () => clearTimeout(timeoutId)
+    }
+    
     // Vérifier qu'on est bien sur une route /modules/:id
     if (!pathname.match(/^\/modules\/[^/]+$/)) {
       console.error('❌ ERREUR: ModuleDetail rendu sur une mauvaise route!', { pathname })
@@ -58,28 +76,23 @@ const ModuleDetail = () => {
       return
     }
     
-    // Vérifier que l'ID est bien présent
-    if (!id) {
+    // Vérifier que l'ID est bien présent (utiliser l'ID extrait de l'URL si useParams n'est pas disponible)
+    const finalId = id || extractedIdFromPath
+    if (!finalId) {
       logger.error('ModuleDetail: ID manquant dans les params', { pathname }, 'ModuleDetail')
-      console.error('❌ ModuleDetail: ID manquant dans useParams!', { pathname })
-      
-      // Essayer d'extraire l'ID depuis l'URL directement
-      const match = pathname.match(/^\/modules\/([^/]+)/)
-      if (match && match[1]) {
-        const extractedId = match[1]
-        console.warn('⚠️ ID trouvé dans l\'URL mais pas dans useParams:', extractedId)
-        // Forcer la navigation avec l'ID extrait
-        navigate(`/modules/${extractedId}`, { replace: true })
-        return
-      } else {
-        // Pas d'ID trouvé, rediriger vers /modules
-        console.error('❌ Aucun ID trouvé dans l\'URL, redirection vers /modules')
-        navigate('/modules', { replace: true })
-        return
-      }
-    } else {
-      console.log('✅ ModuleDetail: ID présent, composant devrait s\'afficher correctement', { id })
+      console.error('❌ ModuleDetail: ID manquant dans useParams ET dans l\'URL!', { pathname })
+      navigate('/modules', { replace: true })
+      return
     }
+    
+    if (finalId && finalId !== id) {
+      // L'ID de l'URL ne correspond pas à useParams, forcer la mise à jour
+      console.warn('⚠️ ID URL différent de useParams, navigation forcée')
+      navigate(`/modules/${finalId}`, { replace: true })
+      return
+    }
+    
+    console.log('✅ ModuleDetail: ID présent, composant devrait s\'afficher correctement', { id: finalId })
   }, [id, navigate])
   
   // Réinitialiser l'onglet à "Contenu" quand le module change
