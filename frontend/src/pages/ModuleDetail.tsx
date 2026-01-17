@@ -163,6 +163,20 @@ const ModuleDetail = () => {
     }
   }, [id, refetch])
 
+  // Log pour vérifier que le module est bien chargé (AVANT les returns conditionnels)
+  useEffect(() => {
+    if (module) {
+      console.log('✅ Module chargé et prêt à être affiché', {
+        moduleId: module.id,
+        moduleTitle: module.title,
+        hasContent: !!module.content,
+        hasLessons: !!module.content?.lessons,
+        lessonsCount: module.content?.lessons?.length || 0,
+        hasText: !!module.content?.text
+      })
+    }
+  }, [module])
+
   if (isLoading) {
     return (
       <Box minH="100vh" bgGradient="linear-gradient(180deg, blue.50 0%, white 100%)" py={{ base: 8, md: 12 }}>
