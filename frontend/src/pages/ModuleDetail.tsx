@@ -36,11 +36,16 @@ const ModuleDetail = () => {
     const pathname = window.location.pathname
     logger.debug('ModuleDetail component mounted', { moduleId: id, pathname }, 'ModuleDetail')
     console.log('🔵 ModuleDetail RENDERED', { id, pathname, timestamp: new Date().toISOString() })
+    console.log('🔵 useParams id:', id)
+    console.log('🔵 window.location.pathname:', pathname)
     
     // Vérifier que l'ID est bien présent
     if (!id) {
       logger.error('ModuleDetail: ID manquant dans les params', { pathname }, 'ModuleDetail')
       console.error('❌ ModuleDetail: ID manquant!', { pathname })
+      console.error('❌ Cela signifie que React Router ne passe pas correctement le paramètre :id')
+    } else {
+      console.log('✅ ModuleDetail: ID présent, composant devrait s\'afficher correctement', { id })
     }
   }, [id])
   

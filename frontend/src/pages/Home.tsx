@@ -73,6 +73,9 @@ const Home = () => {
    * Ces stats ne sont chargées que si l'utilisateur est authentifié
    * IMPORTANT: Ne pas bloquer le rendu initial - les stats sont optionnelles
    */
+  const { user } = useAuthStore()
+  const isAdmin = user?.is_admin || false
+  
   const { data: stats, isLoading: statsLoading } = useQuery(
     'home-stats',
     async () => {
@@ -81,18 +84,22 @@ const Home = () => {
           timeout: API_TIMEOUTS.SIMPLE, // 10 secondes pour les stats home
         })
         return response.data
-      } catch {
-        // Si l'utilisateur n'est pas admin ou s'il y a une erreur,
+      } catch (error: any) {
+        // Si l'utilisateur n'est pas admin (403) ou s'il y a une erreur,
         // retourner null pour utiliser les stats par défaut affichées dans l'UI
+        // Ne pas logger l'erreur si c'est juste un 403 (normal pour les non-admins)
+        if (error?.response?.status !== 403) {
+          console.warn('Erreur lors du chargement des stats home:', error)
+        }
         return null
       }
     },
     {
       staleTime: 5 * 60 * 1000,
       cacheTime: 10 * 60 * 1000,
-      enabled: isAuthenticated,
+      enabled: isAuthenticated && isAdmin, // Seulement pour les admins
       retry: false,
-      // Ne pas bloquer l'affichage si non authentifié
+      // Ne pas bloquer l'affichage si non authentifié ou non admin
       // Ne pas attendre le chargement pour rendre la page
       suspense: false,
     }

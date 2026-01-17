@@ -52,7 +52,8 @@ const Modules = () => {
     console.log('🟢 Modules component RENDERED', { pathname, timestamp: new Date().toISOString() })
     // Si on est sur /modules/:id, on ne devrait PAS être ici
     if (pathname.match(/^\/modules\/[^/]+$/)) {
-      console.error('❌ ERREUR: Modules component rendu sur une route /modules/:id!', { pathname })
+      console.error('❌ ERREUR CRITIQUE: Modules component rendu sur une route /modules/:id!', { pathname })
+      console.error('❌ Cela signifie que React Router ne match pas correctement la route /modules/:id')
     }
   }, [])
 
