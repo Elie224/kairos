@@ -342,7 +342,7 @@ const Home = () => {
                   ].map((stat, idx) => (
                     <Box
                       key={idx}
-                      p={4}
+                      p={{ base: 3, md: 4 }}
                       borderRadius="xl"
                       bg="whiteAlpha.15"
                       backdropFilter="blur(20px)"
@@ -350,14 +350,14 @@ const Home = () => {
                       textAlign="center"
                       _hover={{
                         bg: 'whiteAlpha.25',
-                        transform: 'translateY(-4px)',
+                        transform: { base: 'none', md: 'translateY(-4px)' },
                         borderColor: 'rgba(255, 255, 255, 0.4)',
                       }}
                       transition="all 0.3s ease"
                     >
-                      <Icon as={stat.icon} boxSize={6} mb={2} color="white" />
-                      <Text fontSize="xl" fontWeight="bold" mb={1} color="white">{stat.value}</Text>
-                      <Text fontSize="xs" color="whiteAlpha.90" fontWeight="medium">{stat.label}</Text>
+                      <Icon as={stat.icon} boxSize={{ base: 5, md: 6 }} mb={2} color="white" />
+                      <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="bold" mb={1} color="white">{stat.value}</Text>
+                      <Text fontSize={{ base: '2xs', md: 'xs' }} color="whiteAlpha.90" fontWeight="medium">{stat.label}</Text>
                     </Box>
                   ))
                 )}
