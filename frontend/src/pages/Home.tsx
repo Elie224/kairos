@@ -89,24 +89,33 @@ const Home = () => {
     async () => {
       try {
         const response = await api.get('/auth/stats', {
-          timeout: API_TIMEOUTS.SIMPLE, // 10 secondes pour les stats home
+          timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour les stats (augmenté de 10s)
         })
         return response.data
       } catch (error: any) {
-        // Si l'utilisateur n'est pas admin (403) ou s'il y a une erreur,
+        // Si l'utilisateur n'est pas admin (403) ou s'il y a un timeout,
         // retourner null pour utiliser les stats par défaut affichées dans l'UI
-        // Ne pas logger l'erreur si c'est juste un 403 (normal pour les non-admins)
-        if (error?.response?.status !== 403) {
-          console.warn('Erreur lors du chargement des stats home:', error)
+        // Ne pas logger l'erreur si c'est juste un 403 ou un timeout (normal)
+        if (error?.response?.status === 403) {
+          // 403 = pas admin, c'est normal
+          return null
         }
+        if (error?.code === 'ECONNABORTED' || error?.message?.includes('timeout')) {
+          // Timeout - c'est normal sur Render avec cold start, ne pas logger
+          return null
+        }
+        // Pour les autres erreurs, logger uniquement en mode debug
+        logger.debug('Erreur lors du chargement des stats home', { error: error?.message }, 'Home')
         return null
       }
     },
     {
-      staleTime: 5 * 60 * 1000,
-      cacheTime: 10 * 60 * 1000,
+      staleTime: 10 * 60 * 1000, // 10 minutes - augmenté le cache
+      cacheTime: 30 * 60 * 1000, // 30 minutes - garder en cache plus longtemps
       enabled: isAuthenticated && isAdmin, // Seulement pour les admins
-      retry: false,
+      retry: false, // Ne pas réessayer - les stats sont optionnelles
+      refetchOnMount: false, // Ne pas refetch si déjà en cache
+      refetchOnWindowFocus: false, // Ne pas refetch au focus
       // Ne pas bloquer l'affichage si non authentifié ou non admin
       // Ne pas attendre le chargement pour rendre la page
       suspense: false,
