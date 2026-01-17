@@ -26,15 +26,47 @@ interface ModuleCardProps {
   subjectLabel: string
 }
 
-// Garde global pour empêcher les navigations simultanées (partagé entre toutes les instances)
-let globalNavigationInProgress = false
-let globalNavigationTimeout: NodeJS.Timeout | null = null
+// Garde global STRICT pour empêcher TOUTES les navigations simultanées (partagé entre toutes les instances)
+// Utilisation d'un Set pour tracker les modules en cours de navigation
+const navigatingModules = new Set<string>()
+let navigationLockTimeout: NodeJS.Timeout | null = null
+
+// Fonction utilitaire pour gérer la navigation avec garde global
+const navigateWithGuard = (moduleId: string, targetPath: string, navigate: (path: string, opts?: any) => void): boolean => {
+  // Vérifier si n'importe quel module est en cours de navigation
+  if (navigatingModules.size > 0) {
+    console.warn('⚠️ Navigation déjà en cours, ignoré', { moduleId, navigatingModules: Array.from(navigatingModules) })
+    return false
+  }
+  
+  // Ajouter ce module à la liste des navigations en cours
+  navigatingModules.add(moduleId)
+  
+  // Navigation immédiate
+  navigate(targetPath, { replace: false })
+  console.log('✅ Navigation React Router déclenchée vers:', targetPath)
+  
+  // Nettoyer le garde après un délai (permettre une nouvelle navigation après 1.5s)
+  if (navigationLockTimeout) {
+    clearTimeout(navigationLockTimeout)
+  }
+  navigationLockTimeout = setTimeout(() => {
+    navigatingModules.clear()
+  }, 1500)
+  
+  return true
+}
 
 export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCardProps) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  // Garde local pour ce composant spécifique
-  const isNavigatingRef = useRef(false)
+  // Référence stable pour le module ID (évite les re-renders)
+  const moduleIdRef = useRef(module.id)
+
+  // Mettre à jour la référence si l'ID change
+  if (moduleIdRef.current !== module.id) {
+    moduleIdRef.current = module.id
+  }
 
   const handleStartLearning = useCallback((e: React.MouseEvent) => {
     // CRITIQUE: Arrêter la propagation AVANT toute autre opération
@@ -42,40 +74,21 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
     e.preventDefault()
     e.nativeEvent.stopImmediatePropagation()
     
-    // Vérifier les gardes globaux ET locaux
-    if (globalNavigationInProgress || isNavigatingRef.current) {
-      console.warn('⚠️ Navigation déjà en cours, ignoré', { global: globalNavigationInProgress, local: isNavigatingRef.current })
-      return
-    }
-    
-    if (!module.id) {
+    const moduleId = moduleIdRef.current
+    if (!moduleId) {
       logger.error('Module ID manquant pour la navigation', { module }, 'ModuleCard')
       console.error('❌ Module ID manquant pour la navigation', module)
       return
     }
     
-    // Marquer les gardes comme actifs
-    globalNavigationInProgress = true
-    isNavigatingRef.current = true
-    
-    const targetPath = `/modules/${module.id}`
-    console.log('🟢 Navigation vers module:', module.id, module.title)
+    const targetPath = `/modules/${moduleId}`
+    console.log('🟢 Navigation vers module:', moduleId, module.title)
     console.log('🟢 URL cible:', targetPath)
-    logger.debug('Navigation vers module', { moduleId: module.id, moduleTitle: module.title, targetPath }, 'ModuleCard')
+    logger.debug('Navigation vers module', { moduleId, moduleTitle: module.title, targetPath }, 'ModuleCard')
     
-    // Navigation immédiate
-    navigate(targetPath, { replace: false })
-    console.log('✅ Navigation React Router déclenchée vers:', targetPath)
-    
-    // Réinitialiser les gardes après un court délai
-    if (globalNavigationTimeout) {
-      clearTimeout(globalNavigationTimeout)
-    }
-    globalNavigationTimeout = setTimeout(() => {
-      globalNavigationInProgress = false
-      isNavigatingRef.current = false
-    }, 2000) // Augmenter à 2 secondes pour éviter les doubles clics rapides
-  }, [module.id, module.title, navigate])
+    // Utiliser la fonction avec garde global
+    navigateWithGuard(moduleId, targetPath, navigate)
+  }, [module.title, module, navigate])
 
   const handleCardClick = useCallback((e: React.MouseEvent) => {
     // Vérifier explicitement si le clic provient du bouton ou de ses enfants
@@ -83,37 +96,24 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
     const button = target.closest('button')
     
     if (button) {
-      // Le clic est sur le bouton, laisser handleStartLearning gérer
+      // Le clic est sur le bouton, ignorer complètement (handleStartLearning gère)
+      e.stopPropagation()
+      e.preventDefault()
       return
     }
     
-    // Vérifier les gardes avant de naviguer
-    if (globalNavigationInProgress || isNavigatingRef.current) {
-      console.warn('⚠️ Navigation déjà en cours (clic carte), ignoré')
+    // Vérifier le garde global AVANT de naviguer
+    const moduleId = moduleIdRef.current
+    if (!moduleId) {
       return
     }
     
-    if (!module.id) {
-      return
-    }
+    const targetPath = `/modules/${moduleId}`
+    console.log('🟢 Clic carte vers module:', moduleId)
     
-    // Marquer les gardes comme actifs
-    globalNavigationInProgress = true
-    isNavigatingRef.current = true
-    
-    const targetPath = `/modules/${module.id}`
-    navigate(targetPath, { replace: false })
-    console.log('✅ Navigation React Router déclenchée (clic carte) vers:', targetPath)
-    
-    // Réinitialiser les gardes
-    if (globalNavigationTimeout) {
-      clearTimeout(globalNavigationTimeout)
-    }
-    globalNavigationTimeout = setTimeout(() => {
-      globalNavigationInProgress = false
-      isNavigatingRef.current = false
-    }, 2000)
-  }, [module.id, navigate])
+    // Utiliser la fonction avec garde global
+    navigateWithGuard(moduleId, targetPath, navigate)
+  }, [navigate])
 
   // Utiliser le thème bleu pour toutes les cartes
   const cardColor = 'blue'
