@@ -24,11 +24,17 @@ import api from '../services/api'
 import { useAuthStore } from '../store/authStore'
 import { API_TIMEOUTS } from '../constants/api'
 import { useSEO } from '../hooks/useSEO'
+import logger from '../utils/logger'
 
 const Home = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { isAuthenticated } = useAuthStore()
+
+  // Log pour déboguer le rendu
+  useEffect(() => {
+    logger.debug('Home component mounted', {}, 'Home')
+  }, [])
 
   // Scroll restoration minimal - seulement après que le contenu soit rendu
   useEffect(() => {
