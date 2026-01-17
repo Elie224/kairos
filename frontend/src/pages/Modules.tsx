@@ -77,17 +77,6 @@ const Modules = () => {
     return null
   }
 
-  const { modules, groupedModules, isLoading, totalCount } = useModules(filters)
-
-  // Synchroniser selectedSubject avec filters.subject
-  useEffect(() => {
-    if (filters.subject && filters.subject !== selectedSubject) {
-      setSelectedSubject(filters.subject)
-    } else if (!filters.subject && selectedSubject) {
-      setSelectedSubject(null)
-    }
-  }, [filters.subject, selectedSubject])
-
   const subjectLabels: Record<string, string> = {
     mathematics: '📐 Mathématiques',
     computer_science: '🤖 Informatique & IA',
