@@ -11,7 +11,7 @@
  * 
  * @module components/modules/ModuleCard
  */
-import { memo, useRef } from 'react'
+import { memo, useRef, useCallback } from 'react'
 import { Card, CardBody, VStack, HStack, Badge, Heading, Text, Button, Box, Icon } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -26,21 +26,25 @@ interface ModuleCardProps {
   subjectLabel: string
 }
 
+// Garde global pour empêcher les navigations simultanées (partagé entre toutes les instances)
+let globalNavigationInProgress = false
+let globalNavigationTimeout: NodeJS.Timeout | null = null
+
 export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCardProps) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  // Garde pour empêcher les clics multiples et navigations simultanées
+  // Garde local pour ce composant spécifique
   const isNavigatingRef = useRef(false)
 
-  const handleStartLearning = (e: React.MouseEvent) => {
+  const handleStartLearning = useCallback((e: React.MouseEvent) => {
     // CRITIQUE: Arrêter la propagation AVANT toute autre opération
     e.stopPropagation()
     e.preventDefault()
     e.nativeEvent.stopImmediatePropagation()
     
-    // Vérifier si une navigation est déjà en cours
-    if (isNavigatingRef.current) {
-      console.warn('⚠️ Navigation déjà en cours, ignoré')
+    // Vérifier les gardes globaux ET locaux
+    if (globalNavigationInProgress || isNavigatingRef.current) {
+      console.warn('⚠️ Navigation déjà en cours, ignoré', { global: globalNavigationInProgress, local: isNavigatingRef.current })
       return
     }
     
@@ -50,7 +54,8 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
       return
     }
     
-    // Marquer la navigation comme en cours
+    // Marquer les gardes comme actifs
+    globalNavigationInProgress = true
     isNavigatingRef.current = true
     
     const targetPath = `/modules/${module.id}`
@@ -58,28 +63,57 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
     console.log('🟢 URL cible:', targetPath)
     logger.debug('Navigation vers module', { moduleId: module.id, moduleTitle: module.title, targetPath }, 'ModuleCard')
     
-    // Navigation immédiate sans setTimeout pour éviter les problèmes
+    // Navigation immédiate
     navigate(targetPath, { replace: false })
     console.log('✅ Navigation React Router déclenchée vers:', targetPath)
     
-    // Réinitialiser le garde après un court délai
-    setTimeout(() => {
+    // Réinitialiser les gardes après un court délai
+    if (globalNavigationTimeout) {
+      clearTimeout(globalNavigationTimeout)
+    }
+    globalNavigationTimeout = setTimeout(() => {
+      globalNavigationInProgress = false
       isNavigatingRef.current = false
-    }, 1000)
-  }
+    }, 2000) // Augmenter à 2 secondes pour éviter les doubles clics rapides
+  }, [module.id, module.title, navigate])
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    // Ne naviguer que si le clic n'est pas sur le bouton
-    if ((e.target as HTMLElement).closest('button')) {
-      return // Le bouton gère sa propre navigation
+  const handleCardClick = useCallback((e: React.MouseEvent) => {
+    // Vérifier explicitement si le clic provient du bouton ou de ses enfants
+    const target = e.target as HTMLElement
+    const button = target.closest('button')
+    
+    if (button) {
+      // Le clic est sur le bouton, laisser handleStartLearning gérer
+      return
     }
-    if (module.id) {
-      const targetPath = `/modules/${module.id}`
-      // Utiliser navigate() de React Router pour une navigation SPA correcte
-      navigate(targetPath, { replace: false })
-      console.log('✅ Navigation React Router déclenchée (clic carte) vers:', targetPath)
+    
+    // Vérifier les gardes avant de naviguer
+    if (globalNavigationInProgress || isNavigatingRef.current) {
+      console.warn('⚠️ Navigation déjà en cours (clic carte), ignoré')
+      return
     }
-  }
+    
+    if (!module.id) {
+      return
+    }
+    
+    // Marquer les gardes comme actifs
+    globalNavigationInProgress = true
+    isNavigatingRef.current = true
+    
+    const targetPath = `/modules/${module.id}`
+    navigate(targetPath, { replace: false })
+    console.log('✅ Navigation React Router déclenchée (clic carte) vers:', targetPath)
+    
+    // Réinitialiser les gardes
+    if (globalNavigationTimeout) {
+      clearTimeout(globalNavigationTimeout)
+    }
+    globalNavigationTimeout = setTimeout(() => {
+      globalNavigationInProgress = false
+      isNavigatingRef.current = false
+    }, 2000)
+  }, [module.id, navigate])
 
   // Utiliser le thème bleu pour toutes les cartes
   const cardColor = 'blue'
