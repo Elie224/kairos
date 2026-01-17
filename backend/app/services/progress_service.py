@@ -150,7 +150,7 @@ class ProgressService:
                             "$cond": [
                                 {"$and": [
                                     {"$ne": ["$score", None]},
-                                    {"$type": ["$score", "number"]}
+                                    {"$eq": [{"$type": "$score"}, "number"]}
                                 ]},
                                 "$score",
                                 None
@@ -162,7 +162,7 @@ class ProgressService:
                             "$cond": [
                                 {"$and": [
                                     {"$ne": ["$score", None]},
-                                    {"$type": ["$score", "number"]}
+                                    {"$eq": [{"$type": "$score"}, "number"]}
                                 ]},
                                 1,
                                 0
