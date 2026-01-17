@@ -44,6 +44,8 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, isLoading]) // Retirer checkAuth des dépendances pour éviter les boucles infinies
 
+  // IMPORTANT: Ne pas bloquer le rendu si on est en train de charger
+  // Cela permet à React Router de matcher correctement la route même pendant le chargement
   if (isLoading) {
     return (
       <Box minH="100vh" display="flex" alignItems="center" justifyContent="center">
@@ -57,8 +59,15 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     )
   }
 
+  // CRITIQUE: Ne rediriger vers /login que si on est vraiment non authentifié
+  // et sauvegarder la route demandée pour redirection après login
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
+    console.log('🔒 ProtectedRoute: Utilisateur non authentifié, redirection vers /login', { 
+      requestedPath: location.pathname 
+    })
+    // Sauvegarder la route demandée pour redirection après login
+    const returnPath = location.pathname + location.search
+    return <Navigate to={`/login?returnTo=${encodeURIComponent(returnPath)}`} replace />
   }
 
   // S'assurer que les enfants sont rendus avec une clé unique pour forcer le re-render

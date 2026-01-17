@@ -29,6 +29,7 @@ interface Module {
 const ModuleDetail = () => {
   const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
   const [tabIndex, setTabIndex] = useState(0)
   
   // Log pour déboguer le rendu du composant - FORCER le log immédiatement
@@ -49,13 +50,15 @@ const ModuleDetail = () => {
     // Vérifier qu'on est bien sur une route /modules/:id
     if (!pathname.match(/^\/modules\/[^/]+$/)) {
       console.error('❌ ERREUR: ModuleDetail rendu sur une mauvaise route!', { pathname })
-      // Si on est sur /modules (sans ID), rediriger vers /modules
+      // Si on est sur /modules (sans ID), rediriger vers /modules avec navigate
       if (pathname === '/modules') {
         console.error('❌ Redirection vers /modules car on est sur /modules sans ID')
-        window.location.href = '/modules'
+        // Utiliser navigate au lieu de window.location.href pour éviter les problèmes de routing SPA
+        navigate('/modules', { replace: true })
         return
       }
-      // Si on est sur une autre route, ne rien faire (laisser React Router gérer)
+      // Si on est sur une autre route (comme /index.html), ne rien faire (laisser React Router gérer)
+      // Ne pas utiliser window.location.href car cela cause des problèmes de routing SPA
       return
     }
     
@@ -77,15 +80,17 @@ const ModuleDetail = () => {
         setTimeout(() => {
           // Vérifier si l'ID est maintenant présent
           if (!id) {
-            console.error('❌ ID toujours manquant après délai, rechargement forcé')
-            window.location.href = `/modules/${extractedId}`
+            console.error('❌ ID toujours manquant après délai, navigation forcée avec navigate')
+            // Utiliser navigate au lieu de window.location.href
+            navigate(`/modules/${extractedId}`, { replace: true })
           }
         }, 200)
         return
       } else {
         // Pas d'ID trouvé, rediriger vers /modules
         console.error('❌ Aucun ID trouvé dans l\'URL, redirection vers /modules')
-        window.location.href = '/modules'
+        // Utiliser navigate au lieu de window.location.href
+        navigate('/modules', { replace: true })
         return
       }
     } else {

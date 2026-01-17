@@ -13,6 +13,7 @@
  * @module pages/Modules
  */
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Container,
   VStack,
@@ -40,6 +41,7 @@ import { SUBJECT_COLORS } from '../constants/modules'
 
 const Modules = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const [filters, setFilters] = useState<ModuleFilters>({
     subject: '',
     searchQuery: '',
@@ -54,10 +56,9 @@ const Modules = () => {
     if (pathname.match(/^\/modules\/[^/]+$/)) {
       console.error('❌ ERREUR CRITIQUE: Modules component rendu sur une route /modules/:id!', { pathname })
       console.error('❌ Cela indique que React Router n\'a pas matché correctement la route /modules/:id')
-      console.error('❌ Redirection immédiate vers la bonne route...')
-      // Utiliser window.location.href pour forcer un rechargement complet et le bon matching
-      // car React Router a clairement échoué à matcher la route
-      window.location.href = pathname
+      console.error('❌ Redirection immédiate vers la bonne route avec navigate...')
+      // Utiliser navigate au lieu de window.location.href pour éviter les problèmes de routing SPA
+      navigate(pathname, { replace: true })
       return
     }
     // Vérifier aussi qu'on n'est pas sur /exams ou /home

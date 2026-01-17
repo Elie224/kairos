@@ -39,21 +39,13 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
       console.log('🟢 URL cible:', targetPath)
       logger.debug('Navigation vers module', { moduleId: module.id, moduleTitle: module.title, targetPath }, 'ModuleCard')
       
-      // Utiliser navigate de React Router pour une navigation SPA correcte
-      // Si la navigation échoue (par exemple si React Router ne match pas), fallback sur window.location.href
-      try {
-        navigate(targetPath, { replace: false })
-        // Vérifier après un court délai si la navigation a réussi
-        setTimeout(() => {
-          if (window.location.pathname !== targetPath) {
-            console.warn('⚠️ Navigation React Router échouée, utilisation de window.location.href')
-            window.location.href = targetPath
-          }
-        }, 100)
-      } catch (error) {
-        console.error('❌ Erreur lors de la navigation React Router, utilisation de window.location.href', error)
-        window.location.href = targetPath
-      }
+      // SOLUTION CRITIQUE: Utiliser navigate() de React Router SANS fallback window.location.href
+      // window.location.href cause un rechargement complet qui peut faire échouer le routing SPA
+      // et rediriger vers /index.html si le serveur ne trouve pas la route
+      navigate(targetPath, { replace: false })
+      
+      // Log pour vérifier que la navigation a été déclenchée
+      console.log('✅ Navigation React Router déclenchée vers:', targetPath)
     } else {
       // Logger l'erreur si module.id n'existe pas
       logger.error('Module ID manquant pour la navigation', { module }, 'ModuleCard')
@@ -68,19 +60,9 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
     }
     if (module.id) {
       const targetPath = `/modules/${module.id}`
-      try {
-        navigate(targetPath, { replace: false })
-        // Vérifier après un court délai si la navigation a réussi
-        setTimeout(() => {
-          if (window.location.pathname !== targetPath) {
-            console.warn('⚠️ Navigation React Router échouée, utilisation de window.location.href')
-            window.location.href = targetPath
-          }
-        }, 100)
-      } catch (error) {
-        console.error('❌ Erreur lors de la navigation React Router, utilisation de window.location.href', error)
-        window.location.href = targetPath
-      }
+      // Utiliser navigate() de React Router pour une navigation SPA correcte
+      navigate(targetPath, { replace: false })
+      console.log('✅ Navigation React Router déclenchée (clic carte) vers:', targetPath)
     }
   }
 
@@ -120,19 +102,9 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
           e.preventDefault()
           if (module.id) {
             const targetPath = `/modules/${module.id}`
-            try {
-              navigate(targetPath, { replace: false })
-              // Vérifier après un court délai si la navigation a réussi
-              setTimeout(() => {
-                if (window.location.pathname !== targetPath) {
-                  console.warn('⚠️ Navigation React Router échouée, utilisation de window.location.href')
-                  window.location.href = targetPath
-                }
-              }, 100)
-            } catch (error) {
-              console.error('❌ Erreur lors de la navigation React Router, utilisation de window.location.href', error)
-              window.location.href = targetPath
-            }
+            // Utiliser navigate() de React Router pour une navigation SPA correcte
+            navigate(targetPath, { replace: false })
+            console.log('✅ Navigation React Router déclenchée (clavier) vers:', targetPath)
           }
         }
       }}
