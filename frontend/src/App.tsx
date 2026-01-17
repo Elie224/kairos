@@ -135,7 +135,8 @@ function App() {
         tabIndex={-1}
         aria-label="Contenu principal"
       >
-        <Routes key={location.pathname}>
+        {/* Utiliser location.key pour forcer un re-render complet à chaque navigation */}
+        <Routes key={location.key || location.pathname}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<Home />} />

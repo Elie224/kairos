@@ -40,9 +40,21 @@ const Exams = () => {
   useEffect(() => {
     const pathname = window.location.pathname
     console.log('🟡 Exams component RENDERED', { pathname, timestamp: new Date().toISOString() })
-    // Si on est sur /modules, on ne devrait PAS être ici
-    if (pathname.startsWith('/modules')) {
+    // Si on est sur /modules, on ne devrait PAS être ici - rediriger
+    if (pathname.startsWith('/modules') && pathname !== '/exams') {
       console.error('❌ ERREUR: Exams component rendu sur une route /modules!', { pathname })
+      console.error('❌ Redirection vers /exams...')
+      window.location.href = '/exams'
+      return
+    }
+    // Vérifier qu'on est bien sur /exams
+    if (pathname !== '/exams') {
+      console.error('❌ ERREUR: Exams component rendu sur une mauvaise route!', { pathname })
+      // Rediriger vers /exams si on n'est pas sur la bonne route
+      if (!pathname.startsWith('/exams')) {
+        window.location.href = '/exams'
+        return
+      }
     }
   }, [])
 

@@ -46,6 +46,16 @@ const ModuleDetail = () => {
     console.log('🔵 window.location.pathname:', pathname)
     console.log('🔵 window.location.href:', window.location.href)
     
+    // Vérifier qu'on est bien sur une route /modules/:id
+    if (!pathname.match(/^\/modules\/[^/]+$/)) {
+      console.error('❌ ERREUR: ModuleDetail rendu sur une mauvaise route!', { pathname })
+      // Si on est sur /modules (sans ID), rediriger vers /modules
+      if (pathname === '/modules') {
+        window.location.href = '/modules'
+        return
+      }
+    }
+    
     // Vérifier que l'ID est bien présent
     if (!id) {
       logger.error('ModuleDetail: ID manquant dans les params', { pathname }, 'ModuleDetail')
@@ -58,6 +68,14 @@ const ModuleDetail = () => {
       if (match && match[1]) {
         console.warn('⚠️ ID trouvé dans l\'URL mais pas dans useParams:', match[1])
         console.warn('⚠️ Cela indique un problème de routing React Router')
+        // Forcer un rechargement avec l'ID extrait
+        window.location.href = `/modules/${match[1]}`
+        return
+      } else {
+        // Pas d'ID trouvé, rediriger vers /modules
+        console.error('❌ Aucun ID trouvé, redirection vers /modules')
+        window.location.href = '/modules'
+        return
       }
     } else {
       console.log('✅ ModuleDetail: ID présent, composant devrait s\'afficher correctement', { id })
@@ -85,15 +103,24 @@ const ModuleDetail = () => {
   }
 
   const { data: module, isLoading, error, refetch } = useQuery<Module>(
-    ['module', id],
+    ['module', id], // Clé unique basée sur l'ID pour éviter les conflits de cache
     async () => {
       if (!id) {
         throw new Error('Module ID manquant')
       }
       try {
         logger.debug('Chargement du module', { moduleId: id }, 'ModuleDetail')
+        console.log('📥 Chargement du module depuis l\'API...', { moduleId: id })
         const response = await api.get(`/modules/${id}`, {
           timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour le chargement du module
+        })
+        console.log('✅ Module chargé depuis l\'API', { 
+          moduleId: id,
+          moduleTitle: response.data?.title,
+          hasContent: !!response.data?.content,
+          hasLessons: !!response.data?.content?.lessons,
+          lessonsCount: response.data?.content?.lessons?.length || 0,
+          hasText: !!response.data?.content?.text
         })
         logger.debug('Module chargé avec succès', { 
           moduleId: id, 
@@ -104,6 +131,11 @@ const ModuleDetail = () => {
         }, 'ModuleDetail')
         return response.data
       } catch (err: any) {
+        console.error('❌ Erreur lors du chargement du module', { 
+          moduleId: id, 
+          error: err?.message || err,
+          status: err?.response?.status 
+        })
         logger.error('Erreur lors du chargement du module', { 
           moduleId: id, 
           error: err?.message || err,
@@ -113,9 +145,9 @@ const ModuleDetail = () => {
       }
     },
     { 
-      enabled: !!id,
-      staleTime: 5 * 60 * 1000,
-      cacheTime: 10 * 60 * 1000,
+      enabled: !!id, // Ne charger que si l'ID est présent
+      staleTime: 0, // Ne pas utiliser le cache - toujours recharger
+      cacheTime: 0, // Désactiver le cache pour forcer le rechargement à chaque changement d'ID
       refetchOnMount: true, // Forcer le refetch au montage pour s'assurer que le contenu est chargé
       refetchOnWindowFocus: false,
       retry: 2,
@@ -176,6 +208,20 @@ const ModuleDetail = () => {
       </Box>
     )
   }
+
+  // Log pour vérifier que le module est bien chargé
+  useEffect(() => {
+    if (module) {
+      console.log('✅ Module chargé et prêt à être affiché', {
+        moduleId: module.id,
+        moduleTitle: module.title,
+        hasContent: !!module.content,
+        hasLessons: !!module.content?.lessons,
+        lessonsCount: module.content?.lessons?.length || 0,
+        hasText: !!module.content?.text
+      })
+    }
+  }, [module])
 
   // Vérifier si le module permet les simulations (physique, chimie, biologie)
   const hasSimulation = ['physics', 'chemistry', 'biology'].includes(module.subject?.toLowerCase() || '')

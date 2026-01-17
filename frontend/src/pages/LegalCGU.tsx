@@ -7,10 +7,20 @@ import { useEffect } from 'react'
 const LegalCGU = () => {
   // S'assurer que la page se rend immédiatement
   useEffect(() => {
+    const pathname = window.location.pathname
     // Scroll en haut au chargement
     window.scrollTo({ top: 0, behavior: 'instant' })
     // Logger pour déboguer
-    console.log('LegalCGU component mounted', { pathname: window.location.pathname })
+    console.log('✅ LegalCGU component mounted', { pathname, timestamp: new Date().toISOString() })
+    // Vérifier qu'on est bien sur /legal/cgu
+    if (pathname !== '/legal/cgu') {
+      console.error('❌ ERREUR: LegalCGU component rendu sur une mauvaise route!', { pathname })
+      // Si on n'est pas sur la bonne route, rediriger
+      if (!pathname.startsWith('/legal')) {
+        window.location.href = '/legal/cgu'
+        return
+      }
+    }
   }, [])
 
   return (

@@ -58,6 +58,11 @@ const Modules = () => {
       window.location.href = pathname
       return
     }
+    // Vérifier aussi qu'on n'est pas sur /exams ou /home
+    if (pathname === '/exams' || pathname === '/') {
+      console.error('❌ ERREUR: Modules component rendu sur une mauvaise route!', { pathname })
+      // Ne pas rediriger ici, laisser React Router gérer
+    }
   }, [])
 
   const { modules, groupedModules, isLoading, totalCount } = useModules(filters)

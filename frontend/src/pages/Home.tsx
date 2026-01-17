@@ -33,7 +33,15 @@ const Home = () => {
 
   // Log pour déboguer le rendu
   useEffect(() => {
-    logger.debug('Home component mounted', {}, 'Home')
+    const pathname = window.location.pathname
+    logger.debug('Home component mounted', { pathname }, 'Home')
+    console.log('🏠 Home component RENDERED', { pathname, timestamp: new Date().toISOString() })
+    // Vérifier qu'on est bien sur la homepage
+    if (pathname !== '/' && pathname !== '/index.html' && !pathname.startsWith('/legal')) {
+      console.error('❌ ERREUR: Home component rendu sur une mauvaise route!', { pathname })
+      // Si on est sur /modules, /exams, etc., ne pas rediriger (laisser React Router gérer)
+      // Mais logger l'erreur pour le débogage
+    }
   }, [])
 
   // Scroll restoration minimal - seulement après que le contenu soit rendu

@@ -70,11 +70,39 @@ const GlobalLoader = () => {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Masquer le loader après que React soit monté
-    const timer = setTimeout(() => {
+    // Masquer le loader après que React soit monté ET que le DOM soit prêt
+    // Utiliser plusieurs vérifications pour s'assurer que tout est chargé
+    const checkReady = () => {
+      // Vérifier que le DOM est prêt
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        // Attendre un peu plus pour que React soit complètement monté
+        const timer = setTimeout(() => {
+          setIsLoading(false)
+        }, 300) // Augmenté à 300ms pour éviter la page blanche
+        return () => clearTimeout(timer)
+      }
+    }
+    
+    // Vérifier immédiatement
+    const immediateCheck = checkReady()
+    
+    // Écouter aussi l'événement load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 200)
+    })
+    
+    // Fallback: masquer après 1 seconde maximum
+    const fallbackTimer = setTimeout(() => {
       setIsLoading(false)
-    }, 100)
-    return () => clearTimeout(timer)
+    }, 1000)
+    
+    return () => {
+      if (immediateCheck) immediateCheck()
+      clearTimeout(fallbackTimer)
+      window.removeEventListener('load', () => {})
+    }
   }, [])
 
   if (!isLoading) return null
