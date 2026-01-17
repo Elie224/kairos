@@ -38,45 +38,30 @@ function App() {
   const { isAuthenticated } = useAuthStore()
   const [showOnboarding, setShowOnboarding] = useState(false)
 
-  // Restaurer le scroll en haut de page lors de la navigation ET du rechargement (optimisé)
+  // Restaurer le scroll en haut de page lors de la navigation (sans bloquer le rendu)
   useEffect(() => {
-    // Fonction robuste pour forcer le scroll en haut
+    // Fonction simple pour forcer le scroll en haut
     const scrollToTop = () => {
       try {
-        // Méthode 1: window.scrollTo
         window.scrollTo(0, 0)
-        // Méthode 2: documentElement
         if (document.documentElement) {
           document.documentElement.scrollTop = 0
-          document.documentElement.scrollLeft = 0
         }
-        // Méthode 3: body
         if (document.body) {
           document.body.scrollTop = 0
-          document.body.scrollLeft = 0
         }
-        // Méthode 4: window.scroll avec behavior
-        window.scroll({ top: 0, left: 0, behavior: 'instant' })
       } catch (e) {
         // Fallback silencieux
       }
     }
     
-    // Scroll immédiat
-    scrollToTop()
+    // Scroll après un court délai pour ne pas bloquer le rendu initial
+    const timer = setTimeout(scrollToTop, 100)
     
-    // Scroll après que le DOM soit prêt
-    const rafId = requestAnimationFrame(() => {
-      scrollToTop()
-      // Double vérification
-      setTimeout(scrollToTop, 10)
-      setTimeout(scrollToTop, 50)
-    })
-    
-    return () => cancelAnimationFrame(rafId)
+    return () => clearTimeout(timer)
   }, [location.pathname])
   
-  // S'assurer que le scroll est en haut lors du chargement initial
+  // S'assurer que le scroll est en haut lors du chargement initial (une seule fois, sans bloquer)
   useEffect(() => {
     const scrollToTop = () => {
       try {
@@ -92,22 +77,10 @@ function App() {
       }
     }
     
-    // Si la page est déjà chargée
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      scrollToTop()
-      setTimeout(scrollToTop, 100)
-    } else {
-      const handleLoad = () => {
-        scrollToTop()
-        setTimeout(scrollToTop, 100)
-      }
-      document.addEventListener('DOMContentLoaded', handleLoad)
-      window.addEventListener('load', handleLoad)
-      return () => {
-        document.removeEventListener('DOMContentLoaded', handleLoad)
-        window.removeEventListener('load', handleLoad)
-      }
-    }
+    // Scroll après un délai pour ne pas interférer avec le rendu initial
+    const timer = setTimeout(scrollToTop, 200)
+    
+    return () => clearTimeout(timer)
   }, [])
 
   // Vérifier si l'utilisateur a déjà vu l'onboarding (une seule fois)

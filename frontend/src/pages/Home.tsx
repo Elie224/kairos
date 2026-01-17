@@ -30,33 +30,24 @@ const Home = () => {
   const navigate = useNavigate()
   const { isAuthenticated } = useAuthStore()
 
-  // S'assurer que le contenu est visible au chargement
+  // S'assurer que le scroll est en haut au chargement (sans scrollIntoView qui peut cacher le contenu)
   useEffect(() => {
-    // Forcer le scroll en haut et s'assurer que le contenu est visible
-    const ensureVisibility = () => {
+    // Simple scroll to top sans scrollIntoView qui peut causer des problèmes d'affichage
+    const scrollToTop = () => {
       window.scrollTo({ top: 0, behavior: 'instant' })
-      document.documentElement.scrollTop = 0
-      document.body.scrollTop = 0
-      
-      // S'assurer que la section hero est visible
-      const heroSection = document.getElementById('hero-section')
-      if (heroSection) {
-        heroSection.scrollIntoView({ behavior: 'instant', block: 'start' })
+      if (document.documentElement) {
+        document.documentElement.scrollTop = 0
+      }
+      if (document.body) {
+        document.body.scrollTop = 0
       }
     }
     
-    // Exécuter immédiatement
-    ensureVisibility()
-    
-    // Exécuter après un court délai pour gérer les cas où le DOM n'est pas encore prêt
-    const timer = setTimeout(ensureVisibility, 100)
-    
-    // Exécuter après le chargement complet
-    window.addEventListener('load', ensureVisibility)
+    // Exécuter après un court délai pour laisser le DOM se rendre
+    const timer = setTimeout(scrollToTop, 50)
     
     return () => {
       clearTimeout(timer)
-      window.removeEventListener('load', ensureVisibility)
     }
   }, [])
 
