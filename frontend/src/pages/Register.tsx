@@ -23,6 +23,7 @@ import {
   Divider,
   Select,
   Progress,
+  Badge,
 } from '@chakra-ui/react'
 import { FiUserPlus, FiMail, FiLock, FiUser, FiPhone, FiMapPin, FiEye, FiEyeOff, FiCheck, FiTarget } from 'react-icons/fi'
 import { useAuthStore } from '../store/authStore'
@@ -680,7 +681,7 @@ const Register = () => {
                       <HStack spacing={2}>
                         <Icon as={FiMapPin} color="blue.500" />
                         <Text>Pays</Text>
-                        <Text fontSize="xs" color="gray.400" fontWeight="normal">(optionnel)</Text>
+                        <Badge colorScheme="gray" fontSize="xs" fontWeight="normal" variant="subtle">optionnel</Badge>
                       </HStack>
                     </FormLabel>
                     <Select
