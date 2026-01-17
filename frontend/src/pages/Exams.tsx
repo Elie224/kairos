@@ -35,6 +35,16 @@ const Exams = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
 
+  // Log pour déboguer - s'assurer qu'on est bien sur /exams
+  useEffect(() => {
+    const pathname = window.location.pathname
+    console.log('🟡 Exams component RENDERED', { pathname, timestamp: new Date().toISOString() })
+    // Si on est sur /modules, on ne devrait PAS être ici
+    if (pathname.startsWith('/modules')) {
+      console.error('❌ ERREUR: Exams component rendu sur une route /modules!', { pathname })
+    }
+  }, [])
+
   const { data: modules, isLoading: modulesLoading, error: modulesError } = useQuery<Module[]>(
     ['modules', 'exams-page'], // Clé unique pour éviter les conflits avec la page Modules
     async () => {

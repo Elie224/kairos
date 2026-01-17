@@ -31,9 +31,17 @@ const ModuleDetail = () => {
   const { id } = useParams<{ id: string }>()
   const [tabIndex, setTabIndex] = useState(0)
   
-  // Log pour déboguer le rendu du composant
+  // Log pour déboguer le rendu du composant - FORCER le log immédiatement
   useEffect(() => {
-    logger.debug('ModuleDetail component mounted', { moduleId: id, pathname: window.location.pathname }, 'ModuleDetail')
+    const pathname = window.location.pathname
+    logger.debug('ModuleDetail component mounted', { moduleId: id, pathname }, 'ModuleDetail')
+    console.log('🔵 ModuleDetail RENDERED', { id, pathname, timestamp: new Date().toISOString() })
+    
+    // Vérifier que l'ID est bien présent
+    if (!id) {
+      logger.error('ModuleDetail: ID manquant dans les params', { pathname }, 'ModuleDetail')
+      console.error('❌ ModuleDetail: ID manquant!', { pathname })
+    }
   }, [id])
   
   // Réinitialiser l'onglet à "Contenu" quand le module change

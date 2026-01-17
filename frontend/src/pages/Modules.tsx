@@ -46,6 +46,16 @@ const Modules = () => {
   })
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null)
 
+  // Log pour déboguer - s'assurer qu'on est bien sur /modules et pas /modules/:id
+  useEffect(() => {
+    const pathname = window.location.pathname
+    console.log('🟢 Modules component RENDERED', { pathname, timestamp: new Date().toISOString() })
+    // Si on est sur /modules/:id, on ne devrait PAS être ici
+    if (pathname.match(/^\/modules\/[^/]+$/)) {
+      console.error('❌ ERREUR: Modules component rendu sur une route /modules/:id!', { pathname })
+    }
+  }, [])
+
   const { modules, groupedModules, isLoading, totalCount } = useModules(filters)
 
   // Synchroniser selectedSubject avec filters.subject
