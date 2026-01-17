@@ -94,14 +94,14 @@ const Visualizations = () => {
     }
   )
 
-  // Filtrer uniquement les modules avec simulations 3D disponibles
-  // Seulement physics et chemistry ont des simulations 3D fonctionnelles
+  // Filtrer les modules avec visualisations disponibles (3D pour physique/chimie, 2D pour les autres)
   const modulesWithVisualizations = modules?.filter(
     (module) => {
       const subject = module.subject?.toLowerCase() || ''
-      // Vérifier que c'est physics ou chemistry ET qu'il y a un contenu de scène
-      return (subject === 'physics' || subject === 'chemistry') && 
-             (module.content?.scene || true) // Accepter même sans scene explicite pour ces matières
+      // Toutes les matières peuvent avoir des visualisations
+      // Physique et Chimie : simulations 3D
+      // Autres matières : visualisations 2D (graphiques, diagrammes, etc.)
+      return ['physics', 'chemistry', 'mathematics', 'biology', 'geography', 'economics', 'history', 'computer_science'].includes(subject)
     }
   ) || []
 
@@ -381,11 +381,15 @@ const Visualizations = () => {
                       Aucune visualisation disponible
                     </Text>
                     <Text color="gray.500" fontSize="sm" maxW="400px" mx="auto">
-                      Les visualisations 3D interactives sont disponibles pour les modules de <strong>Physique</strong> et <strong>Chimie</strong>. 
+                      Les visualisations interactives sont disponibles pour toutes les matières :
+                      <br />• <strong>⚙️ Physique</strong> et <strong>🧪 Chimie</strong> : Simulations 3D interactives
+                      <br />• <strong>📐 Mathématiques</strong> : Graphiques et visualisations 2D
+                      <br />• <strong>🧬 Biologie</strong> : Diagrammes et schémas interactifs
+                      <br />• <strong>🌍 Géographie</strong> : Cartes et visualisations géospatiales
+                      <br />• <strong>💰 Économie</strong> : Graphiques et courbes économiques
+                      <br />• <strong>🏛️ Histoire</strong> : Frise chronologique interactive
                       <br /><br />
-                      Pour voir des simulations :
-                      <br />• Sélectionnez "⚙️ Physique" ou "🧪 Chimie" dans le filtre ci-dessus
-                      <br />• Ou créez des modules de Physique/Chimie dans la section Admin
+                      Sélectionnez une matière dans le filtre ci-dessus pour voir les visualisations disponibles.
                     </Text>
                   </Box>
                 ) : (

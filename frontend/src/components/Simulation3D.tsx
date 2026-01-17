@@ -15,29 +15,13 @@ interface Simulation3DProps {
 }
 
 const Simulation3D = ({ module }: Simulation3DProps) => {
-  // Vérifier que le module est en physique ou chimie
-  const allowedSubjects = ['physics', 'chemistry']
   const subject = module.subject?.toLowerCase()
-  const isAllowedSubject = allowedSubjects.includes(subject)
+  const allowedSubjects3D = ['physics', 'chemistry']
+  const is3DSubject = allowedSubjects3D.includes(subject)
   
-  if (!isAllowedSubject) {
-    return (
-      <Box h="100%" w="100%" display="flex" alignItems="center" justifyContent="center" p={8} bg="gray.50">
-        <Box textAlign="center">
-          <ChakraText fontSize="xl" fontWeight="bold" color="gray.700" mb={4}>
-            Simulations 3D non disponibles
-          </ChakraText>
-          <ChakraText color="gray.600" fontSize="sm">
-            Les simulations 3D interactives sont uniquement disponibles pour les modules de Physique et Chimie.
-            {subject && (
-              <Box mt={2}>
-                Matière actuelle : {subject}
-              </Box>
-            )}
-          </ChakraText>
-        </Box>
-      </Box>
-    )
+  // Pour les matières non-3D, afficher une visualisation 2D appropriée
+  if (!is3DSubject) {
+    return <Visualization2D module={module} />
   }
   
   const renderScene = () => {
