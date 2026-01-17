@@ -16,11 +16,14 @@ export const SubjectsGrid = ({ groupedModules, onSubjectClick }: SubjectsGridPro
   const { t } = useTranslation()
 
   const subjectLabels: Record<string, string> = {
-    physics: t('modules.physics'),
-    chemistry: t('modules.chemistry'),
-    mathematics: t('modules.mathematics'),
-    english: t('modules.english'),
-    computer_science: t('modules.computerScience'),
+    mathematics: '📐 Mathématiques',
+    computer_science: '🤖 Informatique & IA',
+    physics: '⚙️ Physique',
+    chemistry: '🧪 Chimie',
+    biology: '🧬 Biologie',
+    geography: '🌍 Géographie',
+    economics: '💰 Économie',
+    history: '🏛️ Histoire',
   }
 
   return (

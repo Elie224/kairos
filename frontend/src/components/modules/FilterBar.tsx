@@ -16,11 +16,14 @@ export const FilterBar = ({ filters, onFilterChange }: FilterBarProps) => {
   const { t } = useTranslation()
 
   const subjectLabels: Record<string, string> = {
-    physics: t('modules.physics'),
-    chemistry: t('modules.chemistry'),
-    mathematics: t('modules.mathematics'),
-    english: t('modules.english'),
-    computer_science: t('modules.computerScience'),
+    mathematics: '📐 Mathématiques',
+    computer_science: '🤖 Informatique & IA',
+    physics: '⚙️ Physique',
+    chemistry: '🧪 Chimie',
+    biology: '🧬 Biologie',
+    geography: '🌍 Géographie',
+    economics: '💰 Économie',
+    history: '🏛️ Histoire',
   }
 
   const handleSubjectFilter = (subject: string) => {

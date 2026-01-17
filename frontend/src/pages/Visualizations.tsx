@@ -64,16 +64,18 @@ const Visualizations = () => {
           limit: 100,
         }
         
-        // Envoyer le filtre seulement pour mathematics et computer_science
-        if (selectedSubject !== 'all' && ['mathematics', 'computer_science'].includes(selectedSubject)) {
+        // Envoyer le filtre pour toutes les matières supportées par l'API
+        const supportedSubjects = ['mathematics', 'computer_science', 'physics', 'chemistry']
+        if (selectedSubject !== 'all' && supportedSubjects.includes(selectedSubject)) {
           params.subject = selectedSubject
         }
         
         const response = await api.get('/modules/', { params })
         let filteredData = response.data || []
         
-        // Filtrer côté client pour physics et chemistry si nécessaire
-        if (selectedSubject !== 'all' && ['physics', 'chemistry'].includes(selectedSubject)) {
+        // Filtrer côté client pour les matières non encore supportées par l'API
+        const clientSideSubjects = ['biology', 'geography', 'economics', 'history']
+        if (selectedSubject !== 'all' && clientSideSubjects.includes(selectedSubject)) {
           filteredData = filteredData.filter((module: Module) => 
             module.subject?.toLowerCase() === selectedSubject
           )
@@ -94,8 +96,7 @@ const Visualizations = () => {
 
   const modulesWithVisualizations = modules?.filter(
     (module) =>
-      module.subject?.toLowerCase() === 'physics' ||
-      module.subject?.toLowerCase() === 'chemistry' ||
+      ['physics', 'chemistry', 'mathematics', 'biology'].includes(module.subject?.toLowerCase() || '') ||
       module.content?.scene
   ) || []
 
