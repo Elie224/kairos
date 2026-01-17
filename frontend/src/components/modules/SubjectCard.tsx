@@ -15,13 +15,25 @@ interface SubjectCardProps {
 }
 
 const SUBJECT_ICONS: Record<string, string> = {
-  mathematics: '📐',  // Algèbre
-  computer_science: '🤖',  // Machine Learning
+  mathematics: '📐',
+  computer_science: '🤖',
+  physics: '⚙️',
+  chemistry: '🧪',
+  biology: '🧬',
+  geography: '🌍',
+  economics: '💰',
+  history: '🏛️',
 }
 
 const SUBJECT_DESCRIPTIONS: Record<string, string> = {
-  mathematics: 'Maîtrisez l\'algèbre : équations, polynômes, matrices et plus encore',
-  computer_science: 'Apprenez le Machine Learning : algorithmes, réseaux de neurones, deep learning',
+  mathematics: 'Fonctions, Suites, Algèbre linéaire, Analyse, Probabilités & Statistiques',
+  computer_science: 'Algorithmes, IA, Machine Learning, Réseaux de neurones, Deep Learning',
+  physics: 'Mécanique, Ondes, Électricité, Électromagnétisme, Physique quantique',
+  chemistry: 'Chimie générale, Organique, Minérale, Solutions aqueuses, Tableau périodique',
+  biology: 'Cellules en 3D, ADN et protéines, Organes et systèmes, Physiologie humaine',
+  geography: 'Cartes interactives, Climats, Reliefs, Dynamiques terrestres, Géospatial',
+  economics: 'Offre et demande, Inflation, Croissance, Marchés financiers, Simulations',
+  history: 'Lignes du temps interactives, Événements majeurs, Contextes, Analyse cause-effet',
 }
 
 export const SubjectCard = ({

@@ -135,6 +135,23 @@ const Dashboard = () => {
   const subjectColors: Record<string, string> = {
     mathematics: 'blue',
     computer_science: 'purple',
+    physics: 'cyan',
+    chemistry: 'green',
+    biology: 'teal',
+    geography: 'orange',
+    economics: 'yellow',
+    history: 'red',
+  }
+  
+  const subjectLabels: Record<string, string> = {
+    mathematics: '📐 Mathématiques',
+    computer_science: '🤖 Informatique & IA',
+    physics: '⚙️ Physique',
+    chemistry: '🧪 Chimie',
+    biology: '🧬 Biologie',
+    geography: '🌍 Géographie',
+    economics: '💰 Économie',
+    history: '🏛️ Histoire',
   }
 
   return (
@@ -454,8 +471,7 @@ const Dashboard = () => {
                             textTransform="capitalize"
                             fontFamily="body"
                           >
-                            {subject === 'computer_science' ? 'Informatique' : 
-                             subject === 'mathematics' ? 'Mathématiques' : subject}
+                            {subjectLabels[subject] || subject}
                           </Text>
                           <Text 
                             fontSize="2xl" 
@@ -556,8 +572,7 @@ const Dashboard = () => {
                                 boxShadow="sm"
                                 textTransform="capitalize"
                               >
-                                {module.subject === 'computer_science' ? 'Informatique' : 
-                                 module.subject === 'mathematics' ? 'Mathématiques' : module.subject}
+                                {subjectLabels[module.subject] || module.subject}
                               </Badge>
                               {isCompleted && (
                                 <Badge 

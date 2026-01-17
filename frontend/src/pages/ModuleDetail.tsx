@@ -85,8 +85,8 @@ const ModuleDetail = () => {
     )
   }
 
-  // Vérifier si le module permet les simulations (aucune pour l'instant avec seulement algèbre et ML)
-  const hasSimulation = false
+  // Vérifier si le module permet les simulations (physique, chimie, biologie)
+  const hasSimulation = ['physics', 'chemistry', 'biology'].includes(module.subject?.toLowerCase() || '')
   // Vérifier si le module ne doit pas avoir de TP (mathématiques)
   const hasNoTP = module.subject === 'mathematics'
   // Les quiz sont disponibles uniquement pour les modules d'informatique

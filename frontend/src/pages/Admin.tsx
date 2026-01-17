@@ -747,8 +747,14 @@ const Admin = () => {
 
   const getSubjectLabel = (subject: string) => {
     const labels: Record<string, string> = {
-      mathematics: t('modules.mathematics'),
-      computer_science: t('modules.computerScience'),
+      mathematics: '📐 Mathématiques',
+      computer_science: '🤖 Informatique & IA',
+      physics: '⚙️ Physique',
+      chemistry: '🧪 Chimie',
+      biology: '🧬 Biologie',
+      geography: '🌍 Géographie',
+      economics: '💰 Économie',
+      history: '🏛️ Histoire',
     }
     return labels[subject] || subject
   }

@@ -217,6 +217,8 @@ const Visualizations = () => {
               <option value="computer_science">🤖 Informatique & IA</option>
               <option value="biology">🧬 Biologie</option>
               <option value="geography">🌍 Géographie</option>
+              <option value="economics">💰 Économie</option>
+              <option value="history">🏛️ Histoire</option>
             </Select>
             <Badge colorScheme="blue" fontSize="sm" px={3} py={1}>
               {modulesWithVisualizations.length} simulation{modulesWithVisualizations.length > 1 ? 's' : ''} disponible{modulesWithVisualizations.length > 1 ? 's' : ''}
