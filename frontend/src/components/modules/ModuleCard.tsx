@@ -86,6 +86,16 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
   }
 
   const handleStartLearning = useCallback((e: React.MouseEvent) => {
+    // CRITIQUE: Vérifier IMMÉDIATEMENT si on est déjà sur une page de détail AVANT toute autre opération
+    // Cela évite les navigations multiples quand le composant se re-rend pendant la navigation
+    if (isOnModuleDetailPage()) {
+      e.stopPropagation()
+      e.preventDefault()
+      e.nativeEvent.stopImmediatePropagation()
+      // Ne rien faire - on est déjà sur une page de détail
+      return
+    }
+    
     // CRITIQUE: Arrêter la propagation AVANT toute autre opération
     e.stopPropagation()
     e.preventDefault()
@@ -108,6 +118,15 @@ export const ModuleCard = memo(({ module, subjectColor, subjectLabel }: ModuleCa
   }, [module.title, module, navigate])
 
   const handleCardClick = useCallback((e: React.MouseEvent) => {
+    // CRITIQUE: Vérifier IMMÉDIATEMENT si on est déjà sur une page de détail AVANT toute autre opération
+    // Cela évite les navigations multiples quand le composant se re-rend pendant la navigation
+    if (isOnModuleDetailPage()) {
+      e.stopPropagation()
+      e.preventDefault()
+      // Ne rien faire - on est déjà sur une page de détail
+      return
+    }
+    
     // Vérifier explicitement si le clic provient du bouton ou de ses enfants
     const target = e.target as HTMLElement
     const button = target.closest('button')
