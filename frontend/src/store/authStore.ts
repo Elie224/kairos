@@ -61,7 +61,7 @@ export const useAuthStore = create<AuthState>()(
           logger.debug('Envoi de la requête de login', { email }, 'AuthStore')
           const response = await api.post('/auth/login', params, {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            timeout: 30000, // 30 secondes pour login (suffisant pour serveurs avec cold start)
+            timeout: 60000, // 60 secondes pour login (cold start Render peut prendre 30-45s)
           })
 
           logger.info('Réponse de login reçue', { hasToken: !!response.data?.access_token, hasUser: !!response.data?.user }, 'AuthStore')
@@ -99,7 +99,7 @@ export const useAuthStore = create<AuthState>()(
 
           logger.debug('Tentative d\'inscription', { email: payload.email, username: payload.username }, 'AuthStore')
           const response = await api.post('/auth/register', payload, {
-            timeout: 30000, // 30 secondes pour register (suffisant pour serveurs avec cold start)
+            timeout: 60000, // 60 secondes pour register (cold start Render peut prendre 30-45s)
           })
           const user = response.data
 
@@ -156,7 +156,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           api.defaults.headers.common['Authorization'] = `Bearer ${token}`
           const response = await api.get('/auth/me', {
-            timeout: 30000, // 30 secondes pour vérifier l'auth (suffisant pour serveurs avec cold start)
+            timeout: 60000, // 60 secondes pour vérifier l'auth (cold start Render peut prendre 30-45s)
           })
           set({
             user: response.data,

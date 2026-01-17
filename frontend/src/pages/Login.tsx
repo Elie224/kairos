@@ -122,8 +122,8 @@ const Login = () => {
           errorMessage = err.response.data.detail
         }
       } else if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
-        // Timeout - le serveur prend trop de temps à répondre
-        errorMessage = 'Le serveur prend trop de temps à répondre. Veuillez réessayer.'
+        // Timeout - le serveur prend trop de temps à répondre (probablement cold start Render)
+        errorMessage = 'Le serveur démarre. Veuillez patienter quelques secondes et réessayer. Cela peut prendre jusqu\'à 30 secondes lors du premier démarrage.'
       } else if (err.message) {
         // Autre erreur avec message
         if (err.message.includes('Network Error') || err.message.includes('ERR_NETWORK')) {

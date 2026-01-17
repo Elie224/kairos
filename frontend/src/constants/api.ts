@@ -11,8 +11,8 @@ export const API_TIMEOUTS = {
   // Timeout par défaut (utilisé dans api.ts)
   DEFAULT: 30000, // 30 secondes - suffisant pour la plupart des requêtes
 
-  // Authentification (peut être lent avec cold start)
-  AUTH: 30000, // 30 secondes pour login/register/checkAuth
+  // Authentification (peut être très lent avec cold start Render)
+  AUTH: 60000, // 60 secondes pour login/register/checkAuth (cold start Render peut prendre 30-45s)
 
   // Requêtes simples (stats, count, etc.)
   SIMPLE: 10000, // 10 secondes pour les requêtes GET simples
