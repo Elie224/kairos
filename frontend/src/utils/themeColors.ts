@@ -152,7 +152,7 @@ export const getThemeForAppType = (appType: 'education' | 'technology' | 'health
 
 /**
  * Récupère la configuration de couleur depuis localStorage ou utilise la valeur par défaut
- * Par défaut, utilise le thème bleu pour Kaïros (plateforme éducative high-tech)
+ * Par défaut, utilise le thème bleu pour Kaïrox (plateforme éducative high-tech)
  */
 export const getThemeConfig = (): ThemeColorConfig => {
   try {
@@ -172,7 +172,7 @@ export const getThemeConfig = (): ThemeColorConfig => {
     console.error('Erreur lors de la récupération du thème:', e)
   }
   
-  // Par défaut, utiliser Bleu pour Kaïros (plateforme éducative high-tech)
+  // Par défaut, utiliser Bleu pour Kaïrox (plateforme éducative high-tech)
   // Bleu = high-tech, technologies, réseaux sociaux (parfait pour une plateforme d'apprentissage immersive avec IA)
   const defaultTheme = THEME_COLORS.blue
   // Toujours sauvegarder le thème bleu par défaut

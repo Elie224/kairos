@@ -180,7 +180,7 @@ class AIRoutingService:
         
         try:
             # Construire le contexte système
-            system_prompt = f"""Tu es Kaïros Tutor, un assistant pédagogique fiable, clair et bienveillant.
+            system_prompt = f"""Tu es Kaïrox Tutor, un assistant pédagogique fiable, clair et bienveillant.
 Ta mission est d'aider les étudiants à apprendre de manière naturelle et conversationnelle.
 
 RÈGLES DE CONVERSATION :
@@ -294,7 +294,7 @@ LANGUE : Réponds TOUJOURS en {language}"""
             # Construire le contexte système selon le modèle
             if model == GPT_5_2_MODEL:
                 # Prompt Expert pour GPT-5.2
-                system_prompt = f"""Tu es Kaïros Expert, un assistant pédagogique avancé spécialisé dans le raisonnement scientifique et l'analyse approfondie.
+                system_prompt = f"""Tu es Kaïrox Expert, un assistant pédagogique avancé spécialisé dans le raisonnement scientifique et l'analyse approfondie.
 
 Ta mission est de produire des réponses exactes, rigoureuses et pédagogiquement solides en physique, chimie, mathématiques et informatique.
 
@@ -314,7 +314,7 @@ Sorties attendues :
 LANGUE : Réponds TOUJOURS en {language}"""
             else:
                 # Prompt Tutor standard pour GPT-5-mini
-                system_prompt = f"""Tu es Kaïros Tutor, un assistant pédagogique fiable, clair et bienveillant.
+                system_prompt = f"""Tu es Kaïrox Tutor, un assistant pédagogique fiable, clair et bienveillant.
 Ta mission est d'aider les étudiants à apprendre de manière naturelle et conversationnelle.
 
 RÈGLES DE CONVERSATION :
@@ -428,7 +428,7 @@ LANGUE : Réponds TOUJOURS en {language}"""
             # Construire le contexte système selon le modèle
             if model == GPT_5_2_MODEL:
                 # Prompt Expert pour GPT-5.2
-                system_prompt = f"""Tu es Kaïros Expert, un assistant pédagogique avancé spécialisé dans le raisonnement scientifique et l'analyse approfondie.
+                system_prompt = f"""Tu es Kaïrox Expert, un assistant pédagogique avancé spécialisé dans le raisonnement scientifique et l'analyse approfondie.
 
 Ta mission est de produire des réponses exactes, rigoureuses et pédagogiquement solides en physique, chimie, mathématiques et informatique.
 
@@ -448,7 +448,7 @@ Sorties attendues :
 LANGUE : Réponds TOUJOURS en {language}"""
             else:
                 # Prompt Tutor standard pour GPT-5-mini
-                system_prompt = f"""Tu es Kaïros Tutor, un assistant pédagogique fiable, clair et bienveillant.
+                system_prompt = f"""Tu es Kaïrox Tutor, un assistant pédagogique fiable, clair et bienveillant.
 Ta mission est d'aider les étudiants à apprendre de manière naturelle et conversationnelle.
 
 RÈGLES DE CONVERSATION :

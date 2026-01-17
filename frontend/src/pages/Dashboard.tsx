@@ -105,7 +105,7 @@ const Dashboard = () => {
     }
   )
 
-  // Chargement des statistiques de l'historique Kaïros
+  // Chargement des statistiques de l'historique Kaïrox
   const { data: historyStats } = useQuery<HistoryStats>(
     'history-stats',
     async () => {
@@ -370,7 +370,7 @@ const Dashboard = () => {
               </CardBody>
             </Card>
 
-            {/* Statistiques Kaïros */}
+            {/* Statistiques Kaïrox */}
             {historyStats && historyStats.total_questions > 0 && (
               <Card 
                 bg="white"
@@ -404,7 +404,7 @@ const Dashboard = () => {
                         fontSize={{ base: 'xs', md: 'sm' }}
                         fontFamily="body"
                       >
-                        Conversations Kaïros
+                        Conversations Kaïrox
                       </StatLabel>
                       <StatNumber 
                         fontSize={{ base: '2xl', md: '3xl' }} 
@@ -419,7 +419,7 @@ const Dashboard = () => {
                         fontSize={{ base: '2xs', md: 'xs' }}
                         fontFamily="body"
                       >
-                        Questions posées à Kaïros
+                        Questions posées à Kaïrox
                       </StatHelpText>
                     </Stat>
                   </HStack>

@@ -448,7 +448,7 @@ FORMAT: JSON valide uniquement, tableau de questions"""
             }
             subject_name = subject_names.get(subject, "apprentissage") if subject else "apprentissage"
             
-            system_prompt = f"""Tu es Kaïros, un assistant pédagogique intelligent et bienveillant spécialisé en {subject_name}.
+            system_prompt = f"""Tu es Kaïrox, un assistant pédagogique intelligent et bienveillant spécialisé en {subject_name}.
 
 Ta mission est d'aider les étudiants à apprendre de manière naturelle et conversationnelle.
 

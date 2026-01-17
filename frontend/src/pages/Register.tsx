@@ -284,7 +284,7 @@ const Register = () => {
                     Créer un compte
                   </Heading>
                   <Text color="gray.600" textAlign="center" fontSize={{ base: 'sm', md: 'md' }}>
-                    Rejoignez Kaïros et commencez votre apprentissage
+                    Rejoignez Kaïrox et commencez votre apprentissage
                   </Text>
                 </VStack>
                 
@@ -729,7 +729,7 @@ const Register = () => {
               transition="all 0.2s"
               data-touch-target="true"
             >
-              Découvrir Kaïros
+              Découvrir Kaïrox
             </Button>
           </VStack>
         </Box>

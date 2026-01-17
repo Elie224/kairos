@@ -101,7 +101,7 @@ const Login = () => {
 
     try {
       await login(email, password)
-      showNotification('Connexion réussie ! Bienvenue sur Kaïros.', 'success')
+      showNotification('Connexion réussie ! Bienvenue sur Kaïrox.', 'success')
       navigate('/dashboard')
     } catch (err: any) {
       // Logger l'erreur de manière centralisée
@@ -243,7 +243,7 @@ const Login = () => {
                     Connexion
                   </Heading>
                   <Text color="gray.600" textAlign="center" fontSize={{ base: 'xs', md: 'sm' }}>
-                    Connectez-vous à votre compte Kaïros
+                    Connectez-vous à votre compte Kaïrox
                   </Text>
                 </VStack>
               </VStack>
@@ -412,7 +412,7 @@ const Login = () => {
                 transition="all 0.2s"
                 data-touch-target="true"
               >
-                Découvrir Kaïros
+                Découvrir Kaïrox
               </Button>
             </VStack>
           </Box>

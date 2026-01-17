@@ -159,7 +159,7 @@ const Feedback = () => {
           </Heading>
 
           <Text textAlign="center" color="gray.600">
-            {t('feedback.description', 'Votre avis nous aide à améliorer Kaïros. Partagez vos commentaires, signalez des bugs ou suggérez de nouvelles fonctionnalités.')}
+            {t('feedback.description', 'Votre avis nous aide à améliorer Kaïrox. Partagez vos commentaires, signalez des bugs ou suggérez de nouvelles fonctionnalités.')}
           </Text>
 
           <Box bg="white" p={{ base: 4, md: 6 }} borderRadius="lg" boxShadow="md">

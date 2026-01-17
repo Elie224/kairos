@@ -1,4 +1,4 @@
-# 📁 Structure du Code - Guide de Développement Kairos
+# 📁 Structure du Code - Guide de Développement Kaïrox
 
 Ce document décrit l'architecture et l'organisation du code pour maintenir la qualité, la lisibilité et la maintenabilité.
 
@@ -102,7 +102,7 @@ backend/app/
 ├── models/             # Modèles de données
 ├── repositories/       # Accès aux données (pattern Repository)
 ├── middleware/         # Middlewares (auth, logging, etc.)
-├── prompts/            # Prompts AI (Kairos)
+├── prompts/            # Prompts AI (Kaïrox)
 ├── tasks/              # Tâches asynchrones (Celery)
 ├── utils/              # Utilitaires Python
 ├── schemas.py          # Schémas Pydantic

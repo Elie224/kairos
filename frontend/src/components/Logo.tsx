@@ -51,7 +51,7 @@ const Logo = ({
       >
         <LazyImage 
           src={logoKairos} 
-          alt="Kaïros Logo" 
+          alt="Kaïrox Logo" 
           w="full" 
           h="full"
           objectFit="cover"
@@ -82,7 +82,7 @@ const Logo = ({
           }}
           transition="all 0.3s ease"
         >
-          Kaïros
+          Kaïrox
         </Text>
       </HStack>
     )

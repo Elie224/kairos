@@ -3,7 +3,7 @@
  * et créer une palette de couleurs pour l'application
  */
 
-// Couleurs extraites du logo Kaïros (à ajuster selon le logo réel)
+// Couleurs extraites du logo Kaïrox (à ajuster selon le logo réel)
 // Ces couleurs seront utilisées comme base pour la palette de l'application
 // Thème bleu high-tech pour plateforme éducative immersive avec IA
 export const LOGO_COLORS = {
@@ -68,7 +68,7 @@ export const generateColorPalette = (baseColor: string) => {
 }
 
 /**
- * Palette de couleurs basée sur le logo Kaïros
+ * Palette de couleurs basée sur le logo Kaïrox
  * Thème bleu high-tech pour plateforme éducative immersive avec IA
  */
 export const KAIROS_COLORS = {

@@ -1,6 +1,6 @@
-# 🛠️ Guide de Développement Kairos
+# 🛠️ Guide de Développement Kaïrox
 
-Guide complet pour les développeurs travaillant sur Kairos.
+Guide complet pour les développeurs travaillant sur Kaïrox.
 
 ## 📋 Table des Matières
 
@@ -36,7 +36,7 @@ Voir [CODE_STRUCTURE.md](./CODE_STRUCTURE.md) pour la structure détaillée.
 - **`models/`** - Modèles de données
 - **`repositories/`** - Accès aux données (pattern Repository)
 - **`middleware/`** - Middlewares
-- **`prompts/`** - Prompts AI (Kairos)
+- **`prompts/`** - Prompts AI (Kaïrox)
 
 ## 🎨 Conventions de Code
 

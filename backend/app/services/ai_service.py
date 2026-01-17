@@ -124,7 +124,7 @@ def _get_system_prompt(language: str = "fr", expert_mode: bool = False, research
     if research_mode:
         # Mode Research AI avec GPT-5.2 Pro
         if language == "en":
-            return """You are Kaïros Research AI, an expert assistant at the academic and applied research level.
+            return """You are Kaïrox Research AI, an expert assistant at the academic and applied research level.
 
 Your mission is to analyze complex problems, propose rigorous and innovative solutions, and provide high-level reasoning.
 
@@ -135,7 +135,7 @@ Rules:
 - No excessive simplification.
 - Structured format like scientific report."""
         else:
-            return """Tu es Kaïros Research AI, un assistant expert de niveau académique et recherche appliquée.
+            return """Tu es Kaïrox Research AI, un assistant expert de niveau académique et recherche appliquée.
 
 Ta mission est d'analyser des problématiques complexes, de proposer des solutions rigoureuses et innovantes, et de fournir des raisonnements de haut niveau.
 
@@ -148,7 +148,7 @@ Règles :
     elif expert_mode:
         # Mode Expert avec GPT-5.2
         if language == "en":
-            return """You are Kaïros Expert, an advanced pedagogical assistant specialized in scientific reasoning and in-depth analysis.
+            return """You are Kaïrox Expert, an advanced pedagogical assistant specialized in scientific reasoning and in-depth analysis.
 
 Your mission is to produce accurate, rigorous, and pedagogically sound responses in physics, chemistry, mathematics, and computer science.
 
@@ -165,7 +165,7 @@ Expected outputs:
 - Clear final solution
 - Pedagogical tips or common pitfalls"""
         else:
-            return """Tu es Kaïros Expert, un assistant pédagogique avancé spécialisé dans le raisonnement scientifique et l'analyse approfondie.
+            return """Tu es Kaïrox Expert, un assistant pédagogique avancé spécialisé dans le raisonnement scientifique et l'analyse approfondie.
 
 Ta mission est de produire des réponses exactes, rigoureuses et pédagogiquement solides en physique, chimie, mathématiques et informatique.
 
@@ -184,7 +184,7 @@ Sorties attendues :
     else:
         # Mode Tutor standard avec GPT-5-mini
         if language == "en":
-            return """You are Kaïros Tutor, a reliable, clear, and benevolent pedagogical assistant.
+            return """You are Kaïrox Tutor, a reliable, clear, and benevolent pedagogical assistant.
 Your mission is to explain concepts in physics, chemistry, mathematics, English, and computer science in a simple, structured way adapted to the learner's level.
 
 Rules:
@@ -200,7 +200,7 @@ Format:
 - Clear lists
 - Final summary in 2-3 lines"""
         else:
-            return """Tu es Kaïros Tutor, un assistant pédagogique fiable, clair et bienveillant.
+            return """Tu es Kaïrox Tutor, un assistant pédagogique fiable, clair et bienveillant.
 Ta mission est d'aider les étudiants à apprendre de manière naturelle et conversationnelle.
 
 RÈGLES DE CONVERSATION :
@@ -956,7 +956,7 @@ Génère exactement {num_questions} questions au format JSON ci-dessus, en répa
                     "guidance": "Les simulations 3D interactives sont uniquement disponibles pour les modules de Physique et Chimie.",
                     "tips": [
                         "Explorez les autres onglets pour accéder au contenu du module",
-                        "Utilisez le chat avec Kaïros pour poser vos questions",
+                        "Utilisez le chat avec Kaïrox pour poser vos questions",
                         "Consultez les ressources et les quiz disponibles"
                     ]
                 }
@@ -968,7 +968,7 @@ Génère exactement {num_questions} questions au format JSON ci-dessus, en répa
                 '3d': 'simulation 3D interactive'
             }
             
-            prompt = f"""Tu es Kaïros, un assistant IA pour une plateforme d'apprentissage immersive.
+            prompt = f"""Tu es Kaïrox, un assistant IA pour une plateforme d'apprentissage immersive.
 
 L'utilisateur explore le module "{title}" en mode {mode_descriptions.get(mode, mode)}.
 
@@ -1196,7 +1196,7 @@ def _generate_demo_quiz(module: Dict[str, Any], num_questions: int = 40) -> Dict
                     "guidance": "Les simulations 3D interactives sont uniquement disponibles pour les modules de Physique et Chimie.",
                     "tips": [
                         "Explorez les autres onglets pour accéder au contenu du module",
-                        "Utilisez le chat avec Kaïros pour poser vos questions",
+                        "Utilisez le chat avec Kaïrox pour poser vos questions",
                         "Consultez les ressources et les quiz disponibles"
                     ]
                 }
@@ -1208,7 +1208,7 @@ def _generate_demo_quiz(module: Dict[str, Any], num_questions: int = 40) -> Dict
                 '3d': 'simulation 3D interactive'
             }
             
-            prompt = f"""Tu es Kaïros, un assistant IA pour une plateforme d'apprentissage immersive.
+            prompt = f"""Tu es Kaïrox, un assistant IA pour une plateforme d'apprentissage immersive.
 
 L'utilisateur explore le module "{title}" en mode {mode_descriptions.get(mode, mode)}.
 

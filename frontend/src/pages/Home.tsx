@@ -130,7 +130,7 @@ const Home = () => {
                 letterSpacing="tight"
                 maxW="900px"
               >
-                Kairos – Visualisations Interactives & Gamification Pilotées par l'IA
+                Kaïrox – Visualisations Interactives & Gamification Pilotées par l'IA
               </Heading>
             </AnimatedBox>
             
@@ -143,7 +143,7 @@ const Home = () => {
                 fontWeight="medium"
                 textShadow="0 2px 10px rgba(0, 0, 0, 0.2)"
               >
-                Kairos repose sur un modèle OpenAI intelligent capable de générer automatiquement des contenus pédagogiques interactifs, des simulations dynamiques et une gamification adaptative, couvrant les niveaux collège, lycée et université.
+                Kaïrox repose sur un modèle OpenAI intelligent capable de générer automatiquement des contenus pédagogiques interactifs, des simulations dynamiques et une gamification adaptative, couvrant les niveaux collège, lycée et université.
               </Text>
             </AnimatedBox>
             
@@ -507,7 +507,7 @@ const Home = () => {
               {
                 icon: FiCpu,
                 title: 'Modèle OpenAI Intelligent',
-                description: 'Kairos repose sur un modèle OpenAI qui génère automatiquement des contenus pédagogiques interactifs, des simulations dynamiques et une gamification adaptative pour tous les niveaux.',
+                description: 'Kaïrox repose sur un modèle OpenAI qui génère automatiquement des contenus pédagogiques interactifs, des simulations dynamiques et une gamification adaptative pour tous les niveaux.',
                 gradient: 'linear(to-br, blue.100, blue.200)',
                 iconColor: 'blue.600',
                 delay: 0,
@@ -620,7 +620,7 @@ const Home = () => {
               {
                 step: '2',
                 title: 'Apprenez avec l\'IA',
-                description: 'Posez vos questions à Kaïros, notre tuteur IA qui vous guide avec des explications personnalisées.',
+                description: 'Posez vos questions à Kaïrox, notre tuteur IA qui vous guide avec des explications personnalisées.',
                 icon: FiCpu,
                 color: 'purple',
               },
@@ -707,7 +707,7 @@ const Home = () => {
               fontWeight="medium"
               lineHeight="1.8"
             >
-                  Rejoignez Kaïros et découvrez une nouvelle façon d'apprendre diverses matières avec l'IA
+                  Rejoignez Kaïrox et découvrez une nouvelle façon d'apprendre diverses matières avec l'IA
             </Text>
             <HStack spacing={4} justify="center" flexWrap="wrap">
               <Link to="/register">

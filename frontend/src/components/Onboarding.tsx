@@ -35,7 +35,7 @@ interface OnboardingScreen {
 const onboardingScreens: OnboardingScreen[] = [
   {
     icon: FiTarget,
-    title: 'Bienvenue sur Kaïros',
+    title: 'Bienvenue sur Kaïrox',
     description: 'Votre plateforme d\'apprentissage intelligente pour maîtriser diverses matières avec l\'IA. Explorez des cours interactifs et personnalisés adaptés à votre niveau.',
     color: 'blue',
     gradient: 'linear(to-br, blue.400, blue.600)',

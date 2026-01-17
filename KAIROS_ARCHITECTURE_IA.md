@@ -1,8 +1,8 @@
-# 🚀 Architecture IA Kairos - Documentation Complète
+# 🚀 Architecture IA Kaïrox - Documentation Complète
 
 ## 📋 Vue d'ensemble
 
-Kairos est une **plateforme EdTech intelligente** basée sur l'IA générative, combinant :
+Kaïrox est une **plateforme EdTech intelligente** basée sur l'IA générative, combinant :
 - Visualisation interactive
 - Machine Learning pédagogique
 - Gamification adaptative
@@ -141,7 +141,7 @@ Génération automatique :
 ### ✅ PRIORITÉ 10 - Positionnement Produit
 **Statut**: ✅ Implémenté dans les descriptions
 
-Kairos est positionné comme :
+Kaïrox est positionné comme :
 > **Une plateforme EdTech intelligente basée sur l'IA générative, combinant visualisation interactive, machine learning pédagogique et gamification adaptative pour l'enseignement secondaire et supérieur.**
 
 ---
@@ -181,7 +181,7 @@ Voir `backend/KAIROS_API_DOCUMENTATION.md` pour la documentation complète de to
 
 ## 🎓 Résultat Final
 
-Kairos dispose maintenant d'une **architecture IA pédagogique de niveau professionnel** avec :
+Kaïrox dispose maintenant d'une **architecture IA pédagogique de niveau professionnel** avec :
 
 ✅ **10 priorités stratégiques** implémentées  
 ✅ **20+ endpoints API** fonctionnels  
@@ -189,7 +189,7 @@ Kairos dispose maintenant d'une **architecture IA pédagogique de niveau profess
 ✅ **Tests automatisés**  
 ✅ **Documentation complète**  
 
-**Kairos est prêt pour :**
+**Kaïrox est prêt pour :**
 - Déploiement production
 - Présentation académique
 - Démonstration professionnelle
@@ -207,4 +207,4 @@ Kairos dispose maintenant d'une **architecture IA pédagogique de niveau profess
 
 ---
 
-**Kairos - L'avenir de l'apprentissage intelligent** 🎯
+**Kaïrox - L'avenir de l'apprentissage intelligent** 🎯

@@ -694,7 +694,7 @@ const Support = () => {
                   color="gray.700"
                   fontFamily="body"
                 >
-                  @kairos_education
+                  @kaïrox_education
                 </Text>
               </CardBody>
             </Card>

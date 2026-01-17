@@ -1,5 +1,5 @@
 """
-Kaïros Backend - API principale
+Kaïrox Backend - API principale
 """
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -155,11 +155,11 @@ async def lifespan(app: FastAPI):
     logger.info("Application arrêtée")
 
 app = FastAPI(
-    title="Kaïros API",
+    title="Kaïrox API",
     description="""
     ## API pour la plateforme d'apprentissage immersif avec IA
     
-    Kaïros est une plateforme éducative innovante qui combine l'apprentissage traditionnel avec des technologies immersives (AR/VR) et l'intelligence artificielle.
+    Kaïrox est une plateforme éducative innovante qui combine l'apprentissage traditionnel avec des technologies immersives (AR/VR) et l'intelligence artificielle.
     
     ### Fonctionnalités principales:
     
@@ -190,7 +190,7 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
     contact={
-        "name": "Support Kaïros",
+        "name": "Support Kaïrox",
         "url": "https://kairos-frontend-hjg9.onrender.com/support",
         "email": "support@kairos.education"
     },
@@ -441,9 +441,9 @@ app.add_exception_handler(Exception, general_exception_handler)
 # Inclusion des routeurs
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentification"])
 app.include_router(modules.router, prefix="/api/modules", tags=["Modules"])
-app.include_router(ai_tutor.router, prefix="/api/ai", tags=["Kaïros"])
+app.include_router(ai_tutor.router, prefix="/api/ai", tags=["Kaïrox"])
 app.include_router(prompt_router.router, prefix="/api/prompt-router", tags=["Prompt Router"])
-app.include_router(kairos_prompts.router, prefix="/api/kairos", tags=["Kairos Prompts"])
+app.include_router(kairos_prompts.router, prefix="/api/kairos", tags=["Kaïrox Prompts"])
 app.include_router(user_history.router, prefix="/api/user-history", tags=["Historique Utilisateur"])
 app.include_router(progress.router, prefix="/api/progress", tags=["Progression"])
 app.include_router(badges.router, prefix="/api/badges", tags=["Badges"])
@@ -476,7 +476,7 @@ app.include_router(pedagogical_memory.router, prefix="/api/pedagogical-memory", 
 @app.head("/")  # Support HEAD pour les health checks Render
 async def root():
     return {
-        "message": "Bienvenue sur l'API Kaïros",
+        "message": "Bienvenue sur l'API Kaïrox",
         "version": "1.0.0",
         "docs": "/docs"
     }

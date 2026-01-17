@@ -38,7 +38,7 @@ router = APIRouter()
 
 @router.post("/chat", response_model=AIChatResponse)
 async def chat_with_ai(request: AIChatRequest):
-    """Chat avec Kaïros (mode standard, Expert ou Research) avec cache intelligent et historique (route publique)"""
+    """Chat avec Kaïrox (mode standard, Expert ou Research) avec cache intelligent et historique (route publique)"""
     language = request.language or "fr"
     user_id = "anonymous"  # Auth supprimée
     
@@ -130,7 +130,7 @@ async def chat_with_ai(request: AIChatRequest):
 
 @router.post("/chat/stream")
 async def chat_with_ai_stream(request: AIChatRequest):
-    """Chat avec Kaïros en streaming (optimisé pour 100k utilisateurs) avec historique de conversation (route publique)"""
+    """Chat avec Kaïrox en streaming (optimisé pour 100k utilisateurs) avec historique de conversation (route publique)"""
     language = request.language or "fr"
     user_id = "anonymous"  # Auth supprimée
     
@@ -275,7 +275,7 @@ async def chat_with_ai_stream_files(
     files: List[UploadFile] = File([])
 ):
     """
-    Chat avec Kaïros en streaming avec support des fichiers/images.
+    Chat avec Kaïrox en streaming avec support des fichiers/images.
     Utilise OpenAI Vision pour analyser les images. (route publique)
     """
     user_id = "anonymous"  # Auth supprimée

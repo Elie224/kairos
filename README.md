@@ -1,4 +1,4 @@
-# Kaïros - Plateforme d'apprentissage immersif avec IA
+# Kaïrox - Plateforme d'apprentissage immersif avec IA
 
 Application web utilisant l'intelligence artificielle et les visualisations 3D interactives pour expliquer des concepts complexes (physique, chimie, mathématiques, anglais et informatique) de manière visuelle et interactive.
 
@@ -12,7 +12,7 @@ Application web utilisant l'intelligence artificielle et les visualisations 3D i
 ## 📁 Structure du projet
 
 ```
-Kaïros/
+Kaïrox/
 ├── backend/          # API FastAPI
 ├── frontend/         # Application React
 ├── shared/           # Types et utilitaires partagés

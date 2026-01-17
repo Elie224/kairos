@@ -16,7 +16,7 @@ export const AccessibilityProvider = ({ children }: AccessibilityProviderProps) 
   useEffect(() => {
     // Attendre que le DOM soit prêt
     const timeout = setTimeout(() => {
-      const pageTitle = document.title || 'Kaïros'
+      const pageTitle = document.title || 'Kaïrox'
       announceToScreenReader(`Page chargée: ${pageTitle}`, 'polite')
     }, 100)
     return () => clearTimeout(timeout)

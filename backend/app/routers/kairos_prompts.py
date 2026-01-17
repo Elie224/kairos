@@ -1,5 +1,5 @@
 """
-Routeur pour les prompts officiels Kairos - Visualisations, Quêtes, Badges, etc.
+Routeur pour les prompts officiels Kaïrox - Visualisations, Quêtes, Badges, etc.
 """
 from fastapi import APIRouter, Depends, HTTPException, Body
 from typing import Dict, Any, Optional, List
