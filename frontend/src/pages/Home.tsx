@@ -213,13 +213,14 @@ const Home = () => {
 
             <AnimatedBox animation="fadeInUp" delay={0.2}>
               <Heading 
-                size={{ base: '2xl', md: '4xl', lg: '5xl' }} 
+                size={{ base: 'xl', md: '4xl', lg: '5xl' }} 
                 fontWeight="extrabold" 
-                lineHeight="shorter"
+                lineHeight={{ base: '1.3', md: 'shorter' }}
                 color="white"
                 textShadow="0 4px 20px rgba(0, 0, 0, 0.3)"
                 letterSpacing="tight"
                 maxW="900px"
+                px={{ base: 2, md: 0 }}
               >
                 Kaïrox – Visualisations Interactives & Gamification Pilotées par l'IA
               </Heading>
@@ -227,12 +228,13 @@ const Home = () => {
             
             <AnimatedBox animation="fadeInUp" delay={0.3}>
               <Text 
-                fontSize={{ base: 'md', md: 'lg', lg: 'xl' }} 
+                fontSize={{ base: 'sm', md: 'lg', lg: 'xl' }} 
                 maxW="900px" 
-                lineHeight="tall" 
+                lineHeight={{ base: '1.6', md: 'tall' }} 
                 color="whiteAlpha.95"
                 fontWeight="medium"
                 textShadow="0 2px 10px rgba(0, 0, 0, 0.2)"
+                px={{ base: 2, md: 0 }}
               >
                 Kaïrox repose sur un modèle OpenAI intelligent capable de générer automatiquement des contenus pédagogiques interactifs, des simulations dynamiques et une gamification adaptative, couvrant les niveaux collège, lycée et université.
               </Text>
@@ -303,11 +305,11 @@ const Home = () => {
             {/* Statistiques rapides - Dynamiques si disponibles */}
             <AnimatedBox animation="fadeInUp" delay={0.5}>
               <SimpleGrid 
-                columns={{ base: 3, md: 3 }} 
-                spacing={6} 
+                columns={{ base: 1, md: 3 }} 
+                spacing={{ base: 3, md: 6 }} 
                 w="full"
                 maxW="700px"
-                mt={8}
+                mt={{ base: 4, md: 8 }}
               >
                 {statsLoading ? (
                   // Skeleton pendant le chargement
