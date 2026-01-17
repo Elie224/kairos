@@ -666,8 +666,9 @@ const Visualizations = () => {
                                 transform: 'scale(1.02)',
                               }}
                               transition="all 0.2s"
+                              variant={module.id?.startsWith('demo-') ? 'outline' : 'solid'}
                             >
-                              Lancer la simulation
+                              {module.id?.startsWith('demo-') ? 'Voir la démonstration' : 'Lancer la simulation'}
                             </Button>
                           </VStack>
                         </CardBody>
