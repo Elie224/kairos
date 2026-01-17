@@ -48,24 +48,15 @@ const Modules = () => {
   })
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null)
 
-  // Log pour déboguer - s'assurer qu'on est bien sur /modules et pas /modules/:id
-  // IMPORTANT: Ne rien faire si on est sur /modules/:id (laisser ModuleDetail gérer)
-  useEffect(() => {
-    const pathname = window.location.pathname
-    // Si on est sur /modules/:id, on ne devrait PAS être ici - retourner immédiatement sans rien faire
-    if (pathname.match(/^\/modules\/[^/]+$/)) {
-      // Ne pas logger ni rediriger - juste retourner silencieusement
-      // React Router devrait gérer cela correctement, mais si ce composant se rend quand même,
-      // on ne veut pas interférer
-      return
-    }
-    console.log('🟢 Modules component RENDERED', { pathname, timestamp: new Date().toISOString() })
-    // Vérifier aussi qu'on n'est pas sur /exams ou /home
-    if (pathname === '/exams' || pathname === '/') {
-      console.error('❌ ERREUR: Modules component rendu sur une mauvaise route!', { pathname })
-      // Ne pas rediriger ici, laisser React Router gérer
-    }
-  }, [])
+  // Vérification CRITIQUE: Si on est sur /modules/:id, NE PAS RENDRE ce composant du tout
+  // Cela évite que ModuleCard se rendent et déclenchent des navigations multiples
+  const pathname = window.location.pathname
+  if (pathname.match(/^\/modules\/[^/]+$/)) {
+    // Si on est sur une route /modules/:id, retourner null immédiatement
+    // React Router ne devrait pas rendre ce composant, mais si cela arrive,
+    // on ne rendons rien pour éviter les problèmes
+    return null
+  }
 
   const { modules, groupedModules, isLoading, totalCount } = useModules(filters)
 
