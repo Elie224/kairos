@@ -36,7 +36,7 @@ const Exams = () => {
   const navigate = useNavigate()
 
   const { data: modules, isLoading: modulesLoading, error: modulesError } = useQuery<Module[]>(
-    'modules',
+    ['modules', 'exams-page'], // Clé unique pour éviter les conflits avec la page Modules
     async () => {
       const response = await api.get('/modules/', {
         timeout: API_TIMEOUTS.STANDARD, // 15 secondes pour modules/validations/attempts

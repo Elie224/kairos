@@ -21,6 +21,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { isAuthenticated, isLoading, checkAuth } = useAuthStore()
+  const location = useLocation()
 
   // Vérifier l'authentification au montage (seulement si nécessaire)
   useEffect(() => {
@@ -60,7 +61,8 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <Navigate to="/login" replace />
   }
 
-  return <>{children}</>
+  // S'assurer que les enfants sont rendus avec une clé unique pour forcer le re-render
+  return <Box key={`protected-${location.pathname}`}>{children}</Box>
 }
 
 export default ProtectedRoute

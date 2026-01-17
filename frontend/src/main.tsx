@@ -90,11 +90,47 @@ const AppWithAccessibility = () => {
   )
 }
 
+// Loader global pour le chargement initial
+const GlobalLoader = () => {
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    // Masquer le loader après que React soit monté
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (!isLoading) return null
+
+  return (
+    <Box
+      position="fixed"
+      top={0}
+      left={0}
+      right={0}
+      bottom={0}
+      bg="white"
+      zIndex={9999}
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <VStack spacing={4}>
+        <Spinner size="xl" color="blue.500" thickness="4px" />
+        <Text color="gray.600" fontSize="lg">Chargement de Kaïrox...</Text>
+      </VStack>
+    </Box>
+  )
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>
       <ChakraProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
+          <GlobalLoader />
           <NotificationProvider>
             <LogoColorProvider>
               <AppWithAccessibility />
