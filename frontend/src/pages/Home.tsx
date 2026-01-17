@@ -16,6 +16,7 @@
 import { Box, Container, Heading, Text, Button, VStack, HStack, SimpleGrid, Badge, Icon, Flex, Card, CardBody, Image, Divider, Skeleton, SkeletonText } from '@chakra-ui/react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useEffect } from 'react'
 import { FiTarget, FiCpu, FiEye, FiZap, FiUsers, FiAward, FiArrowRight, FiPlay, FiBook, FiCheck, FiTrendingUp, FiClock, FiChevronDown, FiStar, FiMessageCircle, FiCode, FiBarChart } from 'react-icons/fi'
 import { AnimatedBox } from '../components/AnimatedBox'
 import { useQuery } from 'react-query'
@@ -28,6 +29,36 @@ const Home = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { isAuthenticated } = useAuthStore()
+
+  // S'assurer que le contenu est visible au chargement
+  useEffect(() => {
+    // Forcer le scroll en haut et s'assurer que le contenu est visible
+    const ensureVisibility = () => {
+      window.scrollTo({ top: 0, behavior: 'instant' })
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+      
+      // S'assurer que la section hero est visible
+      const heroSection = document.getElementById('hero-section')
+      if (heroSection) {
+        heroSection.scrollIntoView({ behavior: 'instant', block: 'start' })
+      }
+    }
+    
+    // Exécuter immédiatement
+    ensureVisibility()
+    
+    // Exécuter après un court délai pour gérer les cas où le DOM n'est pas encore prêt
+    const timer = setTimeout(ensureVisibility, 100)
+    
+    // Exécuter après le chargement complet
+    window.addEventListener('load', ensureVisibility)
+    
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('load', ensureVisibility)
+    }
+  }, [])
 
   // SEO
   useSEO({
@@ -73,7 +104,7 @@ const Home = () => {
   }
 
   return (
-    <Box>
+    <Box minH="100vh" position="relative" bg="gray.50">
       {/* Hero Section - Design Premium Amélioré */}
       <Box
         color="white"
@@ -89,6 +120,7 @@ const Home = () => {
         backgroundPosition="center"
         backgroundRepeat="no-repeat"
         data-hero="true"
+        id="hero-section"
       >
         {/* Overlay sombre pour améliorer la lisibilité */}
         <Box

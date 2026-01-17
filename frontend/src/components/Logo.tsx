@@ -1,5 +1,4 @@
-import { Box, HStack, Text } from '@chakra-ui/react'
-import { LazyImage } from './LazyImage'
+import { Box, HStack, Text, Image } from '@chakra-ui/react'
 import logoKairos from '../logo_kairos.jpeg'
 
 interface LogoProps {
@@ -49,16 +48,31 @@ const Logo = ({
         p={0.5}
         overflow="hidden"
       >
-        <LazyImage 
-          src={logoKairos} 
-          alt="Kaïrox Logo" 
-          w="full" 
+        <Image
+          src={logoKairos}
+          alt="Kaïrox Logo"
+          w="full"
           h="full"
           objectFit="cover"
           borderRadius="full"
           transition="all 0.3s ease"
           position="relative"
           zIndex={0}
+          fallback={
+            <Box
+              w="full"
+              h="full"
+              bgGradient="linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              color="white"
+              fontWeight="bold"
+              fontSize="sm"
+            >
+              K
+            </Box>
+          }
         />
       </Box>
     </Box>

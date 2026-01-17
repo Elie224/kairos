@@ -229,13 +229,28 @@ const Register = () => {
     }
   }
 
+  // S'assurer que le formulaire est centré au chargement
+  useEffect(() => {
+    // Scroll vers le formulaire après un court délai pour garantir le centrage
+    const timer = setTimeout(() => {
+      const formElement = document.getElementById('register-form')
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      } else {
+        // Fallback: scroll en haut si l'élément n'est pas trouvé
+        window.scrollTo({ top: 0, behavior: 'instant' })
+      }
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [])
+
   return (
     <Box
-      minH={{ base: 'auto', md: '100vh' }}
+      minH="100vh"
       display="flex"
       alignItems="center"
       justifyContent="center"
-      py={{ base: 2, md: 8 }}
+      py={{ base: 4, md: 8 }}
       px={4}
       position="relative"
       overflow="hidden"
@@ -296,6 +311,7 @@ const Register = () => {
       <Container maxW="2xl" position="relative" zIndex={2}>
         <AnimatedBox animation="fadeInUp" delay={0.1}>
           <Box
+            id="register-form"
             bg={bgColor}
             p={{ base: 2, md: 6 }}
             borderRadius="2xl"
