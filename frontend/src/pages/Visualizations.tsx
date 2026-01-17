@@ -112,10 +112,20 @@ const Visualizations = () => {
   const getSubjectColor = (subject: string) => {
     switch (subject?.toLowerCase()) {
       case 'physics':
-        return 'blue'
+        return 'cyan'
       case 'chemistry':
         return 'green'
       case 'mathematics':
+        return 'purple'
+      case 'biology':
+        return 'teal'
+      case 'geography':
+        return 'orange'
+      case 'economics':
+        return 'yellow'
+      case 'history':
+        return 'red'
+      case 'computer_science':
         return 'purple'
       default:
         return 'gray'
@@ -176,16 +186,112 @@ const Visualizations = () => {
           'Panoramique : Clic droit + glisser'
         ]
       }
+    } else if (subject === 'mathematics') {
+      return {
+        title: 'Visualisation Mathématique',
+        description: 'Graphiques, fonctions et visualisations mathématiques interactives.',
+        concepts: [
+          'Fonctions et graphiques',
+          'Géométrie',
+          'Analyse',
+          'Probabilités'
+        ],
+        controls: [
+          'Interagissez avec les graphiques',
+          'Ajustez les paramètres',
+          'Explorez les variations'
+        ]
+      }
+    } else if (subject === 'biology') {
+      return {
+        title: 'Visualisation Biologique',
+        description: 'Diagrammes, schémas et représentations biologiques interactives.',
+        concepts: [
+          'Structure cellulaire',
+          'Systèmes biologiques',
+          'Processus biologiques',
+          'Organismes'
+        ],
+        controls: [
+          'Explorez les diagrammes',
+          'Zoom sur les détails',
+          'Navigation interactive'
+        ]
+      }
+    } else if (subject === 'geography') {
+      return {
+        title: 'Visualisation Géographique',
+        description: 'Cartes, reliefs et données géospatiales interactives.',
+        concepts: [
+          'Cartographie',
+          'Reliefs et topographie',
+          'Climats',
+          'Dynamiques géographiques'
+        ],
+        controls: [
+          'Navigation sur la carte',
+          'Zoom et panoramique',
+          'Affichage des données'
+        ]
+      }
+    } else if (subject === 'economics') {
+      return {
+        title: 'Visualisation Économique',
+        description: 'Graphiques économiques, courbes et analyses interactives.',
+        concepts: [
+          'Offre et demande',
+          'Marchés financiers',
+          'Indicateurs économiques',
+          'Tendances économiques'
+        ],
+        controls: [
+          'Interagissez avec les graphiques',
+          'Ajustez les paramètres',
+          'Analysez les tendances'
+        ]
+      }
+    } else if (subject === 'history') {
+      return {
+        title: 'Visualisation Historique',
+        description: 'Frise chronologique et événements historiques interactifs.',
+        concepts: [
+          'Chronologie',
+          'Événements historiques',
+          'Contextes historiques',
+          'Relations cause-effet'
+        ],
+        controls: [
+          'Navigation temporelle',
+          'Zoom sur les périodes',
+          'Exploration interactive'
+        ]
+      }
+    } else if (subject === 'computer_science') {
+      return {
+        title: 'Visualisation Informatique',
+        description: 'Algorithmes, structures de données et visualisations IA.',
+        concepts: [
+          'Algorithmes',
+          'Structures de données',
+          'Réseaux de neurones',
+          'Flux de données'
+        ],
+        controls: [
+          'Visualisation des algorithmes',
+          'Interaction avec les structures',
+          'Exploration des processus'
+        ]
+      }
     }
     
     return {
-      title: 'Visualisation 3D',
-      description: 'Explorez cette simulation interactive en 3D.',
+      title: 'Visualisation Interactive',
+      description: 'Explorez cette visualisation interactive.',
       concepts: [],
       controls: [
-        'Rotation : Clic gauche + glisser',
-        'Zoom : Molette de la souris',
-        'Panoramique : Clic droit + glisser'
+        'Interagissez avec la visualisation',
+        'Explorez les fonctionnalités',
+        'Découvrez les détails'
       ]
     }
   }

@@ -431,5 +431,107 @@ const DefaultScene = () => {
   )
 }
 
+// Visualisation 2D pour les autres matières
+const Visualization2D = ({ module }: { module: Module }) => {
+  const subject = module.subject?.toLowerCase()
+  
+  const getVisualizationContent = () => {
+    switch (subject) {
+      case 'mathematics':
+        return {
+          title: '📐 Visualisation Mathématique',
+          description: 'Graphiques, fonctions, et visualisations mathématiques interactives',
+          icon: '📐',
+          color: 'purple'
+        }
+      case 'biology':
+        return {
+          title: '🧬 Visualisation Biologique',
+          description: 'Diagrammes, schémas et représentations biologiques interactives',
+          icon: '🧬',
+          color: 'teal'
+        }
+      case 'geography':
+        return {
+          title: '🌍 Visualisation Géographique',
+          description: 'Cartes, reliefs et données géospatiales interactives',
+          icon: '🌍',
+          color: 'orange'
+        }
+      case 'economics':
+        return {
+          title: '💰 Visualisation Économique',
+          description: 'Graphiques économiques, courbes et analyses interactives',
+          icon: '💰',
+          color: 'yellow'
+        }
+      case 'history':
+        return {
+          title: '🏛️ Visualisation Historique',
+          description: 'Frise chronologique et événements historiques interactifs',
+          icon: '🏛️',
+          color: 'red'
+        }
+      case 'computer_science':
+        return {
+          title: '🤖 Visualisation Informatique',
+          description: 'Algorithmes, structures de données et visualisations IA',
+          icon: '🤖',
+          color: 'purple'
+        }
+      default:
+        return {
+          title: '📊 Visualisation Interactive',
+          description: 'Visualisation interactive pour cette matière',
+          icon: '📊',
+          color: 'gray'
+        }
+    }
+  }
+  
+  const content = getVisualizationContent()
+  
+  return (
+    <Box 
+      h="100%" 
+      w="100%" 
+      display="flex" 
+      alignItems="center" 
+      justifyContent="center" 
+      p={8} 
+      bgGradient={`linear(to-br, ${content.color}.50, ${content.color}.100)`}
+    >
+      <Box textAlign="center" maxW="500px">
+        <ChakraText fontSize="6xl" mb={4}>
+          {content.icon}
+        </ChakraText>
+        <ChakraText fontSize="2xl" fontWeight="bold" color="gray.800" mb={4}>
+          {content.title}
+        </ChakraText>
+        <ChakraText color="gray.600" fontSize="md" mb={6}>
+          {content.description}
+        </ChakraText>
+        <Box 
+          bg="white" 
+          p={6} 
+          borderRadius="lg" 
+          boxShadow="lg"
+          border="2px solid"
+          borderColor={`${content.color}.200`}
+        >
+          <ChakraText fontSize="sm" color="gray.700" mb={2}>
+            Module : <strong>{module.title || 'Module'}</strong>
+          </ChakraText>
+          <ChakraText fontSize="xs" color="gray.500">
+            Les visualisations 2D interactives pour cette matière seront bientôt disponibles.
+            <br />
+            En attendant, explorez le contenu du module dans la section détail.
+          </ChakraText>
+        </Box>
+      </Box>
+    </Box>
+  )
+}
+
 export default Simulation3D
 
