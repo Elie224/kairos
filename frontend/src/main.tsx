@@ -65,31 +65,6 @@ if (typeof window !== 'undefined') {
   })
 }
 
-// Wrapper pour AccessibilityProvider qui nécessite BrowserRouter
-const AppWithAccessibility = () => {
-  // Précharger les routes principales après le montage
-  useEffect(() => {
-    prefetchMainRoutes()
-    // S'assurer que le scroll est en haut au montage
-    window.scrollTo({ top: 0, behavior: 'instant' })
-    document.documentElement.scrollTop = 0
-    document.body.scrollTop = 0
-  }, [])
-
-  return (
-    <BrowserRouter
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      }}
-    >
-      <AccessibilityProvider>
-        <App />
-      </AccessibilityProvider>
-    </BrowserRouter>
-  )
-}
-
 // Loader global pour le chargement initial
 const GlobalLoader = () => {
   const [isLoading, setIsLoading] = useState(true)
@@ -125,12 +100,39 @@ const GlobalLoader = () => {
   )
 }
 
+// Wrapper pour AccessibilityProvider qui nécessite BrowserRouter
+const AppWithAccessibility = () => {
+  // Précharger les routes principales après le montage
+  useEffect(() => {
+    prefetchMainRoutes()
+    // S'assurer que le scroll est en haut au montage
+    window.scrollTo({ top: 0, behavior: 'instant' })
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+  }, [])
+
+  return (
+    <>
+      <GlobalLoader />
+      <BrowserRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
+        <AccessibilityProvider>
+          <App />
+        </AccessibilityProvider>
+      </BrowserRouter>
+    </>
+  )
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>
       <ChakraProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
-          <GlobalLoader />
           <NotificationProvider>
             <LogoColorProvider>
               <AppWithAccessibility />
