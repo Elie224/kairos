@@ -40,7 +40,8 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         }
       }
     }
-  }, [isAuthenticated, isLoading, checkAuth])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, isLoading]) // Retirer checkAuth des dépendances pour éviter les boucles infinies
 
   if (isLoading) {
     return (

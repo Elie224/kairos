@@ -10,12 +10,25 @@ interface ProtectedAdminRouteProps {
 const ProtectedAdminRoute = ({ children }: ProtectedAdminRouteProps) => {
   const { isAuthenticated, isLoading, user, checkAuth } = useAuthStore()
 
-  // Vérifier l'authentification au montage
+  // Vérifier l'authentification au montage (une seule fois)
   useEffect(() => {
     if (!isAuthenticated && !isLoading) {
-      checkAuth()
+      // Vérifier d'abord le token dans localStorage avant d'appeler l'API
+      const authData = localStorage.getItem('kairos-auth')
+      if (authData) {
+        try {
+          const parsed = JSON.parse(authData)
+          if (parsed.state?.token) {
+            // Il y a un token, vérifier avec l'API
+            checkAuth()
+          }
+        } catch {
+          // Pas de token valide, rediriger directement
+        }
+      }
     }
-  }, [isAuthenticated, isLoading, checkAuth])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, isLoading]) // Retirer checkAuth des dépendances pour éviter les boucles infinies
 
   if (isLoading) {
     return (
