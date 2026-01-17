@@ -64,8 +64,10 @@ class KairosPromptService:
                 prompt = prompt.replace("{concept}", concept)
             return prompt
         except Exception as e:
-            logger.error(f"Erreur lors de la récupération du prompt: {e}")
-            return SYSTEM_PROMPT
+            logger.error(f"Erreur lors de la récupération du prompt pour subject={subject}, topic={topic}, concept={concept}: {e}")
+            # Retourner un prompt par défaut avec le concept
+            default_prompt = f"{SYSTEM_PROMPT}\n\nGénère une visualisation interactive pour le concept suivant : {concept or 'default'}."
+            return default_prompt
     
     @staticmethod
     def get_visualization_prompt(

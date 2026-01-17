@@ -623,9 +623,34 @@ def get_prompt(subject: str, topic: str, level: str = "intermediate") -> str:
     
     subject_prompts = prompts_map.get(subject, {})
     
+    # Si le topic n'existe pas, essayer de trouver un topic par défaut pour la matière
+    if topic not in subject_prompts:
+        # Topic par défaut par matière
+        default_topics = {
+            "mathematics": "functions_trigonometry",
+            "physics": "mechanics_dynamics",
+            "chemistry": "general_chemistry",
+            "computer_science": "machine_learning",
+            "biology": "biology",
+            "geography": "geography",
+            "economics": "economics",
+            "history": "history"
+        }
+        default_topic = default_topics.get(subject)
+        if default_topic and default_topic in subject_prompts:
+            topic = default_topic
+        else:
+            # Fallback vers le prompt système
+            return SYSTEM_PROMPT
+    
     if topic in subject_prompts:
         prompt_template = subject_prompts[topic]
-        return prompt_template.format(concept="{concept}", niveau=level)
+        # Formater avec les placeholders, en gérant les cas où certains placeholders n'existent pas
+        try:
+            return prompt_template.format(concept="{concept}", niveau=level)
+        except KeyError:
+            # Si le format échoue, retourner le template tel quel (sans format)
+            return prompt_template
     
     # Fallback vers le prompt système
     return SYSTEM_PROMPT
