@@ -45,142 +45,149 @@ const Navbar = () => {
     onClose()
   }
 
-  const NavLinks = () => (
-    <>
-      <Link 
-        to="/modules" 
-        onClick={onClose}
-        onMouseEnter={() => prefetchRoute('/modules')}
-      >
-        <Button 
-          variant="ghost" 
-          w={{ base: 'full', md: 'auto' }} 
-          justifyContent={{ base: 'flex-start', md: 'center' }} 
-          px={{ base: 4, md: 2 }}
-          minH="44px"
-          fontSize={{ base: 'md', md: 'sm' }}
-        >
-          {t('navbar.modules')}
-        </Button>
-      </Link>
-      <Link 
-        to="/dashboard" 
-        onClick={onClose}
-        onMouseEnter={() => prefetchRoute('/dashboard')}
-      >
-        <Button 
-          variant="ghost" 
-          w={{ base: 'full', md: 'auto' }} 
-          justifyContent={{ base: 'flex-start', md: 'center' }} 
-          px={{ base: 4, md: 2 }}
-          minH="44px"
-          fontSize={{ base: 'md', md: 'sm' }}
-        >
-          {t('navbar.dashboard')}
-        </Button>
-      </Link>
-      <Link 
-        to="/exams" 
-        onClick={onClose}
-        onMouseEnter={() => prefetchRoute('/exams')}
-      >
-        <Button 
-          variant="ghost" 
-          w={{ base: 'full', md: 'auto' }} 
-          justifyContent={{ base: 'flex-start', md: 'center' }} 
-          px={{ base: 4, md: 2 }}
-          minH="44px"
-          fontSize={{ base: 'md', md: 'sm' }}
-        >
-          Examens
-        </Button>
-      </Link>
-      <Link to="/profile" onClick={onClose}>
-        <Button 
-          variant="ghost" 
-          w={{ base: 'full', md: 'auto' }} 
-          justifyContent={{ base: 'flex-start', md: 'center' }} 
-          px={{ base: 4, md: 2 }}
-          minH="44px"
-          fontSize={{ base: 'md', md: 'sm' }}
-        >
-          Profil
-        </Button>
-      </Link>
-      <Link 
-        to="/support" 
-        onClick={onClose}
-        onMouseEnter={() => prefetchRoute('/support')}
-      >
-        <Button 
-          variant="ghost" 
-          w={{ base: 'full', md: 'auto' }} 
-          justifyContent={{ base: 'flex-start', md: 'center' }} 
-          px={{ base: 4, md: 2 }}
-          minH="44px"
-          fontSize={{ base: 'md', md: 'sm' }}
-        >
-          Soutenir
-        </Button>
-      </Link>
-      <Link 
-        to="/gamification" 
-        onClick={onClose}
-        onMouseEnter={() => prefetchRoute('/gamification')}
-      >
-        <Button 
-          variant="ghost" 
-          w={{ base: 'full', md: 'auto' }} 
-          justifyContent={{ base: 'flex-start', md: 'center' }} 
-          px={{ base: 4, md: 2 }}
-          minH="44px"
-          fontSize={{ base: 'md', md: 'sm' }}
-        >
-          🏆 Récompenses
-        </Button>
-      </Link>
-      <Link 
-        to="/visualizations" 
-        onClick={onClose}
-        onMouseEnter={() => prefetchRoute('/visualizations')}
-      >
-        <Button 
-          variant="ghost" 
-          w={{ base: 'full', md: 'auto' }} 
-          justifyContent={{ base: 'flex-start', md: 'center' }} 
-          px={{ base: 4, md: 2 }}
-          minH="44px"
-          fontSize={{ base: 'md', md: 'sm' }}
-        >
-          👁️ Visualisations
-        </Button>
-      </Link>
-      {user?.is_admin && (
+  const NavLinks = () => {
+    // Afficher les liens protégés uniquement si l'utilisateur est authentifié
+    if (!isAuthenticated) {
+      return null
+    }
+
+    return (
+      <>
         <Link 
-          to="/admin" 
+          to="/modules" 
           onClick={onClose}
-          onMouseEnter={() => prefetchRoute('/admin')}
+          onMouseEnter={() => prefetchRoute('/modules')}
         >
           <Button 
             variant="ghost" 
             w={{ base: 'full', md: 'auto' }} 
-            justifyContent={{ base: 'flex-start', md: 'center' }}
-            colorScheme="gray"
-            fontWeight="bold"
-            bgGradient="linear-gradient(135deg, rgba(128, 128, 128, 0.1) 0%, rgba(64, 64, 64, 0.1) 100%)"
-            _hover={{ 
-              bgGradient: 'linear-gradient(135deg, rgba(128, 128, 128, 0.2) 0%, rgba(64, 64, 64, 0.2) 100%)',
-              transform: 'scale(1.05)'
-            }}
-            border="1px solid"
-            borderColor="gray.300"
+            justifyContent={{ base: 'flex-start', md: 'center' }} 
+            px={{ base: 4, md: 2 }}
+            minH="44px"
+            fontSize={{ base: 'md', md: 'sm' }}
           >
-            🔐 Administration
+            {t('navbar.modules')}
           </Button>
         </Link>
-      )}
-    </>
-  )
+        <Link 
+          to="/dashboard" 
+          onClick={onClose}
+          onMouseEnter={() => prefetchRoute('/dashboard')}
+        >
+          <Button 
+            variant="ghost" 
+            w={{ base: 'full', md: 'auto' }} 
+            justifyContent={{ base: 'flex-start', md: 'center' }} 
+            px={{ base: 4, md: 2 }}
+            minH="44px"
+            fontSize={{ base: 'md', md: 'sm' }}
+          >
+            {t('navbar.dashboard')}
+          </Button>
+        </Link>
+        <Link 
+          to="/exams" 
+          onClick={onClose}
+          onMouseEnter={() => prefetchRoute('/exams')}
+        >
+          <Button 
+            variant="ghost" 
+            w={{ base: 'full', md: 'auto' }} 
+            justifyContent={{ base: 'flex-start', md: 'center' }} 
+            px={{ base: 4, md: 2 }}
+            minH="44px"
+            fontSize={{ base: 'md', md: 'sm' }}
+          >
+            Examens
+          </Button>
+        </Link>
+        <Link to="/profile" onClick={onClose}>
+          <Button 
+            variant="ghost" 
+            w={{ base: 'full', md: 'auto' }} 
+            justifyContent={{ base: 'flex-start', md: 'center' }} 
+            px={{ base: 4, md: 2 }}
+            minH="44px"
+            fontSize={{ base: 'md', md: 'sm' }}
+          >
+            Profil
+          </Button>
+        </Link>
+        <Link 
+          to="/support" 
+          onClick={onClose}
+          onMouseEnter={() => prefetchRoute('/support')}
+        >
+          <Button 
+            variant="ghost" 
+            w={{ base: 'full', md: 'auto' }} 
+            justifyContent={{ base: 'flex-start', md: 'center' }} 
+            px={{ base: 4, md: 2 }}
+            minH="44px"
+            fontSize={{ base: 'md', md: 'sm' }}
+          >
+            Soutenir
+          </Button>
+        </Link>
+        <Link 
+          to="/gamification" 
+          onClick={onClose}
+          onMouseEnter={() => prefetchRoute('/gamification')}
+        >
+          <Button 
+            variant="ghost" 
+            w={{ base: 'full', md: 'auto' }} 
+            justifyContent={{ base: 'flex-start', md: 'center' }} 
+            px={{ base: 4, md: 2 }}
+            minH="44px"
+            fontSize={{ base: 'md', md: 'sm' }}
+          >
+            🏆 Récompenses
+          </Button>
+        </Link>
+        <Link 
+          to="/visualizations" 
+          onClick={onClose}
+          onMouseEnter={() => prefetchRoute('/visualizations')}
+        >
+          <Button 
+            variant="ghost" 
+            w={{ base: 'full', md: 'auto' }} 
+            justifyContent={{ base: 'flex-start', md: 'center' }} 
+            px={{ base: 4, md: 2 }}
+            minH="44px"
+            fontSize={{ base: 'md', md: 'sm' }}
+          >
+            👁️ Visualisations
+          </Button>
+        </Link>
+        {user?.is_admin && (
+          <Link 
+            to="/admin" 
+            onClick={onClose}
+            onMouseEnter={() => prefetchRoute('/admin')}
+          >
+            <Button 
+              variant="ghost" 
+              w={{ base: 'full', md: 'auto' }} 
+              justifyContent={{ base: 'flex-start', md: 'center' }}
+              colorScheme="gray"
+              fontWeight="bold"
+              bgGradient="linear-gradient(135deg, rgba(128, 128, 128, 0.1) 0%, rgba(64, 64, 64, 0.1) 100%)"
+              _hover={{ 
+                bgGradient: 'linear-gradient(135deg, rgba(128, 128, 128, 0.2) 0%, rgba(64, 64, 64, 0.2) 100%)',
+                transform: 'scale(1.05)'
+              }}
+              border="1px solid"
+              borderColor="gray.300"
+            >
+              🔐 Administration
+            </Button>
+          </Link>
+        )}
+      </>
+    )
+  }
 
   return (
     <>
