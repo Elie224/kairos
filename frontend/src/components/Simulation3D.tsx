@@ -17,17 +17,23 @@ interface Simulation3DProps {
 const Simulation3D = ({ module }: Simulation3DProps) => {
   // Vérifier que le module est en physique ou chimie
   const allowedSubjects = ['physics', 'chemistry']
-  const isAllowedSubject = allowedSubjects.includes(module.subject?.toLowerCase())
+  const subject = module.subject?.toLowerCase()
+  const isAllowedSubject = allowedSubjects.includes(subject)
   
   if (!isAllowedSubject) {
     return (
-      <Box h="100%" w="100%" display="flex" alignItems="center" justifyContent="center" p={8}>
+      <Box h="100%" w="100%" display="flex" alignItems="center" justifyContent="center" p={8} bg="gray.50">
         <Box textAlign="center">
           <ChakraText fontSize="xl" fontWeight="bold" color="gray.700" mb={4}>
             Simulations 3D non disponibles
           </ChakraText>
-          <ChakraText color="gray.600">
+          <ChakraText color="gray.600" fontSize="sm">
             Les simulations 3D interactives sont uniquement disponibles pour les modules de Physique et Chimie.
+            {subject && (
+              <Box mt={2}>
+                Matière actuelle : {subject}
+              </Box>
+            )}
           </ChakraText>
         </Box>
       </Box>
@@ -61,17 +67,50 @@ const Simulation3D = ({ module }: Simulation3DProps) => {
   }
 
   return (
-    <Box h="100%" w="100%">
-      <Canvas>
-        <Suspense fallback={null}>
-          <PerspectiveCamera makeDefault position={[0, 0, 5]} />
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} />
-          <Stars />
+    <Box h="100%" w="100%" position="relative">
+      <Canvas
+        gl={{ antialias: true, alpha: false }}
+        dpr={[1, 2]}
+        onCreated={({ gl }) => {
+          gl.setClearColor('#000000')
+        }}
+      >
+        <Suspense fallback={
+          <mesh>
+            <boxGeometry args={[1, 1, 1]} />
+            <meshStandardMaterial color="#6366f1" />
+          </mesh>
+        }>
+          <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={75} />
+          <ambientLight intensity={0.6} />
+          <pointLight position={[10, 10, 10]} intensity={1} />
+          <pointLight position={[-10, -10, -10]} intensity={0.5} />
+          <Stars radius={100} depth={50} count={5000} factor={4} fade speed={1} />
           {renderScene()}
-          <OrbitControls enableZoom={true} enablePan={true} enableRotate={true} />
+          <OrbitControls 
+            enableZoom={true} 
+            enablePan={true} 
+            enableRotate={true}
+            minDistance={2}
+            maxDistance={20}
+            autoRotate={false}
+          />
         </Suspense>
       </Canvas>
+      {/* Indicateur de chargement si nécessaire */}
+      <Box
+        position="absolute"
+        top={2}
+        right={2}
+        bg="blackAlpha.600"
+        color="white"
+        px={3}
+        py={1}
+        borderRadius="md"
+        fontSize="xs"
+      >
+        {module.subject === 'physics' ? '⚙️ Physique' : '🧪 Chimie'}
+      </Box>
     </Box>
   )
 }

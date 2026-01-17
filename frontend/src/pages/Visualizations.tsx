@@ -94,10 +94,15 @@ const Visualizations = () => {
     }
   )
 
+  // Filtrer uniquement les modules avec simulations 3D disponibles
+  // Seulement physics et chemistry ont des simulations 3D fonctionnelles
   const modulesWithVisualizations = modules?.filter(
-    (module) =>
-      ['physics', 'chemistry', 'mathematics', 'biology'].includes(module.subject?.toLowerCase() || '') ||
-      module.content?.scene
+    (module) => {
+      const subject = module.subject?.toLowerCase() || ''
+      // Vérifier que c'est physics ou chemistry ET qu'il y a un contenu de scène
+      return (subject === 'physics' || subject === 'chemistry') && 
+             (module.content?.scene || true) // Accepter même sans scene explicite pour ces matières
+    }
   ) || []
 
   const handleSelectModule = (module: Module) => {
