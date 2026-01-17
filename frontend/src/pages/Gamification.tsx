@@ -149,11 +149,11 @@ const Gamification = () => {
             <HStack spacing={3} mb={2}>
               <Icon as={FiAward} boxSize={8} color="purple.500" />
               <Heading size={{ base: 'lg', md: 'xl' }} bgGradient="linear-gradient(135deg, purple.500 0%, pink.500 100%)" bgClip="text">
-                Gamification & Récompenses
+                Gamification Intelligente Pilotée par l'IA
               </Heading>
             </HStack>
             <Text color="gray.600" fontSize={{ base: 'sm', md: 'md' }}>
-              Gagnez des badges, complétez des quêtes et montez dans le classement
+              Badges dynamiques, quêtes générées par IA, système de points adaptatif, classement intelligent et bienveillant. Statistiques générées par IA avec recommandations ciblées.
             </Text>
           </Box>
 

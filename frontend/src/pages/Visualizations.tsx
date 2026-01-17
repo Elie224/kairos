@@ -193,11 +193,11 @@ const Visualizations = () => {
             <HStack spacing={3} mb={2}>
               <Icon as={FiEye} boxSize={8} color="blue.500" />
               <Heading size={{ base: 'lg', md: 'xl' }} bgGradient="linear-gradient(135deg, blue.500 0%, purple.500 100%)" bgClip="text">
-                Visualisations Interactives
+                Visualisations Interactives Avancées Pilotées par l'IA
               </Heading>
             </HStack>
             <Text color="gray.600" fontSize={{ base: 'sm', md: 'md' }}>
-              Explorez des concepts complexes avec des simulations 3D interactives
+              Le modèle IA analyse votre niveau, génère des simulations 2D/3D interactives, adapte la difficulté en temps réel et propose des expériences exploratoires guidées. Couvre Mathématiques, Physique, Chimie, Biologie, et plus.
             </Text>
           </Box>
 
@@ -206,13 +206,16 @@ const Visualizations = () => {
             <Select
               value={selectedSubject}
               onChange={(e) => setSelectedSubject(e.target.value)}
-              maxW="200px"
+              maxW="250px"
               size="md"
             >
               <option value="all">Toutes les matières</option>
-              <option value="physics">Physique</option>
-              <option value="chemistry">Chimie</option>
-              <option value="mathematics">Mathématiques</option>
+              <option value="mathematics">📐 Mathématiques</option>
+              <option value="physics">⚙️ Physique</option>
+              <option value="chemistry">🧪 Chimie</option>
+              <option value="computer_science">🤖 Informatique & IA</option>
+              <option value="biology">🧬 Biologie</option>
+              <option value="geography">🌍 Géographie</option>
             </Select>
             <Badge colorScheme="blue" fontSize="sm" px={3} py={1}>
               {modulesWithVisualizations.length} simulation{modulesWithVisualizations.length > 1 ? 's' : ''} disponible{modulesWithVisualizations.length > 1 ? 's' : ''}
