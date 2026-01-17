@@ -1,11 +1,13 @@
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, PerspectiveCamera, Stars, Text } from '@react-three/drei'
-import React, { Suspense, useRef, useEffect } from 'react'
+import React, { Suspense, useRef, useEffect, useState } from 'react'
 import { Box, Text as ChakraText, Spinner } from '@chakra-ui/react'
 import * as THREE from 'three'
 import { ModuleContent } from '../types/moduleContent'
 
 interface Module {
+  id?: string
+  title?: string
   content?: ModuleContent
   subject: string
 }
@@ -20,31 +22,65 @@ const Simulation3D = ({ module, visualizationData, onGenerateVisualization }: Si
   const subject = module.subject?.toLowerCase()
   const allowedSubjects3D = ['physics', 'chemistry']
   const is3DSubject = allowedSubjects3D.includes(subject)
+  const [isGenerating, setIsGenerating] = useState(false)
+  
+  // Générer la visualisation avec OpenAI si elle n'existe pas encore
+  useEffect(() => {
+    if (!visualizationData && onGenerateVisualization && module.id && !isGenerating) {
+      setIsGenerating(true)
+      const concept = module.title || module.content?.scene || 'default'
+      onGenerateVisualization(module.id, subject, concept)
+        .finally(() => setIsGenerating(false))
+    }
+  }, [module.id, subject, visualizationData, onGenerateVisualization, isGenerating])
+  
+  // Afficher un loader pendant la génération
+  if (isGenerating || (!visualizationData && onGenerateVisualization)) {
+    return (
+      <Box h="100%" w="100%" display="flex" alignItems="center" justifyContent="center" bg="gray.900">
+        <Box textAlign="center">
+          <Spinner size="xl" color="blue.400" thickness="4px" mb={4} />
+          <ChakraText color="white" fontSize="sm">
+            Génération de la simulation par l'IA...
+          </ChakraText>
+          <ChakraText color="gray.400" fontSize="xs" mt={2}>
+            Création d'une visualisation interactive personnalisée
+          </ChakraText>
+        </Box>
+      </Box>
+    )
+  }
   
   // Pour les matières non-3D, afficher une visualisation 2D appropriée
   if (!is3DSubject) {
-    return <Visualization2D module={module} />
+    return <Visualization2D module={module} visualizationData={visualizationData} />
   }
   
   const renderScene = () => {
-    const sceneType = module.content?.scene || 'default'
+    // Utiliser les données générées par OpenAI si disponibles
+    const sceneType = visualizationData?.scene_type || 
+                     visualizationData?.type || 
+                     visualizationData?.visualization?.type ||
+                     module.content?.scene || 
+                     'default'
     
-    // Mapper les scènes selon la matière
+    // Mapper les scènes selon la matière et les données générées par OpenAI
     if (module.subject?.toLowerCase() === 'physics') {
-      switch (sceneType) {
-        case 'gravitation':
-          return <GravitationSimulation />
-        case 'mechanics':
-          return <MechanicsSimulation />
-        default:
-          return <MechanicsSimulation /> // Par défaut pour la physique
+      // Utiliser les données générées par OpenAI si disponibles
+      if (visualizationData?.visualization_3d?.type === 'gravitation' || sceneType === 'gravitation') {
+        return <GravitationSimulation visualizationData={visualizationData} />
+      } else if (visualizationData?.visualization_3d?.type === 'mechanics' || sceneType === 'mechanics') {
+        return <MechanicsSimulation visualizationData={visualizationData} />
+      } else {
+        // Par défaut, utiliser mechanics avec les données IA si disponibles
+        return <MechanicsSimulation visualizationData={visualizationData} />
       }
     } else if (module.subject?.toLowerCase() === 'chemistry') {
-      switch (sceneType) {
-        case 'chemical_reaction':
-          return <ChemicalReaction />
-        default:
-          return <ChemicalReaction /> // Par défaut pour la chimie
+      // Utiliser les données générées par OpenAI si disponibles
+      if (visualizationData?.molecular_visualization || visualizationData?.visualization_3d?.type === 'chemical_reaction' || sceneType === 'chemical_reaction') {
+        return <ChemicalReaction visualizationData={visualizationData} />
+      } else {
+        return <ChemicalReaction visualizationData={visualizationData} />
       }
     }
     
@@ -102,15 +138,22 @@ const Simulation3D = ({ module, visualizationData, onGenerateVisualization }: Si
 }
 
 // Simulation de gravitation avec animation
-const GravitationSimulation = () => {
+const GravitationSimulation = ({ visualizationData }: { visualizationData?: any }) => {
   const satelliteRef = useRef<THREE.Mesh>(null)
+  
+  // Utiliser les paramètres générés par OpenAI si disponibles
+  const orbitRadius = visualizationData?.visualization_3d?.parameters?.radius || 
+                     visualizationData?.parameters?.orbit_radius || 
+                     3
+  const orbitSpeed = visualizationData?.visualization_3d?.parameters?.speed || 
+                    visualizationData?.parameters?.orbit_speed || 
+                    1
   
   useFrame((state) => {
     if (satelliteRef.current) {
       const time = state.clock.getElapsedTime()
-      const radius = 3
-      satelliteRef.current.position.x = Math.cos(time) * radius
-      satelliteRef.current.position.z = Math.sin(time) * radius
+      satelliteRef.current.position.x = Math.cos(time * orbitSpeed) * orbitRadius
+      satelliteRef.current.position.z = Math.sin(time * orbitSpeed) * orbitRadius
     }
   })
 
@@ -205,23 +248,36 @@ const GeometricShapes = () => {
 }
 
 // Réaction chimique
-const ChemicalReaction = () => {
+const ChemicalReaction = ({ visualizationData }: { visualizationData?: any }) => {
   return (
     <>
-      {/* Molécule CH4 */}
-      <mesh position={[-2, 0, 0]}>
-        <sphereGeometry args={[0.3, 16, 16]} />
-        <meshStandardMaterial color="#FF6B6B" />
-      </mesh>
-      {[0, 1, 2, 3].map((i) => {
-        const angle = (i * Math.PI * 2) / 4
-        return (
-          <mesh key={i} position={[-2 + Math.cos(angle) * 0.4, Math.sin(angle) * 0.4, 0]}>
-            <sphereGeometry args={[0.15, 16, 16]} />
-            <meshStandardMaterial color="#4ECDC4" />
+      {/* Molécule - utiliser les données générées par OpenAI si disponibles */}
+      {visualizationData?.molecular_visualization?.molecules ? (
+        // Afficher les molécules selon les données IA
+        visualizationData.molecular_visualization.molecules.map((mol: any, idx: number) => (
+          <mesh key={idx} position={[mol.position?.x || -2 + idx * 2, mol.position?.y || 0, mol.position?.z || 0]}>
+            <sphereGeometry args={[mol.size || 0.3, 16, 16]} />
+            <meshStandardMaterial color={mol.color || "#FF6B6B"} />
           </mesh>
-        )
-      })}
+        ))
+      ) : (
+        <>
+          {/* Molécule CH4 par défaut */}
+          <mesh position={[-2, 0, 0]}>
+            <sphereGeometry args={[0.3, 16, 16]} />
+            <meshStandardMaterial color="#FF6B6B" />
+          </mesh>
+          {[0, 1, 2, 3].map((i) => {
+            const angle = (i * Math.PI * 2) / 4
+            return (
+              <mesh key={i} position={[-2 + Math.cos(angle) * 0.4, Math.sin(angle) * 0.4, 0]}>
+                <sphereGeometry args={[0.15, 16, 16]} />
+                <meshStandardMaterial color="#4ECDC4" />
+              </mesh>
+            )
+          })}
+        </>
+      )}
       
       {/* Flèche */}
       <mesh position={[0, 0, 0]}>
@@ -285,7 +341,7 @@ const EnglishGrammar = () => {
 }
 
 // Simulation de mécanique classique
-const MechanicsSimulation = () => {
+const MechanicsSimulation = ({ visualizationData }: { visualizationData?: any }) => {
   const pendulumRef = useRef<THREE.Group>(null)
   const fallingObjectRef = useRef<THREE.Mesh>(null)
   const springRef = useRef<THREE.Group>(null)
@@ -446,7 +502,7 @@ const DefaultScene = () => {
 }
 
 // Visualisation 2D pour les autres matières
-const Visualization2D = ({ module }: { module: Module }) => {
+const Visualization2D = ({ module, visualizationData }: { module: Module, visualizationData?: any }) => {
   const subject = module.subject?.toLowerCase()
   
   const getVisualizationContent = () => {
@@ -536,11 +592,29 @@ const Visualization2D = ({ module }: { module: Module }) => {
           <ChakraText fontSize="sm" color="gray.700" mb={2}>
             Module : <strong>{module.title || 'Module'}</strong>
           </ChakraText>
-          <ChakraText fontSize="xs" color="gray.500">
-            Les visualisations 2D interactives pour cette matière seront bientôt disponibles.
-            <br />
-            En attendant, explorez le contenu du module dans la section détail.
-          </ChakraText>
+          {visualizationData ? (
+            <>
+              <ChakraText fontSize="sm" color="gray.700" mb={2} fontWeight="bold">
+                Visualisation générée par l'IA
+              </ChakraText>
+              <ChakraText fontSize="xs" color="gray.600" mb={2}>
+                {visualizationData.explanation || visualizationData.description || 'Visualisation interactive personnalisée'}
+              </ChakraText>
+              {visualizationData.visualization && (
+                <Box mt={2} p={2} bg={`${content.color}.50`} borderRadius="md">
+                  <ChakraText fontSize="xs" color="gray.600">
+                    Type: {visualizationData.visualization.type || 'interactive'}
+                  </ChakraText>
+                </Box>
+              )}
+            </>
+          ) : (
+            <ChakraText fontSize="xs" color="gray.500">
+              Génération de la visualisation par l'IA en cours...
+              <br />
+              Les visualisations 2D interactives pour cette matière seront bientôt disponibles.
+            </ChakraText>
+          )}
         </Box>
       </Box>
     </Box>
