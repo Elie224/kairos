@@ -14,8 +14,8 @@ Si vous voulez garder votre code source actuel intact :
 # Aller dans le dossier parent
 cd C:\Users\KOURO\OneDrive\Desktop\Kairós
 
-# Créer un nouveau projet React Native avec TypeScript
-npx react-native init KairosMobile --template react-native-template-typescript
+# Créer un nouveau projet React Native avec TypeScript (Nouvelle commande)
+npx @react-native-community/cli init KairosMobile --template react-native-template-typescript
 
 # Copier votre code source vers le nouveau projet
 xcopy /E /I mobile\src KairosMobile\src
@@ -44,7 +44,7 @@ move package.json package.json.backup
 move tsconfig.json tsconfig.json.backup
 
 # Initialiser React Native (cela va créer android/ et ios/)
-npx react-native init KairosMobile --template react-native-template-typescript --skip-install
+npx @react-native-community/cli init KairosMobile --template react-native-template-typescript --skip-install
 
 # Déplacer le contenu du nouveau projet ici
 move KairosMobile\* .
@@ -72,7 +72,7 @@ npm install -g react-native-cli
 
 # Initialiser le projet
 cd C:\Users\KOURO\OneDrive\Desktop\Kairós
-react-native init KairosMobile --template react-native-template-typescript
+npx @react-native-community/cli init KairosMobile --template react-native-template-typescript
 
 # Puis copier votre code src/ vers le nouveau projet
 ```
@@ -163,15 +163,12 @@ L'APK sera généré dans : `android/app/build/outputs/apk/debug/app-debug.apk`
 
 ## 🐛 Dépannage
 
-### Erreur : "Command failed: react-native init"
+### Erreur : "Command failed: react-native init" ou "The init command is deprecated"
 
-**Solution :**
+**Solution :** Utiliser la nouvelle commande CLI :
 ```powershell
-# Vérifier que React Native CLI est installé
-npm install -g react-native-cli
-
-# Ou utiliser npx (recommandé)
-npx react-native init ...
+# La nouvelle commande recommandée
+npx @react-native-community/cli init KairosMobile --template react-native-template-typescript
 ```
 
 ### Erreur : "SDK location not found"
