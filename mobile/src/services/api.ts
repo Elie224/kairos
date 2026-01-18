@@ -2,9 +2,10 @@ import axios, { AxiosError, AxiosInstance } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 
+// Configuration de l'API - Utiliser le backend en production
 const API_BASE_URL = __DEV__ 
-  ? 'http://localhost:8000/api' 
-  : 'https://votre-domaine.com/api';
+  ? 'http://localhost:8000/api'  // Pour Android: utiliser l'IP de votre machine (ex: http://192.168.1.XXX:8000/api)
+  : 'https://kairos-0aoy.onrender.com/api';
 
 class ApiService {
   private api: AxiosInstance;
