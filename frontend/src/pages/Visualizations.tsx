@@ -87,9 +87,23 @@ const Visualizations = () => {
         }
         
         return filteredData
-      } catch (err) {
-        // Logger l'erreur de manière centralisée
-        logger.error('Erreur lors de la récupération des modules', err, 'Visualizations')
+      } catch (err: any) {
+        // Ne logger que les erreurs inattendues (pas les timeouts ou erreurs réseau normales)
+        if (err?.response?.status === 401 || err?.response?.status === 403) {
+          // Erreur d'authentification/autorisation - normale, ne pas logger
+          return []
+        }
+        if (err?.code === 'ECONNABORTED' || err?.message?.includes('timeout')) {
+          // Timeout - normal sur Render avec cold start, ne pas logger
+          return []
+        }
+        if (err?.code === 'ERR_NETWORK' || err?.message?.includes('Network Error')) {
+          // Erreur réseau - peut être normale, logger seulement en debug
+          logger.debug('Erreur réseau lors de la récupération des modules', err, 'Visualizations')
+          return []
+        }
+        // Pour les autres erreurs, logger en mode debug seulement (pas error)
+        logger.debug('Erreur lors de la récupération des modules', err, 'Visualizations')
         return []
       }
     },
