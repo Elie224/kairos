@@ -8,10 +8,11 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "build:android:debug": "cd android && ./gradlew assembleDebug",
-    "build:android:release": "cd android && ./gradlew assembleRelease",
-    "build:android:bundle": "cd android && ./gradlew bundleRelease",
-    "clean:android": "cd android && ./gradlew clean"
+    "init:android": "if not exist android (echo Le dossier android n'existe pas. Initialisez d'abord le projet avec: npx react-native init KairosMobile --template react-native-template-typescript) else (echo Le dossier android existe deja)",
+    "build:android:debug": "if exist android\\gradlew.bat (cd android && gradlew.bat assembleDebug) else (echo ERREUR: Dossier android manquant. Executez d'abord: npm run init:android)",
+    "build:android:release": "if exist android\\gradlew.bat (cd android && gradlew.bat assembleRelease) else (echo ERREUR: Dossier android manquant. Executez d'abord: npm run init:android)",
+    "build:android:bundle": "if exist android\\gradlew.bat (cd android && gradlew.bat bundleRelease) else (echo ERREUR: Dossier android manquant. Executez d'abord: npm run init:android)",
+    "clean:android": "if exist android\\gradlew.bat (cd android && gradlew.bat clean) else (echo ERREUR: Dossier android manquant)"
   },
   "dependencies": {
     "react": "18.2.0",
